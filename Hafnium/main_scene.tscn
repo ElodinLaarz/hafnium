@@ -1,8 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://gb01yn60ddnh"]
+[gd_scene load_steps=19 format=3 uid="uid://gb01yn60ddnh"]
 
 [ext_resource type="Script" path="res://scripts/character_movement.gd" id="1_bfaqs"]
 [ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://Sprite_sheets/Wizard.png" id="2_u5otq"]
 [ext_resource type="Texture2D" uid="uid://cqkwf4xwn3yhq" path="res://tile_map/map.png" id="3_egsuj"]
+[ext_resource type="PackedScene" uid="uid://cp4h5hktcsaoa" path="res://npcs/slime.tscn" id="4_mrfl8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5vtpi"]
 atlas = ExtResource("2_u5otq")
@@ -143,6 +144,81 @@ texture = ExtResource("3_egsuj")
 physics_layer_0/collision_layer = 1
 sources/2 = SubResource("TileSetAtlasSource_l0e38")
 
+[sub_resource type="Animation" id="Animation_421st"]
+resource_name = "Jumping"
+length = 0.3
+loop_mode = 2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(26, -6), Vector2(27, -19)]
+}
+
+[sub_resource type="Animation" id="Animation_my1nl"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(26, -6)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_27u1o"]
+_data = {
+"Jumping": SubResource("Animation_421st"),
+"RESET": SubResource("Animation_my1nl")
+}
+
+[sub_resource type="Animation" id="Animation_ow5jg"]
+resource_name = "Sliming"
+loop_mode = 2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(107, 20), Vector2(44, 22)]
+}
+
+[sub_resource type="Animation" id="Animation_m5shv"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(107, 20)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_w7ivp"]
+_data = {
+"RESET": SubResource("Animation_m5shv"),
+"Sliming": SubResource("Animation_ow5jg")
+}
+
 [node name="MainScene" type="Node2D"]
 
 [node name="Player Character" type="CharacterBody2D" parent="."]
@@ -162,6 +238,7 @@ shape = SubResource("CapsuleShape2D_f3fsb")
 [node name="Main Camera" type="Camera2D" parent="Player Character"]
 position = Vector2(16, -12)
 zoom = Vector2(3, 3)
+position_smoothing_enabled = true
 
 [node name="TileMap" type="TileMap" parent="."]
 z_index = -1
@@ -176,3 +253,32 @@ layer_1/tile_data = PackedInt32Array()
 layer_2/name = "Fore"
 layer_2/z_index = 1
 layer_2/tile_data = PackedInt32Array(-196602, 327682, 1, -131066, 327682, 2, -196601, 393218, 1, -131065, 393218, 2, -196600, 458754, 1, -131064, 458754, 2, -262149, 327682, 1, -196613, 327682, 2, -262148, 393218, 1, -196612, 393218, 2, -262147, 458754, 1, -196611, 458754, 2, -5, 327682, 1, 65531, 327682, 2, -4, 393218, 1, 65532, 393218, 2, -3, 458754, 1, 65533, 458754, 2, -458748, 327682, 1, -393212, 327682, 2, -458747, 393218, 1, -393211, 393218, 2, -458746, 458754, 1, -393210, 458754, 2, -327678, 65538, 3, -262142, 65538, 4, -196606, 65538, 5, -131070, 65538, 6, -65534, 65538, 7, -327677, 131074, 3, -262141, 131074, 4, -196605, 131074, 5, -131069, 131074, 6, -65533, 131074, 7, -589827, 65538, 3, -524291, 65538, 4, -458755, 65538, 5, -393219, 65538, 6, -327683, 65538, 7, -589826, 131074, 3, -524290, 131074, 4, -458754, 131074, 5, -393218, 131074, 6, -327682, 131074, 7, -655352, 65538, 3, -589816, 65538, 4, -524280, 65538, 5, -458744, 65538, 6, -393208, 65538, 7, -655351, 131074, 3, -589815, 131074, 4, -524279, 131074, 5, -458743, 131074, 6, -393207, 131074, 7, -131063, 65538, 3, -65527, 65538, 4, 9, 65538, 5, 65545, 65538, 6, 131081, 65538, 7, -131062, 131074, 3, -65526, 131074, 4, 10, 131074, 5, 65546, 131074, 6, 131082, 131074, 7)
+
+[node name="Slimes" type="Node" parent="."]
+
+[node name="Slime" parent="Slimes" instance=ExtResource("4_mrfl8")]
+position = Vector2(26, -6)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Slimes/Slime"]
+libraries = {
+"": SubResource("AnimationLibrary_27u1o")
+}
+autoplay = "Jumping"
+
+[node name="Slime2" parent="Slimes" instance=ExtResource("4_mrfl8")]
+position = Vector2(-23, -69)
+
+[node name="Slime3" parent="Slimes" instance=ExtResource("4_mrfl8")]
+position = Vector2(41, -88)
+
+[node name="Slime4" parent="Slimes" instance=ExtResource("4_mrfl8")]
+position = Vector2(-100, -22)
+
+[node name="Slime5" parent="Slimes" instance=ExtResource("4_mrfl8")]
+position = Vector2(107, 20)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Slimes/Slime5"]
+libraries = {
+"": SubResource("AnimationLibrary_w7ivp")
+}
+autoplay = "Sliming"

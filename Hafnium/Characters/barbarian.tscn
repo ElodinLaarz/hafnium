@@ -42,4 +42,4 @@ animations = [{
 position = Vector2(18, 12)
 sprite_frames = SubResource("SpriteFrames_waso6")
 autoplay = "default"
-frame_progress = 0.691713
+frame_progress = 0.251829
