@@ -45,7 +45,7 @@ animations = [{
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_f3fsb"]
 radius = 4.0
-height = 20.0
+height = 14.0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_l0e38"]
 texture = ExtResource("3_egsuj")
@@ -247,7 +247,8 @@ texture_filter = 1
 texture = ExtResource("4_pf1xc")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player Character"]
-position = Vector2(0, -3)
+position = Vector2(0, -1)
+scale = Vector2(0.759999, 1)
 shape = SubResource("CapsuleShape2D_f3fsb")
 
 [node name="Main Camera" type="Camera2D" parent="Player Character"]

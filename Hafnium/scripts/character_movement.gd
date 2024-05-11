@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 # (ElodinLaarz): Values randomly chosen-- feel free to play around for something more fun. 
-const SPEED = 400 # Speed in pixels per second.
+const SPEED = 350 # Speed in pixels per second.
 const ACCEL = 10.0
 
 # Crate unit vector in direction determined by currently pressed keys.
