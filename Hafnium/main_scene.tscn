@@ -1,10 +1,10 @@
-[gd_scene load_steps=19 format=3 uid="uid://gb01yn60ddnh"]
+[gd_scene load_steps=21 format=3 uid="uid://gb01yn60ddnh"]
 
 [ext_resource type="Script" path="res://scripts/character_movement.gd" id="1_bfaqs"]
-[ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://Sprite_sheets/Wizard.png" id="2_u5otq"]
+[ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://sprite_sheets/Wizard.png" id="2_u5otq"]
 [ext_resource type="Texture2D" uid="uid://cqkwf4xwn3yhq" path="res://tile_map/map.png" id="3_egsuj"]
-[ext_resource type="PackedScene" uid="uid://cp4h5hktcsaoa" path="res://npcs/slime.tscn" id="4_mrfl8"]
 [ext_resource type="Script" path="res://Aim Sight.gd" id="3_o47ge"]
+[ext_resource type="PackedScene" uid="uid://cp4h5hktcsaoa" path="res://npcs/slime.tscn" id="4_mrfl8"]
 [ext_resource type="Texture2D" uid="uid://cpuha70ui6ytg" path="res://sprite_sheets/Aim_Right.png" id="4_pf1xc"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5vtpi"]
@@ -184,6 +184,21 @@ _data = {
 "RESET": SubResource("Animation_my1nl")
 }
 
+[sub_resource type="Animation" id="Animation_m5shv"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(107, 20)]
+}
+
 [sub_resource type="Animation" id="Animation_ow5jg"]
 resource_name = "Sliming"
 loop_mode = 2
@@ -198,21 +213,6 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Vector2(107, 20), Vector2(44, 22)]
-}
-
-[sub_resource type="Animation" id="Animation_m5shv"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(107, 20)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_w7ivp"]
@@ -249,6 +249,7 @@ texture = ExtResource("4_pf1xc")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player Character"]
 position = Vector2(0, -3)
 shape = SubResource("CapsuleShape2D_f3fsb")
+
 [node name="Main Camera" type="Camera2D" parent="Player Character"]
 position = Vector2(16, -12)
 zoom = Vector2(3, 3)
@@ -296,13 +297,3 @@ libraries = {
 "": SubResource("AnimationLibrary_w7ivp")
 }
 autoplay = "Sliming"
-
-
-
-
-
-
-
-
-
-
