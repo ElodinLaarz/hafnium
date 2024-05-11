@@ -1,38 +1,38 @@
 [gd_scene load_steps=9 format=3 uid="uid://gb01yn60ddnh"]
 
 [ext_resource type="Script" path="res://scripts/character_movement.gd" id="1_bfaqs"]
-[ext_resource type="Texture2D" uid="uid://inig523vl5qo" path="res://sprite_sheets/not_my_art/Girl-Sheet.png" id="2_m46x7"]
+[ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://Sprite_sheets/Wizard.png" id="2_u5otq"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ixg1d"]
-atlas = ExtResource("2_m46x7")
-region = Rect2(0, 0, 24, 24)
+[sub_resource type="AtlasTexture" id="AtlasTexture_5vtpi"]
+atlas = ExtResource("2_u5otq")
+region = Rect2(0, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_fke7k"]
-atlas = ExtResource("2_m46x7")
-region = Rect2(24, 0, 24, 24)
+[sub_resource type="AtlasTexture" id="AtlasTexture_0kfw2"]
+atlas = ExtResource("2_u5otq")
+region = Rect2(32, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_hcxnd"]
-atlas = ExtResource("2_m46x7")
-region = Rect2(48, 0, 24, 24)
+[sub_resource type="AtlasTexture" id="AtlasTexture_qkrme"]
+atlas = ExtResource("2_u5otq")
+region = Rect2(64, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_hv7p5"]
-atlas = ExtResource("2_m46x7")
-region = Rect2(72, 0, 24, 24)
+[sub_resource type="AtlasTexture" id="AtlasTexture_r4ve2"]
+atlas = ExtResource("2_u5otq")
+region = Rect2(96, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_jrwje"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ixg1d")
+"texture": SubResource("AtlasTexture_5vtpi")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_fke7k")
+"texture": SubResource("AtlasTexture_0kfw2")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_hcxnd")
+"texture": SubResource("AtlasTexture_qkrme")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_hv7p5")
+"texture": SubResource("AtlasTexture_r4ve2")
 }],
 "loop": true,
 "name": &"default",
@@ -53,7 +53,7 @@ texture_filter = 1
 position = Vector2(12, -12)
 sprite_frames = SubResource("SpriteFrames_jrwje")
 autoplay = "default"
-frame_progress = 0.0557258
+frame_progress = 0.632108
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player Character"]
 position = Vector2(12, -10)
