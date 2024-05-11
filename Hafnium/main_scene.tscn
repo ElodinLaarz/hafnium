@@ -1,38 +1,38 @@
 [gd_scene load_steps=9 format=3 uid="uid://gb01yn60ddnh"]
 
 [ext_resource type="Script" path="res://scripts/character_movement.gd" id="1_bfaqs"]
-[ext_resource type="Texture2D" uid="uid://inig523vl5qo" path="res://sprite sheets/not_my_art/Girl-Sheet.png" id="1_rwp4g"]
+[ext_resource type="Texture2D" uid="uid://inig523vl5qo" path="res://sprite_sheets/not_my_art/Girl-Sheet.png" id="2_m46x7"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_4tlv5"]
-atlas = ExtResource("1_rwp4g")
+[sub_resource type="AtlasTexture" id="AtlasTexture_ixg1d"]
+atlas = ExtResource("2_m46x7")
 region = Rect2(0, 0, 24, 24)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_gq78j"]
-atlas = ExtResource("1_rwp4g")
+[sub_resource type="AtlasTexture" id="AtlasTexture_fke7k"]
+atlas = ExtResource("2_m46x7")
 region = Rect2(24, 0, 24, 24)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_twy62"]
-atlas = ExtResource("1_rwp4g")
+[sub_resource type="AtlasTexture" id="AtlasTexture_hcxnd"]
+atlas = ExtResource("2_m46x7")
 region = Rect2(48, 0, 24, 24)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_uxgd0"]
-atlas = ExtResource("1_rwp4g")
+[sub_resource type="AtlasTexture" id="AtlasTexture_hv7p5"]
+atlas = ExtResource("2_m46x7")
 region = Rect2(72, 0, 24, 24)
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_0p5vg"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_jrwje"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_4tlv5")
+"texture": SubResource("AtlasTexture_ixg1d")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_gq78j")
+"texture": SubResource("AtlasTexture_fke7k")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_twy62")
+"texture": SubResource("AtlasTexture_hcxnd")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_uxgd0")
+"texture": SubResource("AtlasTexture_hv7p5")
 }],
 "loop": true,
 "name": &"default",
@@ -45,18 +45,19 @@ height = 18.0
 
 [node name="MainScene" type="Node2D"]
 
-[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+[node name="Player Character" type="CharacterBody2D" parent="."]
 script = ExtResource("1_bfaqs")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CharacterBody2D"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player Character"]
 texture_filter = 1
 position = Vector2(12, -12)
-sprite_frames = SubResource("SpriteFrames_0p5vg")
+sprite_frames = SubResource("SpriteFrames_jrwje")
 autoplay = "default"
+frame_progress = 0.0557258
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player Character"]
 position = Vector2(12, -10)
 shape = SubResource("CapsuleShape2D_f3fsb")
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Main Camera" type="Camera2D" parent="."]
 zoom = Vector2(3, 3)
