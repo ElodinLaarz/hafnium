@@ -1,0 +1,45 @@
+[gd_scene load_steps=7 format=3 uid="uid://dfnq4ri0jnq14"]
+
+[ext_resource type="Texture2D" path="res://Sprite_sheets/Barbarian.png" id="1_emhvm"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ds21e"]
+atlas = ExtResource("1_emhvm")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gkq81"]
+atlas = ExtResource("1_emhvm")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oxn6u"]
+atlas = ExtResource("1_emhvm")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_67rhu"]
+atlas = ExtResource("1_emhvm")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_waso6"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ds21e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gkq81")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oxn6u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_67rhu")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Barbarian" type="AnimatedSprite2D"]
+position = Vector2(18, 12)
+sprite_frames = SubResource("SpriteFrames_waso6")
+autoplay = "default"
+frame_progress = 0.595471
