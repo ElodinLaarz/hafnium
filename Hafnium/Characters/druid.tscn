@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://deqnbu6cgwbh5"]
 
-[ext_resource type="Texture2D" uid="uid://b08nhx5suyigg" path="res://Sprite_sheets/Druid.png" id="1_uk6tq"]
+[ext_resource type="Texture2D" path="res://Sprite_sheets/Druid.png" id="1_uk6tq"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4y57d"]
 atlas = ExtResource("1_uk6tq")
@@ -42,4 +42,4 @@ animations = [{
 position = Vector2(15, 9)
 sprite_frames = SubResource("SpriteFrames_r7c3x")
 autoplay = "default"
-frame_progress = 0.0831798
+frame_progress = 0.352845
