@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cpuha70ui6ytg"
-path="res://.godot/imported/Aim_Right.png-15f4dada876ba9b9335e904d17e93de4.ctex"
+path="res://.godot/imported/Aim_Right.png-91be11cf78b743d00886c06595f39aff.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprite_sheets/Aim_Right.png"
-dest_files=["res://.godot/imported/Aim_Right.png-15f4dada876ba9b9335e904d17e93de4.ctex"]
+source_file="res://Sprite_sheets/Aim_Right.png"
+dest_files=["res://.godot/imported/Aim_Right.png-91be11cf78b743d00886c06595f39aff.ctex"]
 
 [params]
 
