@@ -1,8 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://gb01yn60ddnh"]
+[gd_scene load_steps=13 format=3 uid="uid://gb01yn60ddnh"]
 
 [ext_resource type="PackedScene" uid="uid://cnie27irw2ene" path="res://scenes/player_character.tscn" id="1_n6xcf"]
 [ext_resource type="Texture2D" uid="uid://cqkwf4xwn3yhq" path="res://tile_map/map.png" id="2_m5k2b"]
 [ext_resource type="PackedScene" uid="uid://bpaa5lkbjqfp7" path="res://scenes/npcs/slime.tscn" id="3_umgfh"]
+[ext_resource type="AudioStream" uid="uid://c3bsok0opcbec" path="res://scenes/Audio/Pixel Dreams.mp3" id="4_qq2u7"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_l0e38"]
 texture = ExtResource("2_m5k2b")
@@ -226,3 +227,8 @@ libraries = {
 "": SubResource("AnimationLibrary_w7ivp")
 }
 autoplay = "Sliming"
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_qq2u7")
+autoplay = true
+bus = &"Music"
