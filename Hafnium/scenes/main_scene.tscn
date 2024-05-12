@@ -181,6 +181,7 @@ _data = {
 [node name="MainScene" type="Node2D"]
 
 [node name="Player Character" parent="." instance=ExtResource("1_n6xcf")]
+unique_name_in_owner = true
 position = Vector2(16, -4)
 
 [node name="TileMap" type="TileMap" parent="."]
