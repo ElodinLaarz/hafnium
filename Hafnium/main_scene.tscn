@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://cmvp42cp4v341"]
+[gd_scene load_steps=22 format=3 uid="uid://cmljlw2x8b6ra"]
 
 [ext_resource type="Script" path="res://scripts/character_movement.gd" id="1_bfaqs"]
 [ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://Sprite_sheets/Wizard.png" id="2_u5otq"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://Aim Sight.gd" id="3_o47ge"]
 [ext_resource type="PackedScene" path="res://npcs/slime.tscn" id="4_mrfl8"]
 [ext_resource type="Texture2D" uid="uid://cpuha70ui6ytg" path="res://Sprite_sheets/Aim_Right.png" id="4_pf1xc"]
+[ext_resource type="PackedScene" uid="uid://cp4h5hktcsaoa" path="res://scenes/npcs/slime.tscn" id="7_7un4a"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5vtpi"]
 atlas = ExtResource("2_u5otq")
@@ -228,7 +229,7 @@ script = ExtResource("1_bfaqs")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player Character"]
 texture_filter = 1
-position = Vector2(0, -5)
+position = Vector2(2, 1)
 sprite_frames = SubResource("SpriteFrames_jrwje")
 autoplay = "default"
 frame_progress = 0.632108
@@ -247,13 +248,13 @@ texture_filter = 1
 texture = ExtResource("4_pf1xc")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player Character"]
-position = Vector2(0, -1)
+position = Vector2(1, 8)
 scale = Vector2(0.759999, 1)
 shape = SubResource("CapsuleShape2D_f3fsb")
 
 [node name="Main Camera" type="Camera2D" parent="Player Character"]
-position = Vector2(16, -12)
-zoom = Vector2(3, 3)
+position = Vector2(-2, 1)
+zoom = Vector2(6, 6)
 position_smoothing_enabled = true
 
 [node name="TileMap" type="TileMap" parent="."]
@@ -298,3 +299,6 @@ libraries = {
 "": SubResource("AnimationLibrary_w7ivp")
 }
 autoplay = "Sliming"
+
+[node name="Slime" parent="." instance=ExtResource("7_7un4a")]
+position = Vector2(-31, 28)
