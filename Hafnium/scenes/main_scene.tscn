@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://cnie27irw2ene" path="res://scenes/player_character.tscn" id="1_n6xcf"]
 [ext_resource type="Texture2D" uid="uid://cqkwf4xwn3yhq" path="res://tile_map/map.png" id="2_m5k2b"]
-[ext_resource type="PackedScene" uid="uid://cp4h5hktcsaoa" path="res://scenes/npcs/slime.tscn" id="3_umgfh"]
+[ext_resource type="PackedScene" uid="uid://bpaa5lkbjqfp7" path="res://scenes/npcs/slime.tscn" id="3_umgfh"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_l0e38"]
 texture = ExtResource("2_m5k2b")
