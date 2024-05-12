@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cpuha70ui6ytg"
-path="res://.godot/imported/Aim_Right.png-91be11cf78b743d00886c06595f39aff.ctex"
+uid="uid://inig523vl5qo"
+path="res://.godot/imported/Girl-Sheet.png-422455070b02f32c765921e5e59c9474.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprite_sheets/Aim_Right.png"
-dest_files=["res://.godot/imported/Aim_Right.png-91be11cf78b743d00886c06595f39aff.ctex"]
+source_file="res://sprites/not_my_art/Girl-Sheet.png"
+dest_files=["res://.godot/imported/Girl-Sheet.png-422455070b02f32c765921e5e59c9474.ctex"]
 
 [params]
 

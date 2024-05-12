@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dgnipi6mjuve"
-path="res://.godot/imported/aim.png-39c9f884c6dea2c870fb892c91733475.ctex"
+uid="uid://cpuha70ui6ytg"
+path="res://.godot/imported/Aim_Right.png-e3419faf1417d5be3321c6537f2229c2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprite_sheets/aim.png"
-dest_files=["res://.godot/imported/aim.png-39c9f884c6dea2c870fb892c91733475.ctex"]
+source_file="res://sprites/Aim_Right.png"
+dest_files=["res://.godot/imported/Aim_Right.png-e3419faf1417d5be3321c6537f2229c2.ctex"]
 
 [params]
 

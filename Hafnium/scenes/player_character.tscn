@@ -1,24 +1,24 @@
 [gd_scene load_steps=11 format=3 uid="uid://cnie27irw2ene"]
 
 [ext_resource type="Script" path="res://scripts/character_movement.gd" id="1_jprhx"]
-[ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://Sprite_sheets/Wizard.png" id="2_wvedv"]
+[ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://sprites/Wizard.png" id="2_himny"]
 [ext_resource type="Script" path="res://scripts/Aim Sight.gd" id="3_er8jr"]
-[ext_resource type="Texture2D" uid="uid://cpuha70ui6ytg" path="res://Sprite_sheets/Aim_Right.png" id="4_304tf"]
+[ext_resource type="Texture2D" uid="uid://cpuha70ui6ytg" path="res://sprites/Aim_Right.png" id="4_i7kdi"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5vtpi"]
-atlas = ExtResource("2_wvedv")
+atlas = ExtResource("2_himny")
 region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0kfw2"]
-atlas = ExtResource("2_wvedv")
+atlas = ExtResource("2_himny")
 region = Rect2(32, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qkrme"]
-atlas = ExtResource("2_wvedv")
+atlas = ExtResource("2_himny")
 region = Rect2(64, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_r4ve2"]
-atlas = ExtResource("2_wvedv")
+atlas = ExtResource("2_himny")
 region = Rect2(96, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_jrwje"]
@@ -66,7 +66,7 @@ script = ExtResource("3_er8jr")
 [node name="Sprite2D" type="Sprite2D" parent="AnimatedSprite2D/Player Pivot Point/Aim Sight"]
 z_index = -1
 texture_filter = 1
-texture = ExtResource("4_304tf")
+texture = ExtResource("4_i7kdi")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -1)

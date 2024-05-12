@@ -1,21 +1,21 @@
-[gd_scene load_steps=7 format=3 uid="uid://dkiq7heb08ljn"]
+[gd_scene load_steps=7 format=3 uid="uid://drbsngwk4n4bw"]
 
-[ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://Sprite_sheets/Wizard.png" id="1_rgapa"]
+[ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://Sprite_sheets/Wizard.png" id="1_cs0ti"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xylau"]
-atlas = ExtResource("1_rgapa")
+atlas = ExtResource("1_cs0ti")
 region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_auuea"]
-atlas = ExtResource("1_rgapa")
+atlas = ExtResource("1_cs0ti")
 region = Rect2(32, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7ax5v"]
-atlas = ExtResource("1_rgapa")
+atlas = ExtResource("1_cs0ti")
 region = Rect2(64, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mtbrr"]
-atlas = ExtResource("1_rgapa")
+atlas = ExtResource("1_cs0ti")
 region = Rect2(96, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_4rg2e"]
@@ -42,4 +42,4 @@ animations = [{
 position = Vector2(15, 15)
 sprite_frames = SubResource("SpriteFrames_4rg2e")
 autoplay = "default"
-frame_progress = 0.0585287
+frame_progress = 0.426359

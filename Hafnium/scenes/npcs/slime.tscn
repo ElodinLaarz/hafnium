@@ -1,13 +1,13 @@
 [gd_scene load_steps=5 format=3 uid="uid://cp4h5hktcsaoa"]
 
-[ext_resource type="Texture2D" uid="uid://dd23cg7l14nnv" path="res://sprite_sheets/slime.png" id="1_xalmk"]
+[ext_resource type="Texture2D" uid="uid://dd23cg7l14nnv" path="res://sprites/slime.png" id="1_2kr4x"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bhmh3"]
-atlas = ExtResource("1_xalmk")
+atlas = ExtResource("1_2kr4x")
 region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3birt"]
-atlas = ExtResource("1_xalmk")
+atlas = ExtResource("1_2kr4x")
 region = Rect2(32, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_52fao"]
