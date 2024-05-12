@@ -1,3 +1,2 @@
-# Godot 4+ specific ignores
 .godot/
-sprite_sheets/not_my_art
+sprites/not_my_art
