@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/character_movement.gd" id="1_jprhx"]
 [ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://sprite_sheets/Wizard.png" id="2_wvedv"]
-[ext_resource type="Script" path="res://Aim Sight.gd" id="3_er8jr"]
+[ext_resource type="Script" path="res://scripts/Aim Sight.gd" id="3_er8jr"]
 [ext_resource type="Texture2D" uid="uid://cpuha70ui6ytg" path="res://sprite_sheets/Aim_Right.png" id="4_304tf"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5vtpi"]

@@ -1,11 +1,54 @@
-[gd_scene load_steps=12 format=3 uid="uid://gb01yn60ddnh"]
+[gd_scene load_steps=21 format=3 uid="uid://cmvp42cp4v341"]
 
-[ext_resource type="PackedScene" uid="uid://cnie27irw2ene" path="res://scenes/player_character.tscn" id="1_n6xcf"]
-[ext_resource type="Texture2D" uid="uid://cqkwf4xwn3yhq" path="res://tile_map/map.png" id="2_m5k2b"]
-[ext_resource type="PackedScene" uid="uid://cp4h5hktcsaoa" path="res://scenes/npcs/slime.tscn" id="3_umgfh"]
+[ext_resource type="Script" path="res://scripts/character_movement.gd" id="1_bfaqs"]
+[ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://Sprite_sheets/Wizard.png" id="2_u5otq"]
+[ext_resource type="Texture2D" uid="uid://cqkwf4xwn3yhq" path="res://tile_map/map.png" id="3_egsuj"]
+[ext_resource type="Script" path="res://Aim Sight.gd" id="3_o47ge"]
+[ext_resource type="PackedScene" path="res://npcs/slime.tscn" id="4_mrfl8"]
+[ext_resource type="Texture2D" uid="uid://cpuha70ui6ytg" path="res://Sprite_sheets/Aim_Right.png" id="4_pf1xc"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5vtpi"]
+atlas = ExtResource("2_u5otq")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0kfw2"]
+atlas = ExtResource("2_u5otq")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qkrme"]
+atlas = ExtResource("2_u5otq")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r4ve2"]
+atlas = ExtResource("2_u5otq")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jrwje"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5vtpi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0kfw2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qkrme")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r4ve2")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_f3fsb"]
+radius = 4.0
+height = 14.0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_l0e38"]
-texture = ExtResource("2_m5k2b")
+texture = ExtResource("3_egsuj")
 0:0/0 = 0
 0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
 0:0/0/physics_layer_0/angular_velocity = 0.0
@@ -180,7 +223,38 @@ _data = {
 
 [node name="MainScene" type="Node2D"]
 
-[node name="Player Character" parent="." instance=ExtResource("1_n6xcf")]
+[node name="Player Character" type="CharacterBody2D" parent="."]
+script = ExtResource("1_bfaqs")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player Character"]
+texture_filter = 1
+position = Vector2(0, -5)
+sprite_frames = SubResource("SpriteFrames_jrwje")
+autoplay = "default"
+frame_progress = 0.632108
+
+[node name="Player Pivot Point" type="Node2D" parent="Player Character/AnimatedSprite2D"]
+unique_name_in_owner = true
+position = Vector2(0, 5)
+
+[node name="Aim Sight" type="Node2D" parent="Player Character/AnimatedSprite2D/Player Pivot Point"]
+position = Vector2(12, 0)
+script = ExtResource("3_o47ge")
+
+[node name="Sprite2D" type="Sprite2D" parent="Player Character/AnimatedSprite2D/Player Pivot Point/Aim Sight"]
+z_index = -1
+texture_filter = 1
+texture = ExtResource("4_pf1xc")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player Character"]
+position = Vector2(0, -1)
+scale = Vector2(0.759999, 1)
+shape = SubResource("CapsuleShape2D_f3fsb")
+
+[node name="Main Camera" type="Camera2D" parent="Player Character"]
+position = Vector2(16, -12)
+zoom = Vector2(3, 3)
+position_smoothing_enabled = true
 
 [node name="TileMap" type="TileMap" parent="."]
 z_index = -1
@@ -198,7 +272,7 @@ layer_2/tile_data = PackedInt32Array(-196602, 327682, 1, -131066, 327682, 2, -19
 
 [node name="Slimes" type="Node" parent="."]
 
-[node name="Slime" parent="Slimes" instance=ExtResource("3_umgfh")]
+[node name="Slime" parent="Slimes" instance=ExtResource("4_mrfl8")]
 position = Vector2(26, -6)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Slimes/Slime"]
@@ -207,16 +281,16 @@ libraries = {
 }
 autoplay = "Jumping"
 
-[node name="Slime2" parent="Slimes" instance=ExtResource("3_umgfh")]
+[node name="Slime2" parent="Slimes" instance=ExtResource("4_mrfl8")]
 position = Vector2(-23, -69)
 
-[node name="Slime3" parent="Slimes" instance=ExtResource("3_umgfh")]
+[node name="Slime3" parent="Slimes" instance=ExtResource("4_mrfl8")]
 position = Vector2(41, -88)
 
-[node name="Slime4" parent="Slimes" instance=ExtResource("3_umgfh")]
+[node name="Slime4" parent="Slimes" instance=ExtResource("4_mrfl8")]
 position = Vector2(-100, -22)
 
-[node name="Slime5" parent="Slimes" instance=ExtResource("3_umgfh")]
+[node name="Slime5" parent="Slimes" instance=ExtResource("4_mrfl8")]
 position = Vector2(107, 20)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Slimes/Slime5"]
