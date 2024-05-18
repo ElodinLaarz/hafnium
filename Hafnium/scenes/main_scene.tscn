@@ -184,6 +184,7 @@ _data = {
 [node name="Player Character" parent="." instance=ExtResource("1_n6xcf")]
 unique_name_in_owner = true
 position = Vector2(16, -4)
+SPEED = 120
 
 [node name="TileMap" type="TileMap" parent="."]
 z_index = -1

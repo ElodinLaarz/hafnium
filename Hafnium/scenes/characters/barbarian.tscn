@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://7b7y00ji1j7"]
 
-[ext_resource type="Texture2D" path="res://Sprite_sheets/Barbarian.png" id="1_bqwfi"]
+[ext_resource type="Texture2D" uid="uid://bp8qefbos8w0p" path="res://sprites/Barbarian.png" id="1_bqwfi"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ds21e"]
 atlas = ExtResource("1_bqwfi")
