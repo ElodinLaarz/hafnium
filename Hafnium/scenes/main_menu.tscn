@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bjf0osioffpss"]
 
-[ext_resource type="Script" path="res://scripts/test_scripts/main_menu.gd" id="1_66nvr"]
-[ext_resource type="Texture2D" uid="uid://c5qsu8a8egex4" path="res://images/main_menu_art.webp" id="2_1ehak"]
+[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_3r5b7"]
+[ext_resource type="Texture2D" uid="uid://c5qsu8a8egex4" path="res://images/main_menu_art.webp" id="2_ontjn"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -10,7 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_66nvr")
+script = ExtResource("1_3r5b7")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 custom_minimum_size = Vector2(500, 0)
@@ -28,7 +28,7 @@ theme_override_constants/margin_bottom = 15
 
 [node name="Main BG Image" type="TextureRect" parent="MarginContainer"]
 layout_mode = 2
-texture = ExtResource("2_1ehak")
+texture = ExtResource("2_ontjn")
 expand_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer"]
