@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3 uid="uid://dknnq10yqcuqc"]
+
+[ext_resource type="Script" path="res://scripts/test_scripts/options.gd" id="1_da2t5"]
+
+[node name="Options" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_da2t5")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 0
+offset_right = 2032.0
+offset_bottom = 1270.0
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Music Volume" type="Button" parent="MarginContainer/VBoxContainer2"]
+layout_mode = 2
+text = "Music"
+
+[node name="Back" type="Button" parent="MarginContainer/VBoxContainer2"]
+layout_mode = 2
+text = "Back"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer2/Music Volume" to="." method="_on_music_volume_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer2/Back" to="." method="_on_back_pressed"]
