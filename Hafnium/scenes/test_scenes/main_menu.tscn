@@ -1,24 +1,61 @@
-[gd_scene format=3 uid="uid://bjf0osioffpss"]
+[gd_scene load_steps=3 format=3 uid="uid://bjf0osioffpss"]
+
+[ext_resource type="Texture2D" uid="uid://bseeyamlbg4wo" path="res://images/background_artwork.webp" id="1_q5fjq"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_ddpnj"]
 
 [node name="MainMenu" type="Node2D"]
 
-[node name="Control" type="Control" parent="."]
-layout_mode = 3
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(0.5, 0.5)
+
+[node name="MarginContainer" type="MarginContainer" parent="Camera2D"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-size_flags_horizontal = 6
-size_flags_vertical = 6
+theme_override_constants/margin_left = 120
+theme_override_constants/margin_top = 80
+theme_override_constants/margin_right = 120
+theme_override_constants/margin_bottom = 80
 
-[node name="Panel" type="Panel" parent="Control"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-grow_horizontal = 2
+[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D/MarginContainer"]
+layout_mode = 2
 
-[node name="RichTextLabel" type="RichTextLabel" parent="Control/Panel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Single Player" type="Button" parent="Camera2D/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Coming Soon" type="Button" parent="Camera2D/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Title" type="TextureRect" parent="Camera2D/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+texture = SubResource("ViewportTexture_ddpnj")
+
+[node name="Option 1" type="TextureRect" parent="Camera2D/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Option 2" type="TextureRect" parent="Camera2D/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Version Number" type="TextureRect" parent="Camera2D/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Main BG Image" type="TextureRect" parent="Camera2D/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+texture = ExtResource("1_q5fjq")
+
+[node name="CenterContainer" type="CenterContainer" parent="Camera2D/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Panel" type="Panel" parent="Camera2D/MarginContainer"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Camera2D/MarginContainer/Panel"]
 layout_mode = 1
 offset_right = 501.0
 offset_bottom = 37.0
@@ -26,16 +63,10 @@ theme_override_font_sizes/normal_font_size = 25
 bbcode_enabled = true
 text = "[center] MAIN MENU [/center]"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/Panel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D/MarginContainer/Panel"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="Single Player" type="Button" parent="Control/Panel/VBoxContainer"]
-layout_mode = 2
-
-[node name="Coming Soon" type="Button" parent="Control/Panel/VBoxContainer"]
-layout_mode = 2
