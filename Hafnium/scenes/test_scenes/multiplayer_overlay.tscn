@@ -1,0 +1,41 @@
+[gd_scene load_steps=2 format=3 uid="uid://bv32i8rf5w5sv"]
+
+[ext_resource type="Script" path="res://scripts/test_scripts/multiplayer_overlay.gd" id="1_oqngg"]
+
+[node name="MultiplayerOverlay" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_oqngg")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -101.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="VerticalButtons" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="HostGame" type="Button" parent="MarginContainer/VerticalButtons"]
+layout_mode = 2
+text = "Host Game"
+
+[node name="JoinGame" type="Button" parent="MarginContainer/VerticalButtons"]
+layout_mode = 2
+text = "Join Game"
+
+[node name="Hide" type="Button" parent="MarginContainer/VerticalButtons"]
+layout_mode = 2
+text = "Hide
+"
+
+[connection signal="pressed" from="MarginContainer/VerticalButtons/HostGame" to="." method="become_host"]
+[connection signal="pressed" from="MarginContainer/VerticalButtons/JoinGame" to="." method="join_game_pressed"]

@@ -1,45 +1,145 @@
-[gd_scene load_steps=7 format=3 uid="uid://7b7y00ji1j7"]
+[gd_scene load_steps=19 format=3 uid="uid://7b7y00ji1j7"]
 
-[ext_resource type="Texture2D" path="res://Sprite_sheets/Barbarian.png" id="1_bqwfi"]
+[ext_resource type="Texture2D" uid="uid://bp8qefbos8w0p" path="res://sprites/Barbarian.png" id="1_mor8k"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ds21e"]
-atlas = ExtResource("1_bqwfi")
+[sub_resource type="AtlasTexture" id="AtlasTexture_ymjkt"]
+atlas = ExtResource("1_mor8k")
 region = Rect2(0, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_gkq81"]
-atlas = ExtResource("1_bqwfi")
+[sub_resource type="AtlasTexture" id="AtlasTexture_bqdus"]
+atlas = ExtResource("1_mor8k")
 region = Rect2(32, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_oxn6u"]
-atlas = ExtResource("1_bqwfi")
+[sub_resource type="AtlasTexture" id="AtlasTexture_v3xx4"]
+atlas = ExtResource("1_mor8k")
 region = Rect2(64, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_67rhu"]
-atlas = ExtResource("1_bqwfi")
+[sub_resource type="AtlasTexture" id="AtlasTexture_kvlki"]
+atlas = ExtResource("1_mor8k")
 region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uctf7"]
+atlas = ExtResource("1_mor8k")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jx4y6"]
+atlas = ExtResource("1_mor8k")
+region = Rect2(32, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6j18r"]
+atlas = ExtResource("1_mor8k")
+region = Rect2(64, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h2od6"]
+atlas = ExtResource("1_mor8k")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e8h66"]
+atlas = ExtResource("1_mor8k")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0ou11"]
+atlas = ExtResource("1_mor8k")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_onmij"]
+atlas = ExtResource("1_mor8k")
+region = Rect2(64, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g3v56"]
+atlas = ExtResource("1_mor8k")
+region = Rect2(96, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_71bb0"]
+atlas = ExtResource("1_mor8k")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bsvr4"]
+atlas = ExtResource("1_mor8k")
+region = Rect2(32, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f6j2v"]
+atlas = ExtResource("1_mor8k")
+region = Rect2(64, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_otw6d"]
+atlas = ExtResource("1_mor8k")
+region = Rect2(96, 64, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_waso6"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ds21e")
+"texture": SubResource("AtlasTexture_ymjkt")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_gkq81")
+"texture": SubResource("AtlasTexture_bqdus")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_oxn6u")
+"texture": SubResource("AtlasTexture_v3xx4")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_67rhu")
+"texture": SubResource("AtlasTexture_kvlki")
 }],
 "loop": true,
-"name": &"default",
+"name": &"walkdown",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uctf7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jx4y6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6j18r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h2od6")
+}],
+"loop": true,
+"name": &"walkleft",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e8h66")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0ou11")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_onmij")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g3v56")
+}],
+"loop": true,
+"name": &"walkright",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_71bb0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bsvr4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f6j2v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_otw6d")
+}],
+"loop": true,
+"name": &"walkup",
 "speed": 5.0
 }]
 
 [node name="Barbarian" type="AnimatedSprite2D"]
 position = Vector2(18, 12)
 sprite_frames = SubResource("SpriteFrames_waso6")
-autoplay = "default"
-frame_progress = 0.789465
+animation = &"walkright"
+autoplay = "walkdown"
+frame_progress = 0.793472
