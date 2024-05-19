@@ -2,21 +2,21 @@ extends Node
 
 const MULTIPLAYER_PLAYER = preload("res://scenes/test_scenes/multiplayer_player.tscn")
 
-const MULTIPLAYER_PLAYERS_NAME = "Players"
-const SINGLE_PLAYER_NAME = "Player" # To remove single player controller.
+const MAIN_SCENE: String = "MainScene"
+const MULTIPLAYER_PLAYERS_NAME: String = "Players"
+const SINGLE_PLAYER_NAME: String = "Player" # To remove single player controller.
 
 const SERVER_PORT = 8080
 const SERVER_IP = "127.0.0.1"
 
-
-
 var _players_spawn_node
-
 
 func become_host():
 	print("Starting to host!")
-
-	_players_spawn_node = get_tree().get_current_scene().get_node(MULTIPLAYER_PLAYERS_NAME)
+	
+	var scene_switcher = get_tree().get_current_scene()
+	var main_scene = scene_switcher.get_node(MAIN_SCENE) 
+	_players_spawn_node = main_scene.get_node(MULTIPLAYER_PLAYERS_NAME)
 	
 	var server_peer = ENetMultiplayerPeer.new()
 	var server_connection_err: Error = server_peer.create_server(SERVER_PORT)
@@ -58,5 +58,7 @@ func _del_player(id: int):
 	
 func _remove_single_player():
 	print("Remove single player")
-	var player_to_remove = get_tree().get_current_scene().get_node(SINGLE_PLAYER_NAME)
+	var scene_switcher = get_tree().get_current_scene()
+	var main_scene = scene_switcher.get_node(MAIN_SCENE) 
+	var player_to_remove = main_scene.get_node(SINGLE_PLAYER_NAME)
 	player_to_remove.queue_free()
