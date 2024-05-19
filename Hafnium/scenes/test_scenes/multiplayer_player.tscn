@@ -1,0 +1,77 @@
+[gd_scene load_steps=11 format=3 uid="uid://dtkeof5ntnysk"]
+
+[ext_resource type="Script" path="res://scripts/test_scripts/multiplayer_controller.gd" id="1_wtxhe"]
+[ext_resource type="Texture2D" uid="uid://bp8qefbos8w0p" path="res://sprites/Barbarian.png" id="2_5p06s"]
+[ext_resource type="Script" path="res://scripts/Aim Sight.gd" id="3_gdvyv"]
+[ext_resource type="Texture2D" uid="uid://cpuha70ui6ytg" path="res://sprites/Aim_Right.png" id="4_7hqv7"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n3afj"]
+atlas = ExtResource("2_5p06s")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_58k7u"]
+atlas = ExtResource("2_5p06s")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_va082"]
+atlas = ExtResource("2_5p06s")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7qvp5"]
+atlas = ExtResource("2_5p06s")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_b8u3m"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n3afj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_58k7u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_va082")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7qvp5")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_uj8wk"]
+radius = 7.89475
+height = 20.0
+
+[node name="MultiplayerPlayer" type="CharacterBody2D"]
+script = ExtResource("1_wtxhe")
+
+[node name="AnimatedSprite" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -5)
+sprite_frames = SubResource("SpriteFrames_b8u3m")
+autoplay = "default"
+
+[node name="MultiplayerPivotPoint" type="Node2D" parent="AnimatedSprite"]
+position = Vector2(0, 5)
+
+[node name="Aim Sight" type="Node2D" parent="AnimatedSprite/MultiplayerPivotPoint"]
+position = Vector2(12, 0)
+script = ExtResource("3_gdvyv")
+
+[node name="Sprite2D" type="Sprite2D" parent="AnimatedSprite/MultiplayerPivotPoint/Aim Sight"]
+z_index = -1
+texture_filter = 1
+texture = ExtResource("4_7hqv7")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="."]
+position = Vector2(0, -1)
+scale = Vector2(0.759999, 1)
+shape = SubResource("CapsuleShape2D_uj8wk")
+
+[node name="Main Camera" type="Camera2D" parent="."]
+position = Vector2(16, -12)
+zoom = Vector2(5, 5)
+position_smoothing_enabled = true

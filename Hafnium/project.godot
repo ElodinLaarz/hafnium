@@ -14,6 +14,14 @@ config/name="Hafnium"
 run/main_scene="res://scenes/main_menu.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 
+[autoload]
+
+MultiplayerManager="*res://scripts/mutiplayer/multiplayer_manager.gd"
+
+[display]
+
+window/size/always_on_top=true
+
 [input]
 
 ui_left={
