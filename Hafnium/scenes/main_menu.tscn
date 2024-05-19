@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://bjf0osioffpss"]
+[gd_scene load_steps=4 format=3 uid="uid://bjf0osioffpss"]
 
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_3r5b7"]
 [ext_resource type="Texture2D" uid="uid://c5qsu8a8egex4" path="res://images/main_menu_art.webp" id="2_ontjn"]
+[ext_resource type="Texture2D" uid="uid://blc3j53dx7ml5" path="res://images/bg_artwork.webp" id="3_whwc5"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -12,8 +13,18 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_3r5b7")
 
-[node name="VSplitContainer" type="VSplitContainer" parent="."]
-layout_mode = 1
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="LargeBGImage" type="TextureRect" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_whwc5")
+expand_mode = 1
+
+[node name="VSplitContainer" type="VSplitContainer" parent="CanvasLayer"]
 anchors_preset = 13
 anchor_left = 0.5
 anchor_right = 0.5
@@ -23,7 +34,7 @@ offset_right = 522.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="VSplitContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/VSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
@@ -32,43 +43,43 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="Main BG Image" type="TextureRect" parent="VSplitContainer/MarginContainer"]
+[node name="MainFGImage" type="TextureRect" parent="CanvasLayer/VSplitContainer/MarginContainer"]
 layout_mode = 2
 texture = ExtResource("2_ontjn")
 expand_mode = 2
 stretch_mode = 4
 
-[node name="MarginContainer2" type="MarginContainer" parent="VSplitContainer/MarginContainer"]
+[node name="MarginContainer2" type="MarginContainer" parent="CanvasLayer/VSplitContainer/MarginContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 
-[node name="RichTextLabel" type="RichTextLabel" parent="VSplitContainer/MarginContainer/MarginContainer2"]
+[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer/VSplitContainer/MarginContainer/MarginContainer2"]
 layout_mode = 2
 text = "v0.0.1"
 
-[node name="OutsideMargins" type="MarginContainer" parent="VSplitContainer"]
+[node name="OutsideMargins" type="MarginContainer" parent="CanvasLayer/VSplitContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="VSplitContainer/OutsideMargins"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/OutsideMargins"]
 z_index = 1
 layout_mode = 2
 
-[node name="Singleplayer" type="Button" parent="VSplitContainer/OutsideMargins/VBoxContainer2"]
+[node name="Singleplayer" type="Button" parent="CanvasLayer/VSplitContainer/OutsideMargins/VBoxContainer2"]
 layout_mode = 2
 text = "New Game"
 
-[node name="Multiplayer" type="Button" parent="VSplitContainer/OutsideMargins/VBoxContainer2"]
+[node name="Multiplayer" type="Button" parent="CanvasLayer/VSplitContainer/OutsideMargins/VBoxContainer2"]
 layout_mode = 2
 text = "Multiplayer Game"
 
-[node name="Quit" type="Button" parent="VSplitContainer/OutsideMargins/VBoxContainer2"]
+[node name="Quit" type="Button" parent="CanvasLayer/VSplitContainer/OutsideMargins/VBoxContainer2"]
 layout_mode = 2
 text = "Quit"
 
-[connection signal="pressed" from="VSplitContainer/OutsideMargins/VBoxContainer2/Singleplayer" to="." method="_on_single_player_pressed"]
-[connection signal="pressed" from="VSplitContainer/OutsideMargins/VBoxContainer2/Multiplayer" to="." method="_on_multiplayer_pressed"]
-[connection signal="pressed" from="VSplitContainer/OutsideMargins/VBoxContainer2/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/VBoxContainer2/Singleplayer" to="." method="_on_single_player_pressed"]
+[connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/VBoxContainer2/Multiplayer" to="." method="_on_multiplayer_pressed"]
+[connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/VBoxContainer2/Quit" to="." method="_on_quit_pressed"]
