@@ -1,6 +1,6 @@
 extends Control
 
-@onready var multiplayer_overlay = $"."
+@onready var multiplayer_overlay = %MultiplayerOverlay
 
 func become_host():
 	print("Become host pressed!")

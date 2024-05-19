@@ -1,9 +1,23 @@
-[gd_scene load_steps=11 format=3 uid="uid://dtkeof5ntnysk"]
+[gd_scene load_steps=14 format=3 uid="uid://dtkeof5ntnysk"]
 
-[ext_resource type="Script" path="res://scripts/test_scripts/multiplayer_controller.gd" id="1_wtxhe"]
+[ext_resource type="Script" path="res://scripts/mutiplayer/multiplayer_controller.gd" id="1_2xl3g"]
 [ext_resource type="Texture2D" uid="uid://bp8qefbos8w0p" path="res://sprites/Barbarian.png" id="2_5p06s"]
+[ext_resource type="Script" path="res://scripts/mutiplayer/multiplayer_input.gd" id="2_wyjee"]
 [ext_resource type="Script" path="res://scripts/mutiplayer/multiplayer_aim.gd" id="3_wy2c3"]
 [ext_resource type="Texture2D" uid="uid://cpuha70ui6ytg" path="res://sprites/Aim_Right.png" id="4_7hqv7"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_7akfh"]
+properties/0/path = NodePath(".:player_id")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:position")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_xl1wi"]
+properties/0/path = NodePath("InputSynchronizer:input_direction")
+properties/0/spawn = true
+properties/0/replication_mode = 1
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n3afj"]
 atlas = ExtResource("2_5p06s")
@@ -46,7 +60,15 @@ radius = 7.89475
 height = 20.0
 
 [node name="MultiplayerPlayer" type="CharacterBody2D"]
-script = ExtResource("1_wtxhe")
+script = ExtResource("1_2xl3g")
+
+[node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_7akfh")
+
+[node name="InputSynchronizer" type="MultiplayerSynchronizer" parent="."]
+unique_name_in_owner = true
+replication_config = SubResource("SceneReplicationConfig_xl1wi")
+script = ExtResource("2_wyjee")
 
 [node name="AnimatedSprite" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
@@ -72,7 +94,7 @@ position = Vector2(0, -1)
 scale = Vector2(0.759999, 1)
 shape = SubResource("CapsuleShape2D_uj8wk")
 
-[node name="Main Camera" type="Camera2D" parent="."]
+[node name="MultiplayerCamera" type="Camera2D" parent="."]
 position = Vector2(16, -12)
 zoom = Vector2(5, 5)
 position_smoothing_enabled = true
