@@ -4,3 +4,4 @@ extends CharacterBody2D
 	set(id):
 		player_id = id
 
+# Update Multiplayer Position using input from network.

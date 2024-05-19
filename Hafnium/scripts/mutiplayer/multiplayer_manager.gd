@@ -1,12 +1,20 @@
 extends Node
 
+const MULTIPLAYER_PLAYERS_NAME = "Players"
+const SINGLE_PLAYER_NAME = "Player"
+
 const SERVER_PORT = 8080
 const SERVER_IP = "127.0.0.1"
 
 const MULTIPLAYER_PLAYER = preload("res://scenes/test_scenes/multiplayer_player.tscn")
 
+var _players_spawn_node
+
+
 func become_host():
 	print("Starting to host!")
+
+	_players_spawn_node = get_tree().get_current_scene().get_node(MULTIPLAYER_PLAYERS_NAME)
 	
 	var server_peer = ENetMultiplayerPeer.new()
 	var server_connection_err: Error = server_peer.create_server(SERVER_PORT)
@@ -33,5 +41,12 @@ func _add_player_to_game(id: int):
 	player_to_add.player_id = id
 	player_to_add.name = str(id)
 
+	_players_spawn_node.add_child(player_to_add, true)
+
 func _del_player(id: int):
 	print("Player %d left the game :(" % id)
+	
+func _remove_single_player():
+	print("Remove single player")
+	var player_to_remove = get_tree().get_current_scene().get_node(SINGLE_PLAYER_NAME)
+	player_to_remove.queue_free()

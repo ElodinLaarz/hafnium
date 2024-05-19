@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/test_scripts/multiplayer_controller.gd" id="1_wtxhe"]
 [ext_resource type="Texture2D" uid="uid://bp8qefbos8w0p" path="res://sprites/Barbarian.png" id="2_5p06s"]
-[ext_resource type="Script" path="res://scripts/Aim Sight.gd" id="3_gdvyv"]
+[ext_resource type="Script" path="res://scripts/mutiplayer/multiplayer_aim.gd" id="3_wy2c3"]
 [ext_resource type="Texture2D" uid="uid://cpuha70ui6ytg" path="res://sprites/Aim_Right.png" id="4_7hqv7"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n3afj"]
@@ -55,11 +55,12 @@ sprite_frames = SubResource("SpriteFrames_b8u3m")
 autoplay = "default"
 
 [node name="MultiplayerPivotPoint" type="Node2D" parent="AnimatedSprite"]
+unique_name_in_owner = true
 position = Vector2(0, 5)
 
 [node name="Aim Sight" type="Node2D" parent="AnimatedSprite/MultiplayerPivotPoint"]
 position = Vector2(12, 0)
-script = ExtResource("3_gdvyv")
+script = ExtResource("3_wy2c3")
 
 [node name="Sprite2D" type="Sprite2D" parent="AnimatedSprite/MultiplayerPivotPoint/Aim Sight"]
 z_index = -1

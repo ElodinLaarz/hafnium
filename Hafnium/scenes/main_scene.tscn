@@ -1,9 +1,11 @@
-[gd_scene load_steps=14 format=3 uid="uid://gb01yn60ddnh"]
+[gd_scene load_steps=16 format=3 uid="uid://gb01yn60ddnh"]
 
+[ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_bh6xp"]
 [ext_resource type="PackedScene" uid="uid://cnie27irw2ene" path="res://scenes/player_character.tscn" id="1_n6xcf"]
 [ext_resource type="Texture2D" uid="uid://cqkwf4xwn3yhq" path="res://tile_map/map.png" id="2_m5k2b"]
 [ext_resource type="PackedScene" uid="uid://bpaa5lkbjqfp7" path="res://scenes/npcs/slime.tscn" id="3_umgfh"]
 [ext_resource type="AudioStream" uid="uid://c3bsok0opcbec" path="res://scenes/Audio/Pixel Dreams.mp3" id="4_qq2u7"]
+[ext_resource type="PackedScene" uid="uid://bv32i8rf5w5sv" path="res://scenes/test_scenes/multiplayer_overlay.tscn" id="6_o1c21"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_l0e38"]
 texture = ExtResource("2_m5k2b")
@@ -183,8 +185,9 @@ _data = {
 load_path = "res://.godot/imported/Circle2D.svg-fb34cf440e8150c991cd10f0bce8c6a4.ctex"
 
 [node name="MainScene" type="Node2D"]
+script = ExtResource("1_bh6xp")
 
-[node name="Player Character" parent="." instance=ExtResource("1_n6xcf")]
+[node name="Player" parent="." instance=ExtResource("1_n6xcf")]
 unique_name_in_owner = true
 position = Vector2(16, -4)
 
@@ -239,3 +242,16 @@ bus = &"Music"
 [node name="Circle2d" type="Sprite2D" parent="."]
 position = Vector2(17, -99)
 texture = SubResource("CompressedTexture2D_40ni4")
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://scenes/test_scenes/multiplayer_player.tscn")
+spawn_path = NodePath("../Players")
+spawn_limit = 3
+
+[node name="Players" type="Node2D" parent="."]
+
+[node name="MultiplayerOverlay" parent="." instance=ExtResource("6_o1c21")]
+offset_left = 95.0
+offset_top = 27.0
+offset_right = 95.0
+offset_bottom = 27.0
