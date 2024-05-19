@@ -1,6 +1,6 @@
 [gd_scene load_steps=16 format=3 uid="uid://gb01yn60ddnh"]
 
-[ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_bh6xp"]
+[ext_resource type="Script" path="res://scripts/scene_switcher.gd" id="1_jse2r"]
 [ext_resource type="PackedScene" uid="uid://cnie27irw2ene" path="res://scenes/player_character.tscn" id="1_n6xcf"]
 [ext_resource type="Texture2D" uid="uid://cqkwf4xwn3yhq" path="res://tile_map/map.png" id="2_m5k2b"]
 [ext_resource type="PackedScene" uid="uid://bpaa5lkbjqfp7" path="res://scenes/npcs/slime.tscn" id="3_umgfh"]
@@ -185,7 +185,7 @@ _data = {
 load_path = "res://.godot/imported/Circle2D.svg-fb34cf440e8150c991cd10f0bce8c6a4.ctex"
 
 [node name="MainScene" type="Node2D"]
-script = ExtResource("1_bh6xp")
+script = ExtResource("1_jse2r")
 
 [node name="Player" parent="." instance=ExtResource("1_n6xcf")]
 unique_name_in_owner = true
