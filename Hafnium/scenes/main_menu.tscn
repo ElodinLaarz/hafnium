@@ -12,65 +12,63 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_3r5b7")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
-custom_minimum_size = Vector2(500, 0)
+[node name="VSplitContainer" type="VSplitContainer" parent="."]
 layout_mode = 1
 anchors_preset = 13
 anchor_left = 0.5
 anchor_right = 0.5
 anchor_bottom = 1.0
+offset_left = -522.0
+offset_right = 522.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 15
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 15
 
-[node name="Main BG Image" type="TextureRect" parent="MarginContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="VSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Main BG Image" type="TextureRect" parent="VSplitContainer/MarginContainer"]
 layout_mode = 2
 texture = ExtResource("2_ontjn")
 expand_mode = 2
+stretch_mode = 4
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer"]
+[node name="MarginContainer2" type="MarginContainer" parent="VSplitContainer/MarginContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 
-[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer/MarginContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="VSplitContainer/MarginContainer/MarginContainer2"]
 layout_mode = 2
 text = "v0.0.1"
 
-[node name="TextureRect" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-expand_mode = 5
+[node name="OutsideMargins" type="MarginContainer" parent="VSplitContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="."]
+[node name="VBoxContainer2" type="VBoxContainer" parent="VSplitContainer/OutsideMargins"]
 z_index = 1
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -61.5
-offset_right = 61.5
-offset_bottom = 109.0
-grow_horizontal = 2
+layout_mode = 2
 
-[node name="Single Player" type="Button" parent="VBoxContainer2"]
+[node name="Single Player" type="Button" parent="VSplitContainer/OutsideMargins/VBoxContainer2"]
 layout_mode = 2
 text = "New Game"
 
-[node name="Coming Soon" type="Button" parent="VBoxContainer2"]
+[node name="Coming Soon" type="Button" parent="VSplitContainer/OutsideMargins/VBoxContainer2"]
 layout_mode = 2
 text = "Coming Soon..."
 
-[node name="Quit" type="Button" parent="VBoxContainer2"]
+[node name="Quit" type="Button" parent="VSplitContainer/OutsideMargins/VBoxContainer2"]
 layout_mode = 2
 text = "Quit"
 
-[connection signal="pressed" from="VBoxContainer2/Single Player" to="." method="_on_single_player_pressed"]
-[connection signal="pressed" from="VBoxContainer2/Coming Soon" to="." method="_on_coming_soon_pressed"]
-[connection signal="pressed" from="VBoxContainer2/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="VSplitContainer/OutsideMargins/VBoxContainer2/Single Player" to="." method="_on_single_player_pressed"]
+[connection signal="pressed" from="VSplitContainer/OutsideMargins/VBoxContainer2/Coming Soon" to="." method="_on_coming_soon_pressed"]
+[connection signal="pressed" from="VSplitContainer/OutsideMargins/VBoxContainer2/Quit" to="." method="_on_quit_pressed"]
