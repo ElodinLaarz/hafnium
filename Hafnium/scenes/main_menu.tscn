@@ -57,18 +57,18 @@ theme_override_constants/margin_bottom = 10
 z_index = 1
 layout_mode = 2
 
-[node name="Single Player" type="Button" parent="VSplitContainer/OutsideMargins/VBoxContainer2"]
+[node name="Singleplayer" type="Button" parent="VSplitContainer/OutsideMargins/VBoxContainer2"]
 layout_mode = 2
 text = "New Game"
 
-[node name="Coming Soon" type="Button" parent="VSplitContainer/OutsideMargins/VBoxContainer2"]
+[node name="Multiplayer" type="Button" parent="VSplitContainer/OutsideMargins/VBoxContainer2"]
 layout_mode = 2
-text = "Coming Soon..."
+text = "Multiplayer Game"
 
 [node name="Quit" type="Button" parent="VSplitContainer/OutsideMargins/VBoxContainer2"]
 layout_mode = 2
 text = "Quit"
 
-[connection signal="pressed" from="VSplitContainer/OutsideMargins/VBoxContainer2/Single Player" to="." method="_on_single_player_pressed"]
-[connection signal="pressed" from="VSplitContainer/OutsideMargins/VBoxContainer2/Coming Soon" to="." method="_on_coming_soon_pressed"]
+[connection signal="pressed" from="VSplitContainer/OutsideMargins/VBoxContainer2/Singleplayer" to="." method="_on_single_player_pressed"]
+[connection signal="pressed" from="VSplitContainer/OutsideMargins/VBoxContainer2/Multiplayer" to="." method="_on_multiplayer_pressed"]
 [connection signal="pressed" from="VSplitContainer/OutsideMargins/VBoxContainer2/Quit" to="." method="_on_quit_pressed"]

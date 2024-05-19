@@ -1,6 +1,9 @@
 extends Node
 
-@onready var player = %Player
+var multiplayer_enabled: bool = false
 
-#func spawn_player(id: int) -> Error:
-	#return
+func _on_tree_entered():
+	if multiplayer_enabled:
+		%MultiplayerOverlay.visibile = true
+	else:
+		%MultiplayerOverlay.visibile = true

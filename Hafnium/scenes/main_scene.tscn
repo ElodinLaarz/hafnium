@@ -251,6 +251,8 @@ spawn_limit = 3
 [node name="Players" type="Node2D" parent="."]
 
 [node name="MultiplayerOverlay" parent="." instance=ExtResource("6_o1c21")]
+unique_name_in_owner = true
+visible = false
 offset_left = 95.0
 offset_top = 27.0
 offset_right = 95.0
