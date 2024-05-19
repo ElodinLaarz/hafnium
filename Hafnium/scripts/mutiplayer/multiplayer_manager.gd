@@ -1,6 +1,6 @@
 extends Node
 
-const MULTIPLAYER_PLAYER = preload("res://scenes/test_scenes/multiplayer_player.tscn")
+const MULTIPLAYER_PLAYER = preload("res://scenes/multiplayer_player.tscn")
 
 const MAIN_SCENE: String = "MainScene"
 const MULTIPLAYER_PLAYERS_NAME: String = "Players"

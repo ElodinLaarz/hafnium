@@ -75,6 +75,5 @@ scale = Vector2(0.759999, 1)
 shape = SubResource("CapsuleShape2D_f3fsb")
 
 [node name="Main Camera" type="Camera2D" parent="."]
-position = Vector2(16, -12)
 zoom = Vector2(5, 5)
 position_smoothing_enabled = true
