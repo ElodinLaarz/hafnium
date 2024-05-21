@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://jvw1qovwral5"]
+
+[ext_resource type="Script" path="res://scripts/scene_switcher.gd" id="1_m2cis"]
+[ext_resource type="PackedScene" uid="uid://bjf0osioffpss" path="res://scenes/main_menu.tscn" id="1_x26f8"]
+
+[node name="SceneSwitcher" type="Node"]
+script = ExtResource("1_m2cis")
+
+[node name="MainMenu" parent="." instance=ExtResource("1_x26f8")]
+
+[connection signal="start_game_type" from="MainMenu" to="." method="handle_game_start"]

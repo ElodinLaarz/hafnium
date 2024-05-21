@@ -11,15 +11,18 @@ config_version=5
 [application]
 
 config/name="Hafnium"
-run/main_scene="res://scenes/main_menu.tscn"
+run/main_scene="res://scenes/SceneSwitcher.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 
 [autoload]
 
 MultiplayerManager="*res://scripts/mutiplayer/multiplayer_manager.gd"
+Common="*res://scripts/common.gd"
 
 [display]
 
+window/size/viewport_width=1080
+window/size/viewport_height=720
 window/size/always_on_top=true
 
 [input]

@@ -3,7 +3,7 @@ extends Node2D
 # aim_radius is how far the aim sight is drawn from the player.
 const aim_radius: float = 8 # In pixels...?
 
-@onready var pivot: Node2D = %"Player Pivot Point"
+@onready var pivot: Node2D = %PlayerPivot
 
 class PolarCoordinate:
 	var radius: float

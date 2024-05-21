@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/character_movement.gd" id="1_jprhx"]
 [ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://sprites/Wizard.png" id="2_himny"]
-[ext_resource type="Script" path="res://scripts/Aim Sight.gd" id="3_er8jr"]
+[ext_resource type="Script" path="res://scripts/player_aim.gd" id="3_er8jr"]
 [ext_resource type="Texture2D" uid="uid://cpuha70ui6ytg" path="res://sprites/Aim_Right.png" id="4_i7kdi"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5vtpi"]
@@ -56,15 +56,15 @@ sprite_frames = SubResource("SpriteFrames_jrwje")
 autoplay = "default"
 frame_progress = 0.632108
 
-[node name="Player Pivot Point" type="Node2D" parent="AnimatedSprite2D"]
+[node name="PlayerPivot" type="Node2D" parent="AnimatedSprite2D"]
 unique_name_in_owner = true
 position = Vector2(0, 5)
 
-[node name="Aim Sight" type="Node2D" parent="AnimatedSprite2D/Player Pivot Point"]
+[node name="Aim Sight" type="Node2D" parent="AnimatedSprite2D/PlayerPivot"]
 position = Vector2(12, 0)
 script = ExtResource("3_er8jr")
 
-[node name="Sprite2D" type="Sprite2D" parent="AnimatedSprite2D/Player Pivot Point/Aim Sight"]
+[node name="Sprite2D" type="Sprite2D" parent="AnimatedSprite2D/PlayerPivot/Aim Sight"]
 z_index = -1
 texture_filter = 1
 texture = ExtResource("4_i7kdi")
@@ -75,6 +75,5 @@ scale = Vector2(0.759999, 1)
 shape = SubResource("CapsuleShape2D_f3fsb")
 
 [node name="Main Camera" type="Camera2D" parent="."]
-position = Vector2(16, -12)
 zoom = Vector2(5, 5)
 position_smoothing_enabled = true
