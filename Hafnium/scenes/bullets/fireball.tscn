@@ -1,0 +1,46 @@
+[gd_scene load_steps=8 format=3 uid="uid://2fbyvsx3kw4n"]
+
+[ext_resource type="Texture2D" uid="uid://biis87q8e6uop" path="res://sprites/not_my_art/fireball.png" id="1_s85b4"]
+[ext_resource type="Script" path="res://scripts/fireball.gd" id="1_snadh"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_264gt"]
+atlas = ExtResource("1_s85b4")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gc4ax"]
+atlas = ExtResource("1_s85b4")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3pnu3"]
+atlas = ExtResource("1_s85b4")
+region = Rect2(0, 128, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_022yf"]
+atlas = ExtResource("1_s85b4")
+region = Rect2(128, 128, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_q36fl"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_264gt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gc4ax")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3pnu3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_022yf")
+}],
+"loop": true,
+"name": &"default",
+"speed": 12.0
+}]
+
+[node name="Fireball" type="Node2D"]
+script = ExtResource("1_snadh")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_q36fl")

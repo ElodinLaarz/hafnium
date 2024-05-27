@@ -1,8 +1,8 @@
 [gd_scene load_steps=11 format=3 uid="uid://cnie27irw2ene"]
 
-[ext_resource type="Script" path="res://scripts/character_movement.gd" id="1_jprhx"]
+[ext_resource type="Script" path="res://scripts/singleplayer/player_handler.gd" id="1_jprhx"]
 [ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://sprites/Wizard.png" id="2_himny"]
-[ext_resource type="Script" path="res://scripts/player_aim.gd" id="3_er8jr"]
+[ext_resource type="Script" path="res://scripts/singleplayer/player_aim.gd" id="3_er8jr"]
 [ext_resource type="Texture2D" uid="uid://cpuha70ui6ytg" path="res://sprites/Aim_Right.png" id="4_i7kdi"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5vtpi"]

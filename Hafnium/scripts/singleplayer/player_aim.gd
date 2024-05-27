@@ -41,3 +41,11 @@ func _process(delta: float):
 	
 	var polar_displacement: PolarCoordinate = polar_coordinates(unit_displacement)
 	rotation = polar_displacement.angle
+
+func _physics_process(delta: float):
+	if Input.is_action_just_pressed("attack"):
+		attack()
+	pass
+
+func attack():
+	pass
