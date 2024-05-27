@@ -7,9 +7,9 @@ const Aim = preload("res://scripts/singleplayer/player_aim.gd")
 var aim = Aim.new()
 
 func ready_aim():
-	aim.aim_sight = get_node("AnimatedSprite2D/PlayerPivot/Aim Sight")
-	aim.pivot = get_node("AnimatedSprite2D/PlayerPivot")
+	aim.aim_sight = get_node("Main Camera/PlayerPivot/Aim Sight")
 	aim.camera = get_node("Main Camera")
+	aim.pivot = get_node("Main Camera/PlayerPivot")
 
 func handle_movement(delta: float):
 	movement.set_max_speed_walk() # Default to walking, unless running.
