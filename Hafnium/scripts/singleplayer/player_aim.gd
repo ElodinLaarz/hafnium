@@ -3,7 +3,10 @@ extends Node2D
 # aim_radius is how far the aim sight is drawn from the player.
 const aim_radius: float = 8 # In pixels...?
 
-@onready var pivot: Node2D = %PlayerPivot
+# should be set when pulled into another script...
+var aim_sight: Node2D
+var pivot: Node2D
+var camera: Camera2D
 
 class PolarCoordinate:
 	var radius: float
@@ -27,25 +30,20 @@ func polar_coordinates(cartesian: Vector2) -> PolarCoordinate:
 # Returns a unit vector whose angle represents the angle between the pivot
 # point (which should be at "the center" of the player) and the mouse.
 func unit_direction_to_mouse(source_position: Vector2) -> Vector2:
-	var mouse_position: Vector2 = get_global_mouse_position()
-
+	var mouse_position: Vector2 = camera.get_viewport().get_mouse_position()
+	
 	var direction: Vector2 = mouse_position - source_position # I am already worried about negatives
 	
 	return direction.normalized()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float):
+func update_pivot(delta: float):
+	if not pivot:
+		print("UH OH! No Pivot?? :O")
+		return
 	var pivot_position: Vector2 = pivot.global_position
 	var unit_displacement: Vector2 = unit_direction_to_mouse(pivot_position)
-	position = pivot.position + aim_radius * unit_displacement
+	aim_sight.position = pivot.position + aim_radius * unit_displacement
 	
 	var polar_displacement: PolarCoordinate = polar_coordinates(unit_displacement)
-	rotation = polar_displacement.angle
-
-func _physics_process(delta: float):
-	if Input.is_action_just_pressed("attack"):
-		attack()
-	pass
-
-func attack():
-	pass
+	aim_sight.rotation = polar_displacement.angle
