@@ -140,6 +140,6 @@ animations = [{
 [node name="Barbarian" type="AnimatedSprite2D"]
 position = Vector2(18, 12)
 sprite_frames = SubResource("SpriteFrames_waso6")
-animation = &"walkdown"
+animation = &"walkleft"
 autoplay = "default"
-frame_progress = 0.169936
+frame_progress = 0.811632

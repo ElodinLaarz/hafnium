@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://gb01yn60ddnh"]
+[gd_scene load_steps=17 format=3 uid="uid://gb01yn60ddnh"]
 
 [ext_resource type="Script" path="res://scripts/scene_switcher.gd" id="1_jse2r"]
 [ext_resource type="PackedScene" uid="uid://cnie27irw2ene" path="res://scenes/player_character.tscn" id="1_n6xcf"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bpaa5lkbjqfp7" path="res://scenes/npcs/slime.tscn" id="3_umgfh"]
 [ext_resource type="AudioStream" uid="uid://c3bsok0opcbec" path="res://scenes/Audio/Pixel Dreams.mp3" id="4_qq2u7"]
 [ext_resource type="PackedScene" uid="uid://bv32i8rf5w5sv" path="res://scenes/test_scenes/multiplayer_overlay.tscn" id="6_o1c21"]
+[ext_resource type="PackedScene" uid="uid://bikubqsr50x4g" path="res://bomb.tscn" id="7_d7bbh"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_l0e38"]
 texture = ExtResource("2_m5k2b")
@@ -257,3 +258,6 @@ anchors_preset = 10
 anchor_bottom = 0.0
 offset_bottom = 108.0
 grow_vertical = 1
+
+[node name="Bomb" parent="." instance=ExtResource("7_d7bbh")]
+position = Vector2(-13, -8)
