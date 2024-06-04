@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/scene_switcher.gd" id="1_jse2r"]
 [ext_resource type="PackedScene" uid="uid://cnie27irw2ene" path="res://scenes/player_character.tscn" id="1_n6xcf"]
+[ext_resource type="PackedScene" uid="uid://30i2deyqd887" path="res://scenes/interface.tscn" id="2_6ww0p"]
 [ext_resource type="Texture2D" uid="uid://1siimnr8666y" path="res://tile_map/New Map.png" id="2_jygq7"]
 [ext_resource type="Texture2D" uid="uid://cqkwf4xwn3yhq" path="res://tile_map/map.png" id="2_m5k2b"]
 [ext_resource type="PackedScene" uid="uid://bpaa5lkbjqfp7" path="res://scenes/npcs/slime.tscn" id="3_umgfh"]
@@ -190,10 +191,20 @@ _data = {
 "Sliming": SubResource("Animation_ow5jg")
 }
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_40ni4"]
-
 [node name="MainScene" type="Node2D"]
 script = ExtResource("1_jse2r")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Interface" parent="UI" instance=ExtResource("2_6ww0p")]
+
+[node name="MultiplayerOverlay" parent="UI" instance=ExtResource("6_o1c21")]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 10
+anchor_bottom = 0.0
+offset_bottom = 108.0
+grow_vertical = 1
 
 [node name="TileMap" type="TileMap" parent="."]
 z_index = -1
@@ -242,14 +253,13 @@ libraries = {
 }
 autoplay = "Sliming"
 
+[node name="Bomb" parent="." instance=ExtResource("7_d7bbh")]
+position = Vector2(-13, -8)
+
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("4_qq2u7")
 autoplay = true
 bus = &"Music"
-
-[node name="Circle2d" type="Sprite2D" parent="."]
-position = Vector2(17, -99)
-texture = SubResource("CompressedTexture2D_40ni4")
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("res://scenes/multiplayer_player.tscn")
@@ -257,15 +267,3 @@ spawn_path = NodePath("../Players")
 spawn_limit = 3
 
 [node name="Players" type="Node2D" parent="."]
-
-[node name="UI" type="CanvasLayer" parent="."]
-
-[node name="MultiplayerOverlay" parent="UI" instance=ExtResource("6_o1c21")]
-unique_name_in_owner = true
-anchors_preset = 10
-anchor_bottom = 0.0
-offset_bottom = 108.0
-grow_vertical = 1
-
-[node name="Bomb" parent="." instance=ExtResource("7_d7bbh")]
-position = Vector2(-13, -8)

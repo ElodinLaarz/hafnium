@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://d15y1m5m5mf16"]
+
+[ext_resource type="Texture2D" uid="uid://brp1b4pqpmbmi" path="res://sprites/not_my_art/label_bg.png" id="1_50d6c"]
+
+[node name="NinePatchRect" type="NinePatchRect"]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_50d6c")
+patch_margin_left = 8
+patch_margin_top = 8
+patch_margin_right = 8
+patch_margin_bottom = 8
