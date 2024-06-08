@@ -1,12 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://byhdsfnk720yr"]
+[gd_scene load_steps=3 format=3 uid="uid://byhdsfnk720yr"]
 
 [ext_resource type="Texture2D" uid="uid://brp1b4pqpmbmi" path="res://sprites/not_my_art/label_bg.png" id="1_7qiry"]
-[ext_resource type="Texture2D" uid="uid://cxhg1pbn3iumk" path="res://sprites/Bomb.png" id="2_mvxon"]
 [ext_resource type="Theme" uid="uid://b5oe8bhuvgk3t" path="res://scenes/interface/themes/ui_theme.tres" id="3_llqkp"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cebq4"]
-atlas = ExtResource("2_mvxon")
-region = Rect2(0, 0, 16, 16)
 
 [node name="Counter" type="NinePatchRect"]
 offset_right = 78.0
@@ -16,19 +11,6 @@ patch_margin_left = 8
 patch_margin_top = 8
 patch_margin_right = 8
 patch_margin_bottom = 8
-
-[node name="BombTexture" type="TextureRect" parent="."]
-texture_filter = 1
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_top = -20.0
-offset_right = 40.0
-offset_bottom = 20.0
-grow_vertical = 2
-texture = SubResource("AtlasTexture_cebq4")
-stretch_mode = 4
 
 [node name="CounterText" type="Label" parent="."]
 layout_mode = 1

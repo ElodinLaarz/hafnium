@@ -7,6 +7,7 @@ var health_to_damage_multiplier: int = 2
 var health: int
 var max_health: int
 
+# Should probably have each class hold this info...
 func hp(pc: ClassHandler.PlayerClass):
 	match pc:
 		ClassHandler.PlayerClass.BARBARIAN:

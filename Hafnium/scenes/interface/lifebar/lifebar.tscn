@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://djv82uycmteji"]
+
+[ext_resource type="Script" path="res://scripts/stats/draw_health.gd" id="1_oslmg"]
+[ext_resource type="PackedScene" uid="uid://77y77fbjn1ka" path="res://scenes/interface/lifebar/heart.tscn" id="2_u1181"]
+
+[node name="Bar" type="HBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 5
+script = ExtResource("1_oslmg")
+
+[node name="Heart" parent="." instance=ExtResource("2_u1181")]
+layout_mode = 2

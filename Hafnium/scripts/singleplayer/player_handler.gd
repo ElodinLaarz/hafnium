@@ -1,7 +1,9 @@
 extends CharacterBody2D
 class_name PlayerCharacter
 
-var player_stats: Stats
+# TODO(ElodinLaarz): Add Class Choice.
+var player_class: ClassHandler.PlayerClass = ClassHandler.PlayerClass.DRUID
+var player_stats: Stats # Not preloaded because PlayerClass-dependent
 var movement = preload("res://scripts/singleplayer/movement.gd").new()
 var aim = preload("res://scripts/singleplayer/player_aim.gd").new()
 
@@ -30,10 +32,9 @@ func handle_attack(delta: float):
 func handle_stats(delta: float):
 	pass
 
-# TODO(ElodinLaarz): Add Class Choice.
 func _ready():
 	ready_aim()
-	player_stats = Stats.new(ClassHandler.PlayerClass.DRUID)
+	player_stats = Stats.new(player_class)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float):

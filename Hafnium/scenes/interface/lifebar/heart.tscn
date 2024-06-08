@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://77y77fbjn1ka"]
+
+[ext_resource type="Texture2D" uid="uid://bwr8hjdfjwpuo" path="res://sprites/aseprite_files/random/Hearts.png" id="1_dsbjh"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_27x67"]
+atlas = ExtResource("1_dsbjh")
+region = Rect2(0, 0, 16, 16)
+
+[node name="Heart" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = SubResource("AtlasTexture_27x67")
