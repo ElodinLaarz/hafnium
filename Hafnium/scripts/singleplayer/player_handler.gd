@@ -1,10 +1,11 @@
 extends CharacterBody2D
+class_name PlayerCharacter
 
-const Movement = preload("res://scripts/singleplayer/movement.gd")
-var movement = Movement.new()
+var movement = preload("res://scripts/singleplayer/movement.gd").new()
+var aim = preload("res://scripts/singleplayer/player_aim.gd").new()
 
-const Aim = preload("res://scripts/singleplayer/player_aim.gd")
-var aim = Aim.new()
+const Stats = preload("res://scripts/stats/stats_handler.gd")
+var player_stats # Stats
 
 func ready_aim():
 	aim.aim_sight = get_node("Main Camera/PlayerPivot/Aim Sight")
