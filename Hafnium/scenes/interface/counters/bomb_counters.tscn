@@ -1,23 +1,23 @@
 [gd_scene load_steps=5 format=3 uid="uid://byhdsfnk720yr"]
 
-[ext_resource type="Texture2D" uid="uid://brp1b4pqpmbmi" path="res://sprites/not_my_art/label_bg.png" id="1_s8urp"]
-[ext_resource type="Texture2D" uid="uid://cxhg1pbn3iumk" path="res://sprites/Bomb.png" id="2_un1nr"]
-[ext_resource type="Theme" uid="uid://b5oe8bhuvgk3t" path="res://interface/themes/ui_theme.tres" id="3_noeel"]
+[ext_resource type="Texture2D" uid="uid://brp1b4pqpmbmi" path="res://sprites/not_my_art/label_bg.png" id="1_7qiry"]
+[ext_resource type="Texture2D" uid="uid://cxhg1pbn3iumk" path="res://sprites/Bomb.png" id="2_mvxon"]
+[ext_resource type="Theme" uid="uid://b5oe8bhuvgk3t" path="res://scenes/interface/themes/ui_theme.tres" id="3_llqkp"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cebq4"]
-atlas = ExtResource("2_un1nr")
+atlas = ExtResource("2_mvxon")
 region = Rect2(0, 0, 16, 16)
 
 [node name="Counter" type="NinePatchRect"]
 offset_right = 78.0
 offset_bottom = 34.0
-texture = ExtResource("1_s8urp")
+texture = ExtResource("1_7qiry")
 patch_margin_left = 8
 patch_margin_top = 8
 patch_margin_right = 8
 patch_margin_bottom = 8
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="BombTexture" type="TextureRect" parent="."]
 texture_filter = 1
 layout_mode = 1
 anchors_preset = 4
@@ -30,7 +30,7 @@ grow_vertical = 2
 texture = SubResource("AtlasTexture_cebq4")
 stretch_mode = 4
 
-[node name="Label" type="Label" parent="."]
+[node name="CounterText" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -42,7 +42,7 @@ offset_top = -17.0
 offset_bottom = 17.0
 grow_horizontal = 0
 grow_vertical = 2
-theme = ExtResource("3_noeel")
+theme = ExtResource("3_llqkp")
 text = "10"
 horizontal_alignment = 1
 vertical_alignment = 1
