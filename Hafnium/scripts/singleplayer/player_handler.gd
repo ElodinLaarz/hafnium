@@ -28,6 +28,9 @@ func handle_attack(delta: float):
 	if Input.is_action_just_pressed("attack"):
 		print("attack!")
 
+func handle_stats(delta: float):
+	pass
+
 func _ready():
 	ready_aim()
 
@@ -35,3 +38,4 @@ func _ready():
 func _process(delta: float):
 	handle_movement(delta)
 	handle_attack(delta)
+	handle_stats(delta)
