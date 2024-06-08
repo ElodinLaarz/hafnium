@@ -9,3 +9,4 @@ func update_health(player_character: PlayerCharacter):
 	# Update the icon for each heart based on the current status.
 	# TODO(ElodinLaarz): Could probably ask each class for a map
 	# to draw their health...
+	
