@@ -1,12 +1,9 @@
 extends CharacterBody2D
 class_name PlayerCharacter
 
+var player_stats: Stats
 var movement = preload("res://scripts/singleplayer/movement.gd").new()
 var aim = preload("res://scripts/singleplayer/player_aim.gd").new()
-
-const CH = preload("res://scripts/classes/class_handler.gd")
-const Stats = preload("res://scripts/stats/stats_handler.gd")
-var player_stats # Stats
 
 func ready_aim():
 	aim.aim_sight = get_node("Main Camera/PlayerPivot/Aim Sight")
@@ -36,7 +33,7 @@ func handle_stats(delta: float):
 # TODO(ElodinLaarz): Add Class Choice.
 func _ready():
 	ready_aim()
-	player_stats = Stats.new(CH.PlayerClass.DRUID)
+	player_stats = Stats.new(ClassHandler.PlayerClass.DRUID)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float):

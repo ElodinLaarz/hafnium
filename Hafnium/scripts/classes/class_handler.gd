@@ -1,4 +1,5 @@
 extends Node
+class_name ClassHandler
 
 enum PlayerClass {BARBARIAN, DRUID, WIZARD}
 

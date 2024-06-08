@@ -1,23 +1,22 @@
 extends Node
 class_name Stats
 
-const CH = preload("res://scripts/classes/class_handler.gd")
-
 # Usually the value is 2 since 1 damage = 1/2 heart for most classes.
 # An exception is the Barbarian for which 1 heart = 4 points of damage.
 var health_to_damage_multiplier: int = 2
 var health: int
+var max_health: int
 
-func hp(pc: CH.PlayerClass):
+func hp(pc: ClassHandler.PlayerClass):
 	match pc:
-		CH.PlayerClass.BARBARIAN:
+		ClassHandler.PlayerClass.BARBARIAN:
 			health_to_damage_multiplier = 4
-			health = 3
-		CH.PlayerClass.DRUID:
-			health = 3
-		CH.PlayerClass.WIZARD:
-			health = 2
+			max_health = 3
+		ClassHandler.PlayerClass.DRUID:
+			max_health = 3
+		ClassHandler.PlayerClass.WIZARD:
+			max_health = 2
 
-func _init(chosen_class: CH.PlayerClass):
+func _init(chosen_class: ClassHandler.PlayerClass):
 	hp(chosen_class)
 	pass
