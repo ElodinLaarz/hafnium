@@ -19,5 +19,5 @@ func hp(pc: CH.PlayerClass):
 			health = 2
 
 func _init(chosen_class: CH.PlayerClass):
-	
+	hp(chosen_class)
 	pass
