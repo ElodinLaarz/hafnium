@@ -27,12 +27,12 @@ func check_and_create_hearts(parent_node: Node, player_character: PlayerCharacte
 	set_num_hearts(heart_container, heart_counter)
 
 	# Draw appropriate hearts based on the current health.
-	print("Calling heart drawing logic...")
-	pc.heart_drawing_logic.call(player_character.player_class.stats, heart_container)
+	print("Calling heart drawing logic... for character class %s" % ClassHandler.ClassName.keys()[pc.name])
+	pc.draw_hearts(heart_container)
 
 func update_health(player_character: PlayerCharacter):
 	check_and_create_hearts(self, player_character)
 
 func _ready():
-	var example_pc: PlayerCharacter = PlayerCharacter.new(ClassHandler.ClassName.DRUID)
+	var example_pc: PlayerCharacter = PlayerCharacter.new(ClassHandler.ClassName.BARBARIAN)
 	update_health(example_pc)

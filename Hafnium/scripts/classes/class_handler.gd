@@ -6,14 +6,18 @@ enum ClassName {BARBARIAN, DRUID, WIZARD}
 enum HeartName {
 	TRANSPARENT,
 	EMPTY, 
+
 	RED_FULL,
 	RED_HALF,
+
 	WIZARD_FULL, 
 	WIZARD_HALF_FULL_HALF_MANA,
 	WIZARD_HALF_MANA,
 	WIZARD_FULL_MANA,
+
 	DRUID_FULL,
 	DRUID_HALF,
+
 	BARBARIAN_FULL,
 	BARBARIAN_3_4,
 	BARBARIAN_HALF,
@@ -52,39 +56,52 @@ func heart_texture(texture_rect: TextureRect, heart_name: HeartName) -> AtlasTex
 var empty_heart: Rect2i = named_heart_lookup[HeartName.EMPTY]
 var health_checks: Health = Health.new()
 
-func barbarian_heart_drawing_logic():
+func barbarian_heart_drawing_logic(stats: Stats, heart_container: Node):
+	if !health_checks.bounds_ok(stats, heart_container):
+		print("Health bounds check failed-- using default heart drawing logic.")
+		default_hearts()
+		return
+	if stats.health_to_damage_multiplier != 4:
+		print("Barbarians should have a health to damage multiplier of 4.")
+		print("Using default heart drawing logic.")
+		default_hearts()
+		return
+	
+	var total_hearts: int = stats.max_health / stats.health_to_damage_multiplier
 	# Draw 1/4 hearts
-	pass
+	var full_heart_count: int = stats.current_health / stats.health_to_damage_multiplier
+	var partial_heart: int = stats.current_health % stats.health_to_damage_multiplier 
+
+	for i in range(total_hearts):
+		var current_heart: TextureRect = heart_container.get_child(i)
+		if i < full_heart_count:
+			current_heart.texture = heart_texture(current_heart, HeartName.BARBARIAN_FULL)
+		elif i == full_heart_count:
+			match partial_heart:
+				3: current_heart.texture = heart_texture(current_heart, HeartName.BARBARIAN_3_4)
+				2: current_heart.texture = heart_texture(current_heart, HeartName.BARBARIAN_HALF)
+				1: current_heart.texture = heart_texture(current_heart, HeartName.BARBARIAN_1_4)
+				_: current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
+		else:
+			current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
 
 func druid_heart_drawing_logic(stats: Stats, heart_container: Node):
-	if stats.max_health % 2 != 0:
-		print("Druids must have an even number of max health.")
-		print("Default heart drawing logic will be used.")
-		default_hearts()
-		return
-	if heart_container.get_child_count() != stats.max_health / 2:
-		print("Heart container does not match max health.")
-		print("Default heart drawing logic will be used.")
-		default_hearts()
-		return
-	if !health_checks.bounds_ok(stats):
-		print("Health out of bounds.")
+	if !health_checks.bounds_ok(stats, heart_container):
+		print("Health bounds check failed-- using default heart drawing logic.")
 		default_hearts()
 		return
 
-	var full_heart_count: int = stats.current_health / 2 + 1
-	var half_heart_count: int = stats.current_health % 2 + 1
-
-	print("Full hearts: ", full_heart_count)
-	print("Half hearts: ", half_heart_count)
-	print("Empty hearts: ", stats.max_health / 2 - full_heart_count - half_heart_count)
+	var full_heart_count: int = stats.current_health / 2
+	var partial_heart: int = stats.current_health % 2
 
 	for i in range(stats.max_health / 2):
 		var current_heart: TextureRect = heart_container.get_child(i)
 		if i < full_heart_count:	
 			current_heart.texture = heart_texture(current_heart, HeartName.DRUID_FULL)
-		elif i < full_heart_count + half_heart_count:
-			current_heart.texture = heart_texture(current_heart, HeartName.DRUID_HALF)
+		elif i == full_heart_count:
+			match partial_heart:
+				1: current_heart.texture = heart_texture(current_heart, HeartName.DRUID_HALF)
+				_: current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
 		else:
 			current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
 
@@ -126,6 +143,9 @@ class PlayerClass:
 		# Wizards have purple hearts, but their missing health also
 		# becomes reserve mana, which is blue.
 		self.heart_drawing_logic = class_handler.hdl(cn)
+	
+	func draw_hearts(heart_container: Node):
+		self.heart_drawing_logic.call(self.stats, heart_container)
 
 func create_class(cn: ClassName) -> PlayerClass :
 	# Create a new player character of the given class.
