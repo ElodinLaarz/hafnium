@@ -57,12 +57,6 @@ func barbarian_heart_drawing_logic():
 	pass
 
 func druid_heart_drawing_logic(stats: Stats, heart_container: Node):
-	# Draw green hearts
-	var full_green: Rect2i = named_heart_lookup[HeartName.DRUID_FULL]
-	print("Full green: ", full_green)
-	var half_green: Rect2i = named_heart_lookup[HeartName.DRUID_HALF]
-	print("Half green: ", half_green)
-
 	if stats.max_health % 2 != 0:
 		print("Druids must have an even number of max health.")
 		print("Default heart drawing logic will be used.")
