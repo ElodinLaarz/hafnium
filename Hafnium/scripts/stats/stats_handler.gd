@@ -12,11 +12,11 @@ func hp(pc: ClassHandler.ClassName):
 	match pc:
 		ClassHandler.ClassName.BARBARIAN:
 			health_to_damage_multiplier = 4
-			max_health = 3
+			max_health = 12 
 		ClassHandler.ClassName.DRUID:
-			max_health = 3
+			max_health = 6
 		ClassHandler.ClassName.WIZARD:
-			max_health = 2
+			max_health = 4 
 
 func _init(chosen_class: ClassHandler.ClassName):
 	hp(chosen_class)

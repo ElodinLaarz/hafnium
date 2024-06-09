@@ -19,6 +19,10 @@ config/features=PackedStringArray("4.2", "Forward Plus")
 MultiplayerManager="*res://scripts/mutiplayer/multiplayer_manager.gd"
 Common="*res://scripts/common.gd"
 
+[debug]
+
+gdscript/warnings/integer_division=0
+
 [display]
 
 window/size/viewport_width=640

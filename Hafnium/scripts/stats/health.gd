@@ -1,11 +1,10 @@
 extends Node
+class_name Health
 
+func bounds_ok(stats: Stats) -> bool:
+	if stats.current_health > stats.max_health:
+		return false
+	if stats.current_health < 0:
+		return false
+	return true
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass

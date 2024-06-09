@@ -6,6 +6,9 @@ var player_class: ClassHandler.PlayerClass
 var movement = preload("res://scripts/singleplayer/movement.gd").new()
 var aim = preload("res://scripts/singleplayer/player_aim.gd").new()
 
+func _init(cn: ClassHandler.ClassName):
+	player_class = ClassHandler.PlayerClass.new(cn)
+
 func ready_aim():
 	aim.aim_sight = get_node("Main Camera/PlayerPivot/Aim Sight")
 	aim.camera = get_node("Main Camera")
@@ -22,7 +25,6 @@ func handle_movement(delta: float):
 	
 	move_and_slide()
 
-
 func handle_attack(delta: float):
 	aim.update_pivot(delta)
 	if Input.is_action_just_pressed("attack"):
@@ -33,7 +35,6 @@ func handle_stats(delta: float):
 
 func _ready():
 	ready_aim()
-	player_class = ClassHandler.PlayerClass.new(ClassHandler.ClassName.DRUID)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float):
