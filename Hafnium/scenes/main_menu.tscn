@@ -55,7 +55,7 @@ theme_override_constants/margin_left = 5
 
 [node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer/VSplitContainer/MarginContainer/MarginContainer2"]
 layout_mode = 2
-text = "v0.0.1"
+text = "v0.0.2"
 
 [node name="OutsideMargins" type="MarginContainer" parent="CanvasLayer/VSplitContainer"]
 layout_mode = 2
@@ -64,22 +64,21 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/OutsideMargins"]
-z_index = 1
+[node name="DefaultOptions" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/OutsideMargins"]
 layout_mode = 2
 
-[node name="Singleplayer" type="Button" parent="CanvasLayer/VSplitContainer/OutsideMargins/VBoxContainer2"]
+[node name="New Game" type="Button" parent="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions"]
 layout_mode = 2
 text = "New Game"
 
-[node name="Multiplayer" type="Button" parent="CanvasLayer/VSplitContainer/OutsideMargins/VBoxContainer2"]
+[node name="Multiplayer" type="Button" parent="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions"]
 layout_mode = 2
-text = "Multiplayer Game"
+text = "Multiplayer"
 
-[node name="Quit" type="Button" parent="CanvasLayer/VSplitContainer/OutsideMargins/VBoxContainer2"]
+[node name="Quit" type="Button" parent="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions"]
 layout_mode = 2
 text = "Quit"
 
-[connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/VBoxContainer2/Singleplayer" to="." method="_on_single_player_pressed"]
-[connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/VBoxContainer2/Multiplayer" to="." method="_on_multiplayer_pressed"]
-[connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/VBoxContainer2/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions/New Game" to="." method="_on_single_player_pressed"]
+[connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions/Multiplayer" to="." method="_on_multiplayer_pressed"]
+[connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions/Quit" to="." method="_on_quit_pressed"]

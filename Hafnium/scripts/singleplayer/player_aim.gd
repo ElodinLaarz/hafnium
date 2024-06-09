@@ -1,4 +1,5 @@
 extends Node2D
+class_name PlayerAim
 
 # aim_radius is how far the aim sight is drawn from the player.
 const aim_radius: float = 8 # In pixels...?

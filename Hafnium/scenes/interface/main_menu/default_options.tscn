@@ -1,0 +1,22 @@
+[gd_scene load_steps=2 format=3 uid="uid://cxdy3fqjt5oqa"]
+
+[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_8d2p1"]
+
+[node name="VBoxContainer2" type="VBoxContainer"]
+script = ExtResource("1_8d2p1")
+
+[node name="New Game" type="Button" parent="."]
+layout_mode = 2
+text = "New Game"
+
+[node name="Multiplayer" type="Button" parent="."]
+layout_mode = 2
+text = "Multiplayer"
+
+[node name="Quit" type="Button" parent="."]
+layout_mode = 2
+text = "Quit"
+
+[connection signal="pressed" from="New Game" to="." method="_on_single_player_pressed"]
+[connection signal="pressed" from="Multiplayer" to="." method="_on_multiplayer_pressed"]
+[connection signal="pressed" from="Quit" to="." method="_on_quit_pressed"]

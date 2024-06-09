@@ -7,7 +7,7 @@ atlas = ExtResource("1_dsbjh")
 region = Rect2(17, 2, 14, 12)
 
 [node name="Heart" type="TextureRect"]
-custom_minimum_size = Vector2(32, 32)
+custom_minimum_size = Vector2(64, 64)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

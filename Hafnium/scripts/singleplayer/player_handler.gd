@@ -3,8 +3,8 @@ class_name PlayerCharacter
 
 # TODO(ElodinLaarz): Add Class Choice.
 var player_class: ClassHandler.PlayerClass 
-var movement = preload("res://scripts/singleplayer/movement.gd").new()
-var aim = preload("res://scripts/singleplayer/player_aim.gd").new()
+var movement = PlayerMovement.new()
+var aim = PlayerAim.new() 
 
 func _init(cn: ClassHandler.ClassName):
 	player_class = ClassHandler.PlayerClass.new(cn)

@@ -1,4 +1,5 @@
 extends Node
+class_name PlayerMovement
 
 # (ElodinLaarz): Values randomly chosen-- feel free to play around for something more fun. 
 # Speed in pixels per second. -- The reason for not using consts in some places is so that
@@ -24,7 +25,7 @@ func velocity_lerp(delta: float, v: Vector2, player_direction: Vector2) -> Vecto
 
 # Create unit vector in direction determined by currently pressed keys.
 func unit_direction() -> Vector2:
-	var input: Vector2
+	var input: Vector2 = Vector2(0,0)
 	input.x = Input.get_action_strength("right") - Input.get_action_strength("left")
 	input.y = Input.get_action_strength("down") - Input.get_action_strength("up") # Yo, down is up?
 	return input.normalized() # Do we need to handle 0 vector?

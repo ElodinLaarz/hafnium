@@ -4,6 +4,8 @@
 [ext_resource type="Theme" uid="uid://b5oe8bhuvgk3t" path="res://scenes/interface/themes/ui_theme.tres" id="3_llqkp"]
 
 [node name="Counter" type="NinePatchRect"]
+self_modulate = Color(1, 1, 1, 0.392157)
+custom_minimum_size = Vector2(100, 32)
 offset_right = 78.0
 offset_bottom = 34.0
 texture = ExtResource("1_7qiry")

@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://30i2deyqd887"]
+[gd_scene load_steps=4 format=3 uid="uid://30i2deyqd887"]
 
 [ext_resource type="Script" path="res://scripts/stats/draw_health.gd" id="1_1nimp"]
+[ext_resource type="PackedScene" uid="uid://cspjc8el4bvi" path="res://scenes/interface/counters/bomb_counter.tscn" id="2_0fffn"]
+[ext_resource type="PackedScene" uid="uid://74u1h84xxs3k" path="res://scenes/interface/counters/ruby_counter.tscn" id="3_p4cmb"]
 
 [node name="Interface" type="Control"]
 layout_mode = 3
@@ -14,8 +16,28 @@ script = ExtResource("1_1nimp")
 [node name="HeartContainer" type="HBoxContainer" parent="."]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+offset_right = 640.0
+offset_bottom = 360.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -100.0
+offset_bottom = 70.0
+grow_horizontal = 0
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="CurrencyCounter" parent="MarginContainer/VBoxContainer" instance=ExtResource("3_p4cmb")]
+layout_mode = 2
+
+[node name="BombCounter" parent="MarginContainer/VBoxContainer" instance=ExtResource("2_0fffn")]
+layout_mode = 2
