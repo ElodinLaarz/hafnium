@@ -15,8 +15,9 @@ func main_scene_start(main_menu: Control, game_type: Common.GameType):
 			multiplayer_overlay.visible = true
 	var player_character: Node2D = load("res://scenes/player_character.tscn").instantiate()
 	level_to_load.add_child(player_character)
-	if !Common.load_player.call("player"):
-		print("Unable to load player character: %s" % "player")
+	var player_name_to_load: String = "barbarian"
+	if !Common.load_player.call(player_name_to_load):
+		print("Unable to load player character: %s" % player_name_to_load)
 		return
 	# Load data about player.
 	# Draw UI and attach.

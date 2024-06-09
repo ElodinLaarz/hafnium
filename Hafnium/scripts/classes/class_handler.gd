@@ -105,6 +105,7 @@ func druid_heart_drawing_logic(stats: Stats, heart_container: Node):
 		else:
 			current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
 
+# TODO(ElodinLaarz): Implement this...
 func wizard_heart_drawing_logic():
 	# Draw purple hearts, with blue reserve mana
 	pass
