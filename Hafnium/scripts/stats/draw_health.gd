@@ -1,6 +1,10 @@
-extends Node
+extends Node 
+class_name PlayerHealth
 
 const PLAYER_HEART = preload("res://scenes/interface/lifebar/heart.tscn")
+
+func _init(pc: PlayerCharacter):
+	update_health(pc)
 
 func dequeue_children(parent: Node):
 	while parent.get_child_count() > 0:
@@ -13,8 +17,7 @@ func set_num_hearts(heart_container: Node, num_hearts: int):
 			var heart: Node = PLAYER_HEART.instantiate()
 			heart_container.add_child(heart)
 
-func check_and_create_hearts(parent_node: Node, player_character: PlayerCharacter):
-	var pc: ClassHandler.PlayerClass = player_character.player_class
+func check_and_create_hearts(parent_node: Node, pc: PlayerCharacter):
 	var stats: Stats = pc.stats
 	var max_health: int = stats.max_health
 	print("Max health: %d" % max_health)
@@ -27,12 +30,7 @@ func check_and_create_hearts(parent_node: Node, player_character: PlayerCharacte
 	set_num_hearts(heart_container, heart_counter)
 
 	# Draw appropriate hearts based on the current health.
-	print("Calling heart drawing logic... for character class %s" % ClassHandler.ClassName.keys()[pc.name])
 	pc.draw_hearts(heart_container)
 
 func update_health(player_character: PlayerCharacter):
 	check_and_create_hearts(self, player_character)
-
-func _ready():
-	var example_pc: PlayerCharacter = PlayerCharacter.new(ClassHandler.ClassName.BARBARIAN)
-	update_health(example_pc)

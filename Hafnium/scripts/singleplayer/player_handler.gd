@@ -6,8 +6,21 @@ var player_class: ClassHandler.PlayerClass
 var movement = PlayerMovement.new()
 var aim = PlayerAim.new() 
 
-func _init(cn: ClassHandler.ClassName):
-	player_class = ClassHandler.PlayerClass.new(cn)
+# TODO(ElodinLaarz): Add Inventory.
+var bomb_count: int = 0
+var bomb_max: int = 3
+
+var currency: int = 0
+
+func load_player_data(player_name: String) -> bool:
+	var player_data: PlayerConfigurationManager.PlayerConfiguration = PlayerConfigurationManager.new().lookup_character(player_name)
+	if player_data:
+		player_class = player_data.player_class
+		currency = player_data.currency
+		bomb_count = player_data.bomb_count
+		bomb_max = player_data.bomb_max
+		return true
+	return false
 
 func ready_aim():
 	aim.aim_sight = get_node("Main Camera/PlayerPivot/Aim Sight")
@@ -32,6 +45,7 @@ func handle_attack(delta: float):
 
 func handle_stats(delta: float):
 	pass
+
 
 func _ready():
 	ready_aim()
