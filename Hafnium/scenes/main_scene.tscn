@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://bpaa5lkbjqfp7" path="res://scenes/npcs/slime.tscn" id="3_umgfh"]
 [ext_resource type="AudioStream" uid="uid://c3bsok0opcbec" path="res://scenes/Audio/Pixel Dreams.mp3" id="4_qq2u7"]
 [ext_resource type="PackedScene" uid="uid://bv32i8rf5w5sv" path="res://scenes/test_scenes/multiplayer_overlay.tscn" id="6_o1c21"]
-[ext_resource type="PackedScene" uid="uid://bikubqsr50x4g" path="res://bomb.tscn" id="7_d7bbh"]
+[ext_resource type="PackedScene" uid="uid://bikubqsr50x4g" path="res://scenes/bomb.tscn" id="7_d7bbh"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2jdt6"]
 texture = ExtResource("2_jygq7")
