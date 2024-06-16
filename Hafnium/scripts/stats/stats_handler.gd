@@ -13,19 +13,6 @@ var damage: int
 var attack_range: int
 var attack_speed: float
 
-class EnemyStatsParams:
-	var max_health: int
-	var damage: int
-	var speed: int
-	var attack_speed: float
-	var attack_range: int
-	func _init(max_health: int, damage: int, speed: int, attack_speed: float, attack_range: int):
-		self.max_health = max_health
-		self.damage = damage
-		self.speed = speed
-		self.attack_speed = attack_speed
-		self.attack_range = attack_range
-
 enum ClassResource {
 	HEALTH,
 	MANA,
@@ -54,33 +41,6 @@ class ResourceStatus:
 		else:
 			recovery_progress = 0
 
-# Should probably have each class hold this info...
-func handle_hp(pc: ClassHandler.ClassName):
-	match pc:
-		ClassHandler.ClassName.BARBARIAN:
-			health_to_damage_multiplier = 4
-			max_health = 12 
-		ClassHandler.ClassName.DRUID:
-			max_health = 6
-		ClassHandler.ClassName.WIZARD:
-			max_health = 4 
-	current_health = max_health
-
-func handle_damage(pc: ClassHandler.ClassName):
-	match pc:
-		ClassHandler.ClassName.BARBARIAN:
-			damage = 3
-			attack_range = 0
-			attack_speed = 1
-		ClassHandler.ClassName.DRUID:
-			damage = 2
-			attack_range = 1
-			attack_speed = 1.2
-		ClassHandler.ClassName.WIZARD:
-			damage = 1
-			attack_range = 2
-			attack_speed = 0.8
-
 # If damage is DOT, etc.
 # func bonus_effect()
 
@@ -92,12 +52,29 @@ func take_damage(d: int) -> bool:
 		return true
 	return false
 
+class EnemyStatsParams:
+	var max_health: int
+	var damage: int
+	var speed: int
+	var attack_speed: float
+	var attack_range: int
+	func _init(max_health: int, damage: int, speed: int, attack_speed: float, attack_range: int):
+		self.max_health = max_health
+		self.damage = damage
+		self.speed = speed
+		self.attack_speed = attack_speed
+		self.attack_range = attack_range
+
 func enemy_init(params: EnemyStatsParams):
 	max_health = params.max_health
 	current_health = max_health
+	damage = params.damage
+	attack_range = params.attack_range
+	attack_speed = params.attack_speed
 
-func _init(chosen_class: ClassHandler.ClassName):
-	if not chosen_class:
-		return
-	handle_hp(chosen_class)
-	handle_damage(chosen_class)
+func _init():
+	current_health = 0
+	max_health = 0
+	damage = 0
+	attack_range = 0
+	attack_speed = 0
