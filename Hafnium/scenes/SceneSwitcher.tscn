@@ -7,5 +7,3 @@
 script = ExtResource("1_m2cis")
 
 [node name="MainMenu" parent="." instance=ExtResource("1_x26f8")]
-
-[connection signal="start_game_type" from="MainMenu" to="." method="handle_game_start"]

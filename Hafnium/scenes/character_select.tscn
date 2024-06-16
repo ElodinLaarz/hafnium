@@ -1,6 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://cs0oorxe8u2kj"]
+[gd_scene load_steps=11 format=3 uid="uid://cs0oorxe8u2kj"]
 
 [ext_resource type="Texture2D" uid="uid://cqkwf4xwn3yhq" path="res://tile_map/map.png" id="1_dmv56"]
+[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_p2cuw"]
 [ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://sprites/Wizard.png" id="1_ryjbv"]
 [ext_resource type="Texture2D" uid="uid://bp8qefbos8w0p" path="res://sprites/Barbarian.png" id="2_0w3pr"]
 
@@ -60,6 +61,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_p2cuw")
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_atc0g")
@@ -177,3 +179,7 @@ vertical_alignment = 1
 [node name="Select Barbarian" type="TextureButton" parent="VBox/BarbarianBox"]
 layout_mode = 2
 metadata/_edit_use_anchors_ = true
+
+[connection signal="pressed" from="VBox/WizardBox/SelectWizard" to="." method="_on_wizard_pressed"]
+[connection signal="pressed" from="VBox/DruidBox/SelectDruid" to="." method="_on_druid_pressed"]
+[connection signal="pressed" from="VBox/BarbarianBox/Select Barbarian" to="." method="_on_barbarian_pressed"]

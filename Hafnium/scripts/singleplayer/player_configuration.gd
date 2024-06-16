@@ -15,7 +15,7 @@ class PlayerConfiguration:
 		self.bomb_max = bomb_max
 
 var data = {
-	"player": PlayerConfiguration.new("Example Player", ClassHandler.PlayerClass.new(ClassHandler.ClassName.DRUID), 25, 2, 5),
+	"druid": PlayerConfiguration.new("Example Player", ClassHandler.PlayerClass.new(ClassHandler.ClassName.DRUID), 25, 2, 5),
 	"wizard": PlayerConfiguration.new("Example Player", ClassHandler.PlayerClass.new(ClassHandler.ClassName.WIZARD), 25, 2, 5),
 	"barbarian": PlayerConfiguration.new(
 		"Example Player",

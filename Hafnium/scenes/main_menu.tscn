@@ -71,6 +71,10 @@ layout_mode = 2
 layout_mode = 2
 text = "New Game"
 
+[node name="Load Game" type="Button" parent="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions"]
+layout_mode = 2
+text = "Load Game"
+
 [node name="Multiplayer" type="Button" parent="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions"]
 layout_mode = 2
 text = "Multiplayer"
@@ -80,5 +84,6 @@ layout_mode = 2
 text = "Quit"
 
 [connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions/New Game" to="." method="_on_single_player_pressed"]
+[connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions/Load Game" to="." method="_on_load_pressed"]
 [connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions/Multiplayer" to="." method="_on_multiplayer_pressed"]
 [connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions/Quit" to="." method="_on_quit_pressed"]
