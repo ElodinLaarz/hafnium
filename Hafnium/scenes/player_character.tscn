@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://cnie27irw2ene"]
+[gd_scene load_steps=11 format=3 uid="uid://cnie27irw2ene"]
 
 [ext_resource type="Script" path="res://scripts/singleplayer/player_handler.gd" id="1_jprhx"]
 [ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://sprites/Wizard.png" id="2_himny"]
@@ -40,11 +40,15 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_f3fsb"]
-radius = 5.26316
-height = 16.0
+[sub_resource type="CircleShape2D" id="CircleShape2D_8558f"]
+radius = 6.65452
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_x1khi"]
+size = Vector2(23, 21)
 
 [node name="Player Character" type="CharacterBody2D"]
+collision_layer = 3
+collision_mask = 3
 script = ExtResource("1_jprhx")
 
 [node name="Main Camera" type="Camera2D" parent="."]
@@ -68,7 +72,17 @@ sprite_frames = SubResource("SpriteFrames_jrwje")
 autoplay = "default"
 frame_progress = 0.632108
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="WorldInteraction" type="CollisionShape2D" parent="."]
 position = Vector2(0, -7)
 scale = Vector2(0.759999, 1)
-shape = SubResource("CapsuleShape2D_f3fsb")
+shape = SubResource("CircleShape2D_8558f")
+
+[node name="Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+position = Vector2(-0.5, -7.5)
+shape = SubResource("RectangleShape2D_x1khi")
+debug_color = Color(0.926885, 0.246329, 0.29079, 0.42)
+
+[connection signal="body_entered" from="Hitbox" to="." method="_on_hitbox_body_entered"]
+[connection signal="body_exited" from="Hitbox" to="." method="_on_hitbox_body_exited"]

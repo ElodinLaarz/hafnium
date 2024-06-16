@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://bpaa5lkbjqfp7"]
+[gd_scene load_steps=8 format=3 uid="uid://bpaa5lkbjqfp7"]
 
 [ext_resource type="Texture2D" uid="uid://dd23cg7l14nnv" path="res://sprites/slime.png" id="1_2kr4x"]
+[ext_resource type="Script" path="res://scripts/slime.gd" id="1_21oya"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bhmh3"]
 atlas = ExtResource("1_2kr4x")
@@ -24,10 +25,33 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Slime" type="Node2D"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_koyg4"]
+radius = 67.3647
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_v2aew"]
+radius = 3.0
+height = 8.0
+
+[node name="Slime" type="CharacterBody2D"]
+script = ExtResource("1_21oya")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(17, 17)
+position = Vector2(0, -8)
 sprite_frames = SubResource("SpriteFrames_52fao")
 autoplay = "default"
 frame_progress = 0.929056
+
+[node name="Detection" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Detection"]
+shape = SubResource("CircleShape2D_koyg4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(1, -2)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_v2aew")
+
+[connection signal="body_entered" from="Detection" to="." method="_on_detection_body_entered"]
+[connection signal="body_exited" from="Detection" to="." method="_on_detection_body_exited"]

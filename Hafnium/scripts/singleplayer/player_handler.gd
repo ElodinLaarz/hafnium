@@ -6,6 +6,8 @@ var player_class: ClassHandler.PlayerClass
 var movement = PlayerMovement.new()
 var aim = PlayerAim.new() 
 
+var enemy_in_attack_range: bool = false
+
 # TODO(ElodinLaarz): Add Inventory.
 var bomb_count: int = 0
 var bomb_max: int = 3
@@ -59,3 +61,22 @@ func _process(delta: float):
 	handle_movement(delta)
 	handle_attack(delta)
 	handle_stats(delta)
+
+func _on_hitbox_body_entered(body):
+	if body.has_method("is_enemy"):
+		enemy_in_attack_range = true
+
+func _on_hitbox_body_exited(body):
+	if body.has_method("is_enemy"):
+		enemy_in_attack_range = false
+
+func take_damage(d: int):
+	var is_dead: bool = player_class.stats.take_damage(d)
+	if is_dead:
+		# Player is dead.
+		pass
+
+
+func enemy_attack(enemy_stats: Stats):
+	take_damage(enemy_stats.damage)
+	pass
