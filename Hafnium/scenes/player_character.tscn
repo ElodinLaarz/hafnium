@@ -40,8 +40,8 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_8558f"]
-radius = 6.65452
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5b62u"]
+size = Vector2(7.89475, 15)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_x1khi"]
 size = Vector2(23, 21)
@@ -73,9 +73,9 @@ autoplay = "default"
 frame_progress = 0.632108
 
 [node name="WorldInteraction" type="CollisionShape2D" parent="."]
-position = Vector2(0, -7)
+position = Vector2(-2.98023e-08, -6.5)
 scale = Vector2(0.759999, 1)
-shape = SubResource("CircleShape2D_8558f")
+shape = SubResource("RectangleShape2D_5b62u")
 
 [node name="Hitbox" type="Area2D" parent="."]
 

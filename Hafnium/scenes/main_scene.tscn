@@ -194,7 +194,6 @@ _data = {
 script = ExtResource("1_jse2r")
 
 [node name="TileMap" type="TileMap" parent="."]
-z_index = -1
 position = Vector2(1, 6)
 tile_set = SubResource("TileSet_3mjyu")
 format = 2
