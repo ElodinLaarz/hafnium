@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://bjll723rfkdt3"]
+
+[ext_resource type="PackedScene" uid="uid://bikubqsr50x4g" path="res://scenes/weapons/bomb.tscn" id="1_uf27a"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6h83i"]
+radius = 25.0799
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 6
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_6h83i")
+debug_color = Color(0.937255, 0.168627, 0.192157, 0.419608)
+
+[node name="AnimatedSprite2D2" parent="Area2D" instance=ExtResource("1_uf27a")]
+position = Vector2(0, 0)

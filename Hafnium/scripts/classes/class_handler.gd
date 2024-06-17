@@ -171,6 +171,16 @@ func setup_damage(pc: PlayerClass, cn: ClassName):
             pc.stats.attack_range = 2
             pc.stats.attack_speed = 0.8
 
+func setup_class_resources(pc: PlayerClass, cn: ClassName):
+    match cn:
+        ClassName.BARBARIAN:
+            pc.stats.resources["bomb"] = 3
+        ClassName.DRUID:
+            pc.stats.resources["bomb"] = 2 
+        ClassName.WIZARD:
+            pc.stats.resources["bomb"] = 1
+            pc.stats.resources["mana"] = 4
+
 class PlayerClass:
     var class_handler := ClassHandler.new()
     var heart_drawing_logic: Callable
@@ -190,6 +200,19 @@ class PlayerClass:
         self.heart_drawing_logic = class_handler.hdl(cn)
         class_handler.setup_damage(self, cn)
         class_handler.setup_hp(self, cn)
+        class_handler.setup_class_resources(self, cn)
+    
+    func has_resource(resource: String, count: int) -> bool:
+        if self.stats.resources.has(resource):
+            return self.stats.resources[resource] >= count
+        return false
+    
+    func use_resource(resource: String, count: int) -> bool:
+        if self.stats.resources.has(resource):
+            if self.stats.resources[resource] >= count:
+                self.stats.resources[resource] -= count
+                return true
+        return false
     
     func draw_hearts(heart_container: Node):
         self.heart_drawing_logic.call(self.stats, heart_container)

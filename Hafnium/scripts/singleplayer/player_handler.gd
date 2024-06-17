@@ -57,7 +57,12 @@ func handle_movement(delta: float):
 func handle_attack(delta: float):
     aim.update_pivot(delta)
     if Input.is_action_just_pressed("attack"):
-        print("attack!")
+        if Common.place_bomb():
+            print("bomb placed!")
+            return
+        else:
+            print("oh noes! no bombs!")
+
 
 func handle_stats():
     if enemy_in_attack_range and enemy_body != null:
