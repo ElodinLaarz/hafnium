@@ -9,8 +9,9 @@ var aim = PlayerAim.new()
 var enemy_body: CharacterBody2D
 var enemy_in_attack_range: bool = false
 var is_invincible: bool = false
-var invincibility_frame_length: float = 1.0
+var invincibility_frame_length: float = 1.5
 var invincibility_frame_timer: float = 0.0
+@onready var _animated_sprite = $PlayerSprite
 
 # TODO(ElodinLaarz): Add Inventory.
 var bomb_count: int = 0
@@ -58,7 +59,7 @@ func handle_attack(delta: float):
     if Input.is_action_just_pressed("attack"):
         print("attack!")
 
-func handle_stats(delta: float):
+func handle_stats():
     if enemy_in_attack_range and enemy_body != null:
         enemy_attack(enemy_body)
 
@@ -68,6 +69,7 @@ func handle_timers(delta: float):
         if invincibility_frame_timer >= invincibility_frame_length:
             is_invincible = false
             invincibility_frame_timer = 0.0
+            _animated_sprite.play("idle")
 
 func _ready():
     ready_aim()
@@ -76,7 +78,7 @@ func _ready():
 func _process(delta: float):
     handle_movement(delta)
     handle_attack(delta)
-    handle_stats(delta)
+    handle_stats() # delta later...
     handle_timers(delta)
 
 func _on_hitbox_body_entered(body):
@@ -93,6 +95,7 @@ func take_damage(d: int):
     if is_invincible:
         # You are invincible and don't take damage :)
         return
+    _animated_sprite.play("invincibility_frames")
     print("You are taking %d damage!" % d)
     var is_dead: bool = player_class.stats.take_damage(d)
     player_class.draw_hearts(Common.player_heart_containers)
