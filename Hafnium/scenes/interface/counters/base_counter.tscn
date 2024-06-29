@@ -27,6 +27,7 @@ offset_bottom = 17.0
 grow_horizontal = 0
 grow_vertical = 2
 theme = ExtResource("3_llqkp")
-text = "10"
+text = "($)
+"
 horizontal_alignment = 1
 vertical_alignment = 1
