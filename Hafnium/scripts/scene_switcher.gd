@@ -3,6 +3,7 @@ extends Node
 const MULTIPLAYER_OVERLAY: String = "MultiplayerOverlay"
 
 var main_scene = load("res://scenes/main_scene.tscn")
+var level_one = load("res://scenes/levels/level_1.tscn")
 var character_select = load("res://scenes/character_select.tscn")
 
 var curret_game_type: Common.GameType = Common.GameType.SINGLE_PLAYER
@@ -16,7 +17,8 @@ func main_scene_start(menu_caller: Control, game_type: Common.GameType, player_n
         menu_caller.queue_free()
         add_child(menu_to_load)
         return
-    var level_to_load: Node2D = main_scene.instantiate()
+    # var level_to_load: Node2D = main_scene.instantiate()
+    var level_to_load: Node2D = level_one.instantiate()
     # Load the main scene and attach the player character.
     var ui: CanvasLayer = level_to_load.get_node("UI")
     var multiplayer_overlay: Control = ui.get_node(MULTIPLAYER_OVERLAY)

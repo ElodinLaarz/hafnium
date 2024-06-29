@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://c4kcgjlual6tq"]
+
+[ext_resource type="PackedScene" uid="uid://30i2deyqd887" path="res://scenes/interface/interface.tscn" id="1_abkko"]
+[ext_resource type="PackedScene" uid="uid://bv32i8rf5w5sv" path="res://scenes/test_scenes/multiplayer_overlay.tscn" id="2_afm22"]
+
+[node name="UI" type="CanvasLayer"]
+
+[node name="Interface" parent="." instance=ExtResource("1_abkko")]
+
+[node name="MultiplayerOverlay" parent="." instance=ExtResource("2_afm22")]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 10
+anchor_bottom = 0.0
+offset_bottom = 108.0
+grow_vertical = 1

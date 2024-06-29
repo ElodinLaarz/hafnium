@@ -132,18 +132,35 @@ func default_hearts():
     # Draw empty heart containers.
     pass
 
-func hdl(cn: ClassName) -> Callable:
+func hdl(pc: PlayerClass, cn: ClassName) -> bool:
+    if !setup_hp(pc, cn):
+        print("trouble setting up hp for %s" % cn)
+        return false
+    if !setup_class_resources(pc, cn):
+        print("trouble setting up resources for %s" % cn)
+        return false
+    if !setup_heart_drawing(pc, cn):
+        print("trouble setting up heart drawing for %s" % cn)
+        return false
+    if !setup_attack(pc, cn):
+        print("trouble setting up attack for %s" % cn)
+        return false
+    return true
+    
+func setup_heart_drawing(pc: PlayerClass, cn: ClassName) -> bool:
     match cn:
         ClassName.BARBARIAN:
-            return barbarian_heart_drawing_logic
+            pc.heart_drawing_logic = barbarian_heart_drawing_logic
         ClassName.DRUID:
-            return druid_heart_drawing_logic
+            pc.heart_drawing_logic = druid_heart_drawing_logic
         ClassName.WIZARD:
-            return wizard_heart_drawing_logic
+            pc.heart_drawing_logic = wizard_heart_drawing_logic
         _:
             print("Unexpected class: ", cn)
             print("Default heart drawing logic will be used.")
-            return default_hearts
+            pc.heart_drawing_logic = default_hearts
+            return false
+    return true
 
 func setup_hp(pc: PlayerClass, cn: ClassName):
     match cn:
@@ -154,7 +171,29 @@ func setup_hp(pc: PlayerClass, cn: ClassName):
             pc.stats.max_health = 6
         ClassName.WIZARD:
             pc.stats.max_health = 4
+        _:
+            # Unmatched class
+            return false
     pc.stats.current_health = pc.stats.max_health 
+    return true
+
+func wizard_attack(stats: Stats):
+    # Add cooldown and stuff
+    return true 
+
+func setup_attack(pc: PlayerClass, cn: ClassName) -> bool:
+    if !setup_damage(pc, cn):
+        print("trouble setting up damage for %s" % cn)
+        return false
+    match cn:
+        # TODO(ElodinLaarz): Implement the other classes...
+        ClassName.WIZARD:
+            Common.player_attack_projectile = load("res://scenes/weapons/bullets/fireball.tscn")
+            pc.attack_logic = wizard_attack 
+        _:
+            # Unmatched class
+            return false
+    return true
 
 func setup_damage(pc: PlayerClass, cn: ClassName):
     match cn:
@@ -170,8 +209,12 @@ func setup_damage(pc: PlayerClass, cn: ClassName):
             pc.stats.damage = 1
             pc.stats.attack_range = 2
             pc.stats.attack_speed = 0.8
+        _:
+            # Unmatched class
+            return false
+    return true
 
-func setup_class_resources(pc: PlayerClass, cn: ClassName):
+func setup_class_resources(pc: PlayerClass, cn: ClassName) -> bool:
     match cn:
         ClassName.BARBARIAN:
             pc.stats.resources["bomb"] = 3
@@ -180,10 +223,14 @@ func setup_class_resources(pc: PlayerClass, cn: ClassName):
         ClassName.WIZARD:
             pc.stats.resources["bomb"] = 1
             pc.stats.resources["mana"] = 4
+        _:
+            return false
+    return true
 
 class PlayerClass:
     var class_handler := ClassHandler.new()
     var heart_drawing_logic: Callable
+    var attack_logic: Callable
     var name: ClassName
     var stats: Stats
     func _init(cn: ClassName):
@@ -197,10 +244,10 @@ class PlayerClass:
 
         # Wizards have purple hearts, but their missing health also
         # becomes reserve mana, which is blue.
-        self.heart_drawing_logic = class_handler.hdl(cn)
-        class_handler.setup_damage(self, cn)
-        class_handler.setup_hp(self, cn)
-        class_handler.setup_class_resources(self, cn)
+        if class_handler.hdl(self, cn):
+            print("successfully set up class %s" % ClassName.keys()[cn])
+        else:
+            print("failed to set up class %s" % ClassName.keys()[cn])
     
     func has_resource(resource: String, count: int) -> bool:
         if self.stats.resources.has(resource):
@@ -213,9 +260,12 @@ class PlayerClass:
                 self.stats.resources[resource] -= count
                 return true
         return false
-    
+
     func draw_hearts(heart_container: Node):
         self.heart_drawing_logic.call(self.stats, heart_container)
+
+    func attack():
+        self.attack_logic.call(self.stats)
 
 func create_class(cn: ClassName) -> PlayerClass:
     # Create a new player character of the given class.
