@@ -3,7 +3,9 @@ extends enemy
 @onready var _slime_animated_sprite = $SlimeSprite
 
 var slime_reward = {
-    # 50% of the time, you get a ruby!
+    # 25% of the time, you get nothing! :(
+    25: [],
+    # 25% of the time, you get a ruby!
     50: [load("res://scenes/items/Ruby.tscn"), 1],
     # 50% of the time, you get 2 rubies!
     100: [load("res://scenes/items/Ruby.tscn"), 2]
@@ -32,8 +34,9 @@ func _on_detection_body_entered(body: CharacterBody2D):
     self.chasing_player = true
 
 func _on_detection_body_exited(body):
-    self.player = null
-    self.chasing_player = false
+    if self.player == body:
+        self.player = null
+        self.chasing_player = false
 
 func _on_hitbox_body_entered(body:Node2D):
     if body.has_method("is_projectile"):

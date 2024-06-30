@@ -211,9 +211,9 @@ func setup_damage(pc: PlayerClass, cn: ClassName):
             pc.stats.projectile_speed = 50
         ClassName.WIZARD:
             pc.stats.damage = 1
-            pc.stats.attack_range = 2
+            pc.stats.attack_range = 90 
             pc.stats.attack_speed = 0.8
-            pc.stats.projectile_speed = 100
+            pc.stats.projectile_speed = 180
         _:
             # Unmatched class
             return false

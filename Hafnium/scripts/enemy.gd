@@ -42,9 +42,9 @@ func drop_reward() -> Array:
     # start.
     reward.keys().sort()
     for key in reward.keys():
-        if key < rand_int:
+        if key >= rand_int:
+            got_reward = reward[key]
             break
-        got_reward = reward[key]
     return got_reward 
 
 func _physics_process(delta):

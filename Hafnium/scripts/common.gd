@@ -28,13 +28,16 @@ func place_bomb() -> bool:
 func attack() -> bool:
     if !player_class.attack():
         return false
+    var stats: Stats = player_class.stats
     var p = player_attack_projectile.instantiate()
     p.rotation = PI+attack_spawn_angle # We should have projectiles point right, actually...
     var aim_dir = Vector2(cos(attack_spawn_angle), sin(attack_spawn_angle))
     p.position = player_character.position + aim_dir * attack_displacement_magnitude 
     # Have the proj have a non-zero velocity in the direction
     # of the aim sight.
-    p.velocity = aim_dir * player_class.stats.projectile_speed 
+    p.velocity = aim_dir * stats.projectile_speed 
+    p.damage = stats.damage 
+    p.ttl = stats.attack_range / stats.projectile_speed
     get_parent().add_child(p)
     return true
 
@@ -57,7 +60,7 @@ func projectile_resolve(creature: CharacterBody2D, proj: CharacterBody2D):
             var count = reward_details[1]
             for i in range(count):
                 var r = reward.instantiate()
-                r.position = reward_spawn_pos
+                r.position = reward_spawn_pos + a_little_offset(5)
                 get_parent().add_child(r)
         else:
             print("No reward to drop. :(")

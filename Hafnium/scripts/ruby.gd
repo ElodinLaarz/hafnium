@@ -1,4 +1,4 @@
-extends CharacterBody2D 
+extends Node2D 
 
 var ttl: float = 1.0 # Seconds to live.
 var currency_value: int = 1
