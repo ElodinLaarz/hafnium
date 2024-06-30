@@ -179,6 +179,9 @@ func setup_hp(pc: PlayerClass, cn: ClassName):
 
 func wizard_attack(stats: Stats):
     # Add cooldown and stuff
+    if stats.attack_cooldown > 0:
+        return false
+    stats.attack_cooldown = stats.attack_speed
     return true 
 
 func setup_attack(pc: PlayerClass, cn: ClassName) -> bool:
@@ -205,10 +208,12 @@ func setup_damage(pc: PlayerClass, cn: ClassName):
             pc.stats.damage = 2
             pc.stats.attack_range = 1
             pc.stats.attack_speed = 1.2
+            pc.stats.projectile_speed = 50
         ClassName.WIZARD:
             pc.stats.damage = 1
             pc.stats.attack_range = 2
             pc.stats.attack_speed = 0.8
+            pc.stats.projectile_speed = 100
         _:
             # Unmatched class
             return false
@@ -264,8 +269,8 @@ class PlayerClass:
     func draw_hearts(heart_container: Node):
         self.heart_drawing_logic.call(self.stats, heart_container)
 
-    func attack():
-        self.attack_logic.call(self.stats)
+    func attack() -> bool:
+        return self.attack_logic.call(self.stats)
 
 func create_class(cn: ClassName) -> PlayerClass:
     # Create a new player character of the given class.

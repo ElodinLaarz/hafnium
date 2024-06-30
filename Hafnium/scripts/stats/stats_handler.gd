@@ -12,6 +12,9 @@ var max_health: int
 var damage: int
 var attack_range: int
 var attack_speed: float
+var projectile_speed: float
+
+var attack_cooldown: float
 
 var resources: Dictionary 
 
@@ -74,6 +77,11 @@ func enemy_init(params: EnemyStatsParams):
     damage = params.damage
     attack_range = params.attack_range
     attack_speed = params.attack_speed
+
+func update(delta):
+    if attack_cooldown > 0:
+        attack_cooldown -= delta
+    pass
 
 func _init():
     current_health = 0

@@ -48,3 +48,6 @@ func update_pivot(delta: float):
 	
 	var polar_displacement: PolarCoordinate = polar_coordinates(unit_displacement)
 	aim_sight.rotation = polar_displacement.angle
+	# Sync the direction of aim_sight with the intended direction of
+	# a projectile.
+	Common.attack_spawn_angle = polar_displacement.angle

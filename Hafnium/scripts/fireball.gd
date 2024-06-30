@@ -1,4 +1,4 @@
-extends Node2D
+extends CharacterBody2D 
 
-func _init():
-	pass
+func _physics_process(delta):
+    move_and_slide()

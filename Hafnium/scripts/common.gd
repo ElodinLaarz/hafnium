@@ -14,6 +14,9 @@ var player_class: ClassHandler.PlayerClass
 var player_heart_containers: Node
 var load_player: Callable
 
+var attack_spawn_angle: float = 0 
+var attack_displacement_magnitude: float = 15
+
 func place_bomb() -> bool:
     if !player_class.use_resource("bomb", 1):
         return false
@@ -26,8 +29,13 @@ func attack() -> bool:
     if !player_class.attack():
         print("can't attack yet! :O")
         return false
-    var projectile = player_attack_projectile.instance()
-    projectile.position = player_character.position
+    var projectile = player_attack_projectile.instantiate()
+    projectile.rotation = PI+attack_spawn_angle # We should have projectiles point right, actually...
+    var aim_dir = Vector2(cos(attack_spawn_angle), sin(attack_spawn_angle))
+    projectile.position = player_character.position + aim_dir * attack_displacement_magnitude 
+    # Have the projectile have a non-zero velocity in the direction
+    # of the aim sight.
+    projectile.velocity = aim_dir * player_class.stats.projectile_speed 
     get_parent().add_child(projectile)
     return true
     

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://2fbyvsx3kw4n"]
+[gd_scene load_steps=9 format=3 uid="uid://2fbyvsx3kw4n"]
 
 [ext_resource type="Texture2D" uid="uid://biis87q8e6uop" path="res://sprites/not_my_art/fireball.png" id="1_s85b4"]
 [ext_resource type="Script" path="res://scripts/fireball.gd" id="1_snadh"]
@@ -39,9 +39,20 @@ animations = [{
 "speed": 12.0
 }]
 
-[node name="Fireball" type="Node2D"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_ra1i3"]
+radius = 2.0
+
+[node name="Fireball" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 0
 script = ExtResource("1_snadh")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(72, 73)
+position = Vector2(4, -3.55271e-15)
+scale = Vector2(0.1, 0.1)
 sprite_frames = SubResource("SpriteFrames_q36fl")
+autoplay = "default"
+frame_progress = 0.341923
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_ra1i3")
