@@ -1,8 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://bqv3td38bqdte"]
+[gd_scene load_steps=11 format=3 uid="uid://bqv3td38bqdte"]
 
 [ext_resource type="TileSet" uid="uid://2fwsyq4erwqb" path="res://scenes/tilemaps/main_tiles.tres" id="1_twwp8"]
 [ext_resource type="PackedScene" uid="uid://bpaa5lkbjqfp7" path="res://scenes/npcs/slime.tscn" id="3_7k8kg"]
 [ext_resource type="PackedScene" uid="uid://c4kcgjlual6tq" path="res://scenes/interface/ui.tscn" id="3_ckccw"]
+[ext_resource type="PackedScene" uid="uid://bpas27v6cdg21" path="res://scenes/npcs/enemy_spawner.tscn" id="4_d3gip"]
 
 [sub_resource type="Animation" id="Animation_421st"]
 resource_name = "Jumping"
@@ -119,3 +120,6 @@ libraries = {
 autoplay = "Sliming"
 
 [node name="UI" parent="." instance=ExtResource("3_ckccw")]
+
+[node name="EnemySpawner" parent="." instance=ExtResource("4_d3gip")]
+position = Vector2(151, -122)
