@@ -9,7 +9,7 @@ var character_select = load("res://scenes/character_select.tscn")
 var curret_game_type: Common.GameType = Common.GameType.SINGLE_PLAYER
 
 func _ready():
-    Common.start_game_type.connect(handle_game_start)
+	Common.start_game_type.connect(handle_game_start)
 
 func main_scene_start(menu_caller: Control, game_type: Common.GameType, player_name: String):
     if game_type == Common.GameType.LOAD_GAME:
@@ -40,12 +40,12 @@ func main_scene_start(menu_caller: Control, game_type: Common.GameType, player_n
     menu_caller.queue_free()
 
 func update_menu_options(main_menu: Control, new_options: Dictionary):
-    # This does not work yet...
-    var buttons: Array = main_menu.get_node("Buttons").get_children()
-    for i in range(buttons.size()):
-        buttons[i].text = new_options[new_options.keys()[i]]
-        buttons[i].text = new_options[new_options.values()[i]]
+	# This does not work yet...
+	var buttons: Array = main_menu.get_node("Buttons").get_children()
+	for i in range(buttons.size()):
+		buttons[i].text = new_options[new_options.keys()[i]]
+		buttons[i].text = new_options[new_options.values()[i]]
 
 func handle_game_start(main_menu: Control, game_type: Common.GameType, player_name: String):
-    print("Game start: %s" % game_type)
-    main_scene_start(main_menu, game_type, player_name)
+	print("Game start: %s" % game_type)
+	main_scene_start(main_menu, game_type, player_name)
