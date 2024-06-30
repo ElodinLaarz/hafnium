@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://2fbyvsx3kw4n"]
 
+[ext_resource type="Script" path="res://scripts/projectile.gd" id="1_etc0n"]
 [ext_resource type="Texture2D" uid="uid://biis87q8e6uop" path="res://sprites/not_my_art/fireball.png" id="1_s85b4"]
-[ext_resource type="Script" path="res://scripts/fireball.gd" id="1_snadh"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_264gt"]
 atlas = ExtResource("1_s85b4")
@@ -45,7 +45,7 @@ radius = 2.0
 [node name="Fireball" type="CharacterBody2D"]
 collision_layer = 4
 collision_mask = 0
-script = ExtResource("1_snadh")
+script = ExtResource("1_etc0n")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(4, -3.55271e-15)

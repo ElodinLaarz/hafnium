@@ -1,9 +1,9 @@
 extends Node
 
-var bomb_weapon = load("res://scenes/weapons/player_bomb.tscn")
+var bomb_weapon: Resource = load("res://scenes/weapons/player_bomb.tscn")
 
 # Not totally sure if this will work for melee attacks...
-var player_attack_projectile : Resource  # Should be initialized to the player's attack projectile by the player
+var player_attack_projectile : Resource  # Should be initialized to the player's attack proj by the player
 
 signal start_game_type(object_to_free: Control, game_type: Common.GameType, save_file: String)
 const START_GAME_TYPE: String = "start_game_type"
@@ -27,15 +27,42 @@ func place_bomb() -> bool:
 
 func attack() -> bool:
     if !player_class.attack():
-        print("can't attack yet! :O")
         return false
-    var projectile = player_attack_projectile.instantiate()
-    projectile.rotation = PI+attack_spawn_angle # We should have projectiles point right, actually...
+    var p = player_attack_projectile.instantiate()
+    p.rotation = PI+attack_spawn_angle # We should have projectiles point right, actually...
     var aim_dir = Vector2(cos(attack_spawn_angle), sin(attack_spawn_angle))
-    projectile.position = player_character.position + aim_dir * attack_displacement_magnitude 
-    # Have the projectile have a non-zero velocity in the direction
+    p.position = player_character.position + aim_dir * attack_displacement_magnitude 
+    # Have the proj have a non-zero velocity in the direction
     # of the aim sight.
-    projectile.velocity = aim_dir * player_class.stats.projectile_speed 
-    get_parent().add_child(projectile)
+    p.velocity = aim_dir * player_class.stats.projectile_speed 
+    get_parent().add_child(p)
     return true
-    
+
+func projectile_resolve(creature: CharacterBody2D, proj: CharacterBody2D):
+    if !proj.has_method("is_projectile"):
+        return
+    if !creature.has_method("is_enemy"):
+        # Only deal damage to enemies.
+        return
+    var damage = proj.damage
+    # Get damage value from proj and apply health reduction
+    # to creature.
+    # Returns true when creature has 0 health.
+    if creature.stats.take_damage(damage):
+        var reward_spawn_pos = creature.position
+        var reward_details = creature.drop_reward()
+        creature.queue_free()
+        if len(reward_details) > 0:
+            var reward = reward_details[0]
+            var count = reward_details[1]
+            for i in range(count):
+                var r = reward.instantiate()
+                r.position = reward_spawn_pos
+                get_parent().add_child(r)
+        else:
+            print("No reward to drop. :(")
+    proj.queue_free()
+
+func a_little_offset(max_offset: float) -> Vector2:
+    var random_modulus: float = randf_range(0, max_offset)
+    return random_modulus * Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()

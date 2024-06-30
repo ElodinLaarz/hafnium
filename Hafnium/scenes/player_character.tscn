@@ -113,7 +113,7 @@ collision_mask = 3
 script = ExtResource("1_jprhx")
 
 [node name="Main Camera" type="Camera2D" parent="."]
-zoom = Vector2(5, 5)
+zoom = Vector2(3, 3)
 position_smoothing_enabled = true
 
 [node name="PlayerPivot" type="Node2D" parent="Main Camera"]

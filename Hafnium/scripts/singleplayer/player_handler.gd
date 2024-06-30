@@ -60,14 +60,9 @@ func handle_attack(delta: float):
         if Input.is_action_pressed("attack"):
                 if Common.attack():
                         print("attacking!")
-                else:
-                        print("oh noes! no weapons!")
         if Input.is_action_just_pressed("secondary_attack"):
                 if Common.place_bomb():
                         print("bomb placed!")
-                        return
-                else:
-                        print("oh noes! no bombs!")
 
 
 func handle_stats(delta: float):
@@ -122,3 +117,8 @@ func enemy_attack(e: enemy):
         return
     take_damage(e.stats.damage)
     is_invincible = true
+
+func add_currency(c: int):
+    currency += c
+    print("You have %d currency!" % currency)
+    # TODO(ElodinLaarz): Update currency display.
