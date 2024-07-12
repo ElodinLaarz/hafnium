@@ -1,0 +1,44 @@
+[gd_scene load_steps=7 format=3 uid="uid://co5we12302nsd"]
+
+[ext_resource type="Texture2D" uid="uid://2a82qwoymdl7" path="res://sprites/NEW Druid.png" id="1_7jgo3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nk0kn"]
+atlas = ExtResource("1_7jgo3")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_peqg2"]
+atlas = ExtResource("1_7jgo3")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cbha6"]
+atlas = ExtResource("1_7jgo3")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_exhy1"]
+atlas = ExtResource("1_7jgo3")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_c8bri"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nk0kn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_peqg2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cbha6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_exhy1")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D"]
+position = Vector2(19, 17)
+sprite_frames = SubResource("SpriteFrames_c8bri")
+frame_progress = 0.731681
