@@ -1,0 +1,114 @@
+[gd_scene load_steps=12 format=3 uid="uid://fovyiqjyaqij"]
+
+[ext_resource type="Texture2D" uid="uid://bp8qefbos8w0p" path="res://sprites/characters/Barbarian.png" id="1_4pcwt"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lslwg"]
+atlas = ExtResource("1_4pcwt")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fmuog"]
+atlas = ExtResource("1_4pcwt")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rcbrd"]
+atlas = ExtResource("1_4pcwt")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ncmcj"]
+atlas = ExtResource("1_4pcwt")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i3uj7"]
+atlas = ExtResource("1_4pcwt")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v6nh2"]
+atlas = ExtResource("1_4pcwt")
+region = Rect2(64, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hbcp1"]
+atlas = ExtResource("1_4pcwt")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xbh3j"]
+atlas = ExtResource("1_4pcwt")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kb3tu"]
+atlas = ExtResource("1_4pcwt")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_u277h"]
+animations = [{
+"frames": [],
+"loop": true,
+"name": &"down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lslwg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fmuog")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rcbrd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ncmcj")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i3uj7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v6nh2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hbcp1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v6nh2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xbh3j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v6nh2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kb3tu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v6nh2")
+}],
+"loop": true,
+"name": &"invincibility_frames",
+"speed": 6.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"left",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"right",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"up",
+"speed": 5.0
+}]
+
+[node name="BarbarianSprite" type="AnimatedSprite2D"]
+position = Vector2(0, -14)
+sprite_frames = SubResource("SpriteFrames_u277h")
+animation = &"idle"
+autoplay = "idle"
