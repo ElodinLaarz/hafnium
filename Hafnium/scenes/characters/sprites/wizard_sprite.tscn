@@ -1,0 +1,87 @@
+[gd_scene load_steps=12 format=3 uid="uid://dw1ncrfig46o2"]
+
+[ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://sprites/characters/Wizard.png" id="1_41p1y"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7c73s"]
+atlas = ExtResource("1_41p1y")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gvqlh"]
+atlas = ExtResource("1_41p1y")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qarb4"]
+atlas = ExtResource("1_41p1y")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yhnrk"]
+atlas = ExtResource("1_41p1y")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8t3ud"]
+atlas = ExtResource("1_41p1y")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ihfu0"]
+atlas = ExtResource("1_41p1y")
+region = Rect2(96, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_adebx"]
+atlas = ExtResource("1_41p1y")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p8s0n"]
+atlas = ExtResource("1_41p1y")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mylof"]
+atlas = ExtResource("1_41p1y")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_oe56b"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7c73s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gvqlh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qarb4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yhnrk")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8t3ud")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ihfu0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_adebx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p8s0n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ihfu0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mylof")
+}],
+"loop": true,
+"name": &"invincibility_frames",
+"speed": 6.0
+}]
+
+[node name="WizardSprite" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_oe56b")
+animation = &"invincibility_frames"
+frame_progress = 0.727505

@@ -1,0 +1,97 @@
+[gd_scene load_steps=13 format=3 uid="uid://bl85q21iu1fmi"]
+
+[ext_resource type="Texture2D" uid="uid://2a82qwoymdl7" path="res://sprites/characters/Druid.png" id="1_c464q"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7o036"]
+atlas = ExtResource("1_c464q")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oix3g"]
+atlas = ExtResource("1_c464q")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8d1aw"]
+atlas = ExtResource("1_c464q")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lbgcs"]
+atlas = ExtResource("1_c464q")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rr0xv"]
+atlas = ExtResource("1_c464q")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ur4oe"]
+atlas = ExtResource("1_c464q")
+region = Rect2(64, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u6b4m"]
+atlas = ExtResource("1_c464q")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eqymb"]
+atlas = ExtResource("1_c464q")
+region = Rect2(96, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w38oy"]
+atlas = ExtResource("1_c464q")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wmtmu"]
+atlas = ExtResource("1_c464q")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_op585"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7o036")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oix3g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8d1aw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lbgcs")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rr0xv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ur4oe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u6b4m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eqymb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w38oy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eqymb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wmtmu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eqymb")
+}],
+"loop": true,
+"name": &"invincibility_frames",
+"speed": 5.0
+}]
+
+[node name="DruidSprite" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_op585")
+animation = &"invincibility_frames"
+frame_progress = 0.669297
