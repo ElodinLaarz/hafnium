@@ -82,7 +82,7 @@ animations = [{
 }]
 
 [node name="WizardSprite" type="AnimatedSprite2D"]
-position = Vector2(0, -14)
+position = Vector2(0, -10)
 sprite_frames = SubResource("SpriteFrames_oe56b")
 animation = &"invincibility_frames"
 autoplay = "idle"

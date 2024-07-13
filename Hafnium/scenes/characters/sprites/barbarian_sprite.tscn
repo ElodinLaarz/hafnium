@@ -108,7 +108,7 @@ animations = [{
 }]
 
 [node name="BarbarianSprite" type="AnimatedSprite2D"]
-position = Vector2(0, -14)
+position = Vector2(0, -10)
 sprite_frames = SubResource("SpriteFrames_u277h")
 animation = &"idle"
 autoplay = "idle"

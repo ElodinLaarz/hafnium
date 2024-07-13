@@ -92,7 +92,7 @@ animations = [{
 }]
 
 [node name="DruidSprite" type="AnimatedSprite2D"]
-position = Vector2(0, -14)
+position = Vector2(0, -10)
 sprite_frames = SubResource("SpriteFrames_op585")
 animation = &"invincibility_frames"
 autoplay = "idle"
