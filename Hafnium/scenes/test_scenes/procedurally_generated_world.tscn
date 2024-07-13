@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://scripts/test_scripts/world_generation.gd" id="2_23mjd"]
 [ext_resource type="Script" path="res://scripts/singleplayer/player_handler.gd" id="3_dhkc5"]
 [ext_resource type="Texture2D" uid="uid://cpuha70ui6ytg" path="res://sprites/Aim_Right.png" id="4_6odi8"]
-[ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://sprites/Wizard.png" id="5_3ikh8"]
+[ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://sprites/characters/Wizard.png" id="5_3ikh8"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_65gsb"]
 noise_type = 3

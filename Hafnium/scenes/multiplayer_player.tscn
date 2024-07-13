@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/mutiplayer/multiplayer_controller.gd" id="1_n0m2s"]
 [ext_resource type="Script" path="res://scripts/mutiplayer/multiplayer_input.gd" id="2_upvfl"]
-[ext_resource type="Texture2D" uid="uid://bp8qefbos8w0p" path="res://sprites/Barbarian.png" id="3_js31c"]
+[ext_resource type="Texture2D" uid="uid://bp8qefbos8w0p" path="res://sprites/characters/Barbarian.png" id="3_js31c"]
 [ext_resource type="Script" path="res://scripts/mutiplayer/multiplayer_aim.gd" id="4_ey7il"]
 [ext_resource type="Texture2D" uid="uid://cpuha70ui6ytg" path="res://sprites/Aim_Right.png" id="5_rhfrw"]
 

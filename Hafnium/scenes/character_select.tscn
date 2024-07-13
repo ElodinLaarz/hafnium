@@ -2,8 +2,8 @@
 
 [ext_resource type="Texture2D" uid="uid://cqkwf4xwn3yhq" path="res://tile_map/map.png" id="1_dmv56"]
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_p2cuw"]
-[ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://sprites/Wizard.png" id="1_ryjbv"]
-[ext_resource type="Texture2D" uid="uid://bp8qefbos8w0p" path="res://sprites/Barbarian.png" id="2_0w3pr"]
+[ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://sprites/characters/Wizard.png" id="1_ryjbv"]
+[ext_resource type="Texture2D" uid="uid://bp8qefbos8w0p" path="res://sprites/characters/Barbarian.png" id="2_0w3pr"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ymqdx"]
 texture = ExtResource("1_dmv56")

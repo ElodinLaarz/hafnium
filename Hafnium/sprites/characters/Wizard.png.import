@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://2a82qwoymdl7"
-path="res://.godot/imported/NEW Druid.png-be46bb9495496a4bca81e862eca58487.ctex"
+uid="uid://c26wbr63yl3mk"
+path="res://.godot/imported/Wizard.png-0babab46b9c40966ff6142350a94c37c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/NEW Druid.png"
-dest_files=["res://.godot/imported/NEW Druid.png-be46bb9495496a4bca81e862eca58487.ctex"]
+source_file="res://sprites/characters/Wizard.png"
+dest_files=["res://.godot/imported/Wizard.png-0babab46b9c40966ff6142350a94c37c.ctex"]
 
 [params]
 
