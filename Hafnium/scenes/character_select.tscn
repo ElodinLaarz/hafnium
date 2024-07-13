@@ -1,9 +1,14 @@
-[gd_scene load_steps=11 format=3 uid="uid://cs0oorxe8u2kj"]
+[gd_scene load_steps=16 format=3 uid="uid://cs0oorxe8u2kj"]
 
 [ext_resource type="Texture2D" uid="uid://cqkwf4xwn3yhq" path="res://tile_map/map.png" id="1_dmv56"]
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_p2cuw"]
-[ext_resource type="Texture2D" uid="uid://c26wbr63yl3mk" path="res://sprites/characters/Wizard.png" id="1_ryjbv"]
 [ext_resource type="Texture2D" uid="uid://bp8qefbos8w0p" path="res://sprites/characters/Barbarian.png" id="2_0w3pr"]
+[ext_resource type="Texture2D" uid="uid://cmtnv3wo0p45w" path="res://sprites/characters/wizard_individual/Sprite-0001.png" id="3_4ieed"]
+[ext_resource type="Texture2D" uid="uid://b0ybbsqheu0ex" path="res://sprites/characters/druid_individual/Sprite-0001.png" id="4_jtiph"]
+[ext_resource type="Texture2D" uid="uid://dxd115dwliphc" path="res://sprites/characters/wizard_individual/Sprite-0002.png" id="4_ys1ob"]
+[ext_resource type="Texture2D" uid="uid://d4b3rpyfm3gxt" path="res://sprites/characters/wizard_individual/Sprite-0003.png" id="5_01v01"]
+[ext_resource type="Texture2D" uid="uid://clu208igg5khh" path="res://sprites/characters/druid_individual/Sprite-0002.png" id="5_tgg2h"]
+[ext_resource type="Texture2D" uid="uid://63b1mfl6sqw7" path="res://sprites/characters/druid_individual/Sprite-0003.png" id="6_167w2"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ymqdx"]
 texture = ExtResource("1_dmv56")
@@ -39,16 +44,30 @@ texture = ExtResource("1_dmv56")
 [sub_resource type="TileSet" id="TileSet_atc0g"]
 sources/0 = SubResource("TileSetAtlasSource_ymqdx")
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_1v8xn"]
-atlas = ExtResource("1_ryjbv")
-region = Rect2(0, 0, 32, 32)
+[sub_resource type="AnimatedTexture" id="AnimatedTexture_nd07y"]
+frames = 4
+frame_0/texture = ExtResource("3_4ieed")
+frame_1/texture = ExtResource("4_ys1ob")
+frame_1/duration = 1.0
+frame_2/texture = ExtResource("3_4ieed")
+frame_2/duration = 1.0
+frame_3/texture = ExtResource("5_01v01")
+frame_3/duration = 1.0
 
 [sub_resource type="LabelSettings" id="LabelSettings_phlv6"]
 font_size = 28
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_x4oug"]
-atlas = ExtResource("1_ryjbv")
-region = Rect2(0, 128, 32, 32)
+[sub_resource type="AnimatedTexture" id="AnimatedTexture_pyrgu"]
+resource_local_to_scene = true
+frames = 4
+speed_scale = 2.0
+frame_0/texture = ExtResource("4_jtiph")
+frame_1/texture = ExtResource("5_tgg2h")
+frame_1/duration = 1.0
+frame_2/texture = ExtResource("4_jtiph")
+frame_2/duration = 1.0
+frame_3/texture = ExtResource("6_167w2")
+frame_3/duration = 1.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1sbv0"]
 atlas = ExtResource("2_0w3pr")
@@ -87,14 +106,11 @@ theme_override_constants/margin_right = 15
 [node name="HBoxContainer" type="HBoxContainer" parent="VBox/WizardBox"]
 layout_mode = 2
 
-[node name="WizardIcon" type="TextureRect" parent="VBox/WizardBox/HBoxContainer"]
+[node name="WizardSelect" type="TextureRect" parent="VBox/WizardBox/HBoxContainer"]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-size_flags_horizontal = 0
-texture = SubResource("AtlasTexture_1v8xn")
-expand_mode = 3
+texture = SubResource("AnimatedTexture_nd07y")
 stretch_mode = 4
-metadata/_edit_use_anchors_ = true
 
 [node name="MarginContainer" type="MarginContainer" parent="VBox/WizardBox/HBoxContainer"]
 layout_mode = 2
@@ -124,8 +140,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 size_flags_horizontal = 0
-texture = SubResource("AtlasTexture_x4oug")
-expand_mode = 3
+texture = SubResource("AnimatedTexture_pyrgu")
 stretch_mode = 4
 metadata/_edit_use_anchors_ = true
 
