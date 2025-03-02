@@ -33,8 +33,8 @@ func unit_direction_to_mouse(source_position: Vector2) -> Vector2:
 	
 	return direction.normalized()
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float):
+# Called every frame. '_delta' is the elapsed time since the previous frame.
+func _process(_delta: float):
 	var pivot_position: Vector2 = pivot.global_position
 	var unit_displacement: Vector2 = unit_direction_to_mouse(pivot_position)
 	position = pivot.position + aim_radius * unit_displacement

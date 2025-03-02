@@ -20,7 +20,7 @@ var is_running: bool = false
 
 # Create unit vector in direction determined by currently pressed keys.
 func unit_direction() -> Vector2:
-	var input: Vector2
+	var input: Vector2 = Vector2(0,0)
 	input.x = Input.get_action_strength("right") - Input.get_action_strength("left")
 	input.y = Input.get_action_strength("down") - Input.get_action_strength("up") # Yo, down is up?
 	return input.normalized() # Do we need to handle 0 vector?
@@ -107,7 +107,7 @@ func _ready():
 	else:
 		multiplayer_camera.enabled = false
 
-func _apply_animation(delta: float):
-	#TODO(ElodinLaarz): Implement animations.
-	pass
+# func _apply_animation(delta: float):
+# 	#TODO(ElodinLaarz): Implement animations.
+# 	pass
 

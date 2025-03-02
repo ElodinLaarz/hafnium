@@ -4,9 +4,9 @@ class_name ClassHandler
 enum ClassName {NONE, BARBARIAN, DRUID, WIZARD}
 
 var Class_sprite_lookup: Dictionary = {
-    ClassName.BARBARIAN: "res://scenes/characters/sprites/barbarian_sprite.tscn",
-    ClassName.DRUID: "res://scenes/characters/sprites/druid_sprite.tscn",
-    ClassName.WIZARD: "res://scenes/characters/sprites/wizard_sprite.tscn",
+	ClassName.BARBARIAN: "res://scenes/characters/sprites/barbarian_sprite.tscn",
+	ClassName.DRUID: "res://scenes/characters/sprites/druid_sprite.tscn",
+	ClassName.WIZARD: "res://scenes/characters/sprites/wizard_sprite.tscn",
 }
 
 enum HeartName {

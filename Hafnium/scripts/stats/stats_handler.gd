@@ -31,11 +31,14 @@ class ResourceStatus:
     var recovery_progress: float
     var recovery_rate: float
 
-    func _init(resource_type: ClassResource, max_resource: int, recovery_rate: float):
-        self.resource_type = resource_type
-        self.max_resource = max_resource
-        self.current_resource = max_resource
-        self.recovery_rate = recovery_rate
+    func _init(
+        p_resource_type: ClassResource,
+        p_max_resource: int,
+        p_recovery_rate: float):
+        self.resource_type = p_resource_type
+        self.max_resource = p_max_resource
+        self.current_resource = p_max_resource
+        self.recovery_rate = p_recovery_rate
         self.recovery_progress = 0
     
     func update(delta: float):
@@ -64,12 +67,17 @@ class EnemyStatsParams:
     var speed: int
     var attack_speed: float
     var attack_range: int
-    func _init(max_health: int, damage: int, speed: int, attack_speed: float, attack_range: int):
-        self.max_health = max_health
-        self.damage = damage
-        self.speed = speed
-        self.attack_speed = attack_speed
-        self.attack_range = attack_range
+    func _init(
+        p_max_health: int,
+        p_damage: int,
+        p_speed: int,
+        p_attack_speed: float,
+        p_attack_range: int):
+        self.max_health = p_max_health
+        self.damage = p_damage
+        self.speed = p_speed
+        self.attack_speed = p_attack_speed
+        self.attack_range = p_attack_range
 
 func enemy_init(params: EnemyStatsParams):
     max_health = params.max_health
