@@ -37,7 +37,7 @@ func unit_direction_to_mouse(source_position: Vector2) -> Vector2:
 	
 	return direction.normalized()
 
-func update_pivot(delta: float):
+func update_pivot(_delta: float):
 	if not pivot:
 		print("UH OH! No Pivot?? :O")
 		return

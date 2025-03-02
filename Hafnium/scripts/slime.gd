@@ -6,9 +6,9 @@ var slime_reward = {
     # 25% of the time, you get nothing! :(
     25: [],
     # 25% of the time, you get a ruby!
-    50: [load("res://scenes/items/Ruby.tscn"), 1],
+    50: [load("res://scenes/items/ruby.tscn"), 1],
     # 50% of the time, you get 2 rubies!
-    100: [load("res://scenes/items/Ruby.tscn"), 2]
+    100: [load("res://scenes/items/ruby.tscn"), 2]
 };
 
 var slime_params: Stats.EnemyStatsParams = Stats.EnemyStatsParams.new(

@@ -7,12 +7,17 @@ class PlayerConfiguration:
 	var bomb_count: int
 	var bomb_max: int
 
-	func _init(name: String, player_class: ClassHandler.PlayerClass, currency: int, bomb_count: int, bomb_max: int):
-		self.name = name
-		self.player_class = player_class
-		self.currency = currency
-		self.bomb_count = bomb_count
-		self.bomb_max = bomb_max
+	func _init(
+        p_name: String,
+        p_player_class: ClassHandler.PlayerClass,
+        p_currency: int,
+        p_bomb_count: int,
+        p_bomb_max: int):
+		self.name = p_name
+		self.player_class = p_player_class
+		self.currency = p_currency
+		self.bomb_count = p_bomb_count
+		self.bomb_max = p_bomb_max
 
 var data = {
 	"druid": PlayerConfiguration.new("Example Player", ClassHandler.PlayerClass.new(ClassHandler.ClassName.DRUID), 25, 2, 5),
