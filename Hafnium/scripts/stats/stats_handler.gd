@@ -56,7 +56,7 @@ class ResourceStatus:
 # Return if the health has reached zero.
 func take_damage(d: int) -> bool:
     current_health -= d 
-    if current_health < 0:
+    if current_health <= 0:
         current_health = 0
         return true
     return false

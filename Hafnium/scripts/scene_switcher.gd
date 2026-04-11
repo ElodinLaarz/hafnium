@@ -22,6 +22,7 @@ func main_scene_start(menu_caller: Control, game_type: Common.GameType, player_n
   if player_name == "":
     print("Player name is empty, defaulting to wizard")
     player_name = "wizard"
+  
   # var level_to_load: Node2D = main_scene.instantiate()
   var level_to_load: Node2D = level_one.instantiate()
   # Load the main scene and attach the player character.
@@ -32,6 +33,7 @@ func main_scene_start(menu_caller: Control, game_type: Common.GameType, player_n
       multiplayer_overlay.visible = false
     Common.GameType.MULTIPLAYER:
       multiplayer_overlay.visible = true
+      
   var player_character: Node2D = load("res://scenes/player_character.tscn").instantiate()
   if !Common.load_player.call(player_name):
     print("Unable to load player character: %s" % player_name)

@@ -1,0 +1,33 @@
+name: "Run Tests"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    name: Run GUT Tests
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Install GUT (since it is ignored by git)
+        run: |
+          mkdir -p Hafnium/addons/gut
+          git clone --depth 1 https://github.com/bitwes/Gut.git target_dir
+          mv target_dir/addons/gut Hafnium/addons/
+          rm -rf target_dir
+      
+      - name: Godot Test
+        uses: barichello/godot-github-action@v1.3.0
+        with:
+          generate-modules: false
+          godot-version: 4.2.2 # Fixed version for stability, matching 4.x feature set
+          project-path: Hafnium/
+          test: true
+          # GUT specific arguments
+          args: "--headless -s addons/gut/gut_cmdln.gd -gdir=res://tests/unit -gexit"
