@@ -63,7 +63,7 @@ var empty_heart: Rect2i = named_heart_lookup[HeartName.EMPTY]
 var health_checks: Health = Health.new()
 
 func barbarian_heart_drawing_logic(stats: Stats, heart_container: Node):
-	if !health_checks.bounds_ok(stats, heart_container):
+	if !health_checks.bounds_ok(stats, heart_container.get_child_count()):
 		print("Health bounds check failed-- using default heart drawing logic.")
 		default_hearts()
 		return
@@ -92,7 +92,7 @@ func barbarian_heart_drawing_logic(stats: Stats, heart_container: Node):
 			current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
 
 func druid_heart_drawing_logic(stats: Stats, heart_container: Node):
-	if !health_checks.bounds_ok(stats, heart_container):
+	if !health_checks.bounds_ok(stats, heart_container.get_child_count()):
 		print("Health bounds check failed-- using default heart drawing logic.")
 		default_hearts()
 		return
@@ -114,7 +114,7 @@ func druid_heart_drawing_logic(stats: Stats, heart_container: Node):
 # TODO(ElodinLaarz): Implement this...
 func wizard_heart_drawing_logic(stats: Stats, heart_container: Node):
 	# Draw purple hearts, with blue reserve mana
-	if !health_checks.bounds_ok(stats, heart_container):
+	if !health_checks.bounds_ok(stats, heart_container.get_child_count()):
 		print("Health bounds check failed-- using default heart drawing logic.")
 		default_hearts()
 		return
@@ -190,14 +190,25 @@ func wizard_attack(stats: Stats):
 	stats.attack_cooldown = stats.attack_speed
 	return true 
 
+func get_attack_projectile_path(cn: ClassName) -> String:
+	match cn:
+		ClassName.WIZARD:
+			return "res://scenes/weapons/bullets/fireball.tscn"
+		_:
+			return ""
+
 func setup_attack(pc: PlayerClass, cn: ClassName) -> bool:
 	if !setup_damage(pc, cn):
 		print("trouble setting up damage for %s" % cn)
 		return false
+	
+	var projectile_path = get_attack_projectile_path(cn)
+	if projectile_path != "":
+		Common.player_attack_projectile = load(projectile_path)
+	
 	match cn:
 		# TODO(ElodinLaarz): Implement the other classes...
 		ClassName.WIZARD:
-			Common.player_attack_projectile = load("res://scenes/weapons/bullets/fireball.tscn")
 			pc.attack_logic = wizard_attack 
 		_:
 			# Unmatched class

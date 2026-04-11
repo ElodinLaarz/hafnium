@@ -4,6 +4,7 @@ class_name enemy
 var _animated_sprite: AnimatedSprite2D 
 
 var movement = EnemyMovement.new()
+var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
 var stats: Stats
 var chasing_player: bool = false
@@ -37,11 +38,12 @@ func drop_reward() -> Array:
     # Select random integer between 0 and 100 and choose the smallest
     # key greater than or equal to the random integer.
     var got_reward: Array = [] 
-    var rand_int = randi_range(0, 100)
+    var rand_int = rng.randi_range(0, 100)
     # Sort keys -- in the future, we should sort the keys from the
     # start.
-    reward.keys().sort()
-    for key in reward.keys():
+    var keys = reward.keys()
+    keys.sort()
+    for key in keys:
         if key >= rand_int:
             got_reward = reward[key]
             break

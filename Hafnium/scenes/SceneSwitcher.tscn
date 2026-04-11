@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://jvw1qovwral5"]
+[gd_scene format=3 uid="uid://jvw1qovwral5"]
 
-[ext_resource type="Script" path="res://scripts/scene_switcher.gd" id="1_m2cis"]
+[ext_resource type="Script" uid="uid://dnrr0qfrp3etx" path="res://scripts/scene_switcher.gd" id="1_m2cis"]
 [ext_resource type="PackedScene" uid="uid://bjf0osioffpss" path="res://scenes/main_menu.tscn" id="1_x26f8"]
 
-[node name="SceneSwitcher" type="Node"]
+[node name="SceneSwitcher" type="Node" unique_id=883921917]
 script = ExtResource("1_m2cis")
 
-[node name="MainMenu" parent="." instance=ExtResource("1_x26f8")]
+[node name="MainMenu" parent="." unique_id=688401633 instance=ExtResource("1_x26f8")]

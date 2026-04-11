@@ -23,12 +23,25 @@ func set_max_speed_run():
 func velocity_lerp(delta: float, v: Vector2, player_direction: Vector2) -> Vector2:
 	return lerp(v, player_direction * player_speed, delta * ACCEL)
 
+# Overridable input methods for testing
+func get_raw_input() -> Vector2:
+	return Vector2(
+		get_action_strength("right") - get_action_strength("left"),
+		get_action_strength("down") - get_action_strength("up")
+	)
+
+func is_action_pressed(action: String) -> bool:
+	return Input.is_action_pressed(action)
+
+func is_action_just_pressed(action: String) -> bool:
+	return Input.is_action_just_pressed(action)
+
+func get_action_strength(action: String) -> float:
+	return Input.get_action_strength(action)
+
 # Create unit vector in direction determined by currently pressed keys.
 func unit_direction() -> Vector2:
-	var input: Vector2 = Vector2(0,0)
-	input.x = Input.get_action_strength("right") - Input.get_action_strength("left")
-	input.y = Input.get_action_strength("down") - Input.get_action_strength("up") # Yo, down is up?
-	return input.normalized() # Do we need to handle 0 vector?
+	return get_raw_input().normalized()
 
 # max_double_click_delta is the largest time between when we consider an action
 # done twice. e.g. double-pressing a key.
@@ -56,9 +69,9 @@ func still_running(delta: float, player_current_speed: float) -> bool:
 
 		# Increment time since last pressed actions
 		recently_pressed_action_times[action] += delta
-		if Input.get_action_strength(action) > 0:
+		if get_action_strength(action) > 0:
 			is_running = true
-		if Input.is_action_just_pressed(action):
+		if is_action_just_pressed(action):
 			recently_pressed_action_times[action] = 0
 			most_recent_action_name = action
 	return is_running
@@ -73,7 +86,7 @@ func started_running(delta: float) -> bool:
 		recently_pressed_action_times[action] += delta
 		# If not running, then run when movement action is a repeat of
 		# the most recent action. e.g. double-pressing "up".
-		var action_just_pressed: bool = Input.is_action_just_pressed(action)
+		var action_just_pressed: bool = is_action_just_pressed(action)
 		var action_is_most_recent: bool = most_recent_action_name == action
 		var action_recent: bool = recently_pressed_action_times[action] < max_double_click_delta
 		if action_just_pressed and action_is_most_recent and action_recent:
