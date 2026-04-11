@@ -98,5 +98,5 @@ func _init():
     attack_range = 0
     attack_speed = 0
     resources = {
-        "bombs": ResourceStatus.new(ClassResource.BOMB, 0, 0),
+        "bomb": ResourceStatus.new(ClassResource.BOMB, 0, 0),
     }

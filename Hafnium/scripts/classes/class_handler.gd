@@ -55,8 +55,13 @@ var named_heart_lookup: Dictionary = {
 }
 
 func heart_texture(texture_rect: TextureRect, heart_name: HeartName) -> AtlasTexture:
-  var at := AtlasTexture.new()
-  at.atlas = texture_rect.texture
+  var texture = texture_rect.texture
+  var at: AtlasTexture
+  if texture is AtlasTexture:
+    at = texture.duplicate()
+  else:
+    at = AtlasTexture.new()
+    at.atlas = texture
   at.region = named_heart_lookup[heart_name]
   return at
 
@@ -66,12 +71,12 @@ var health_checks: Health = Health.new()
 func barbarian_heart_drawing_logic(stats: Stats, heart_container: Node):
   if !health_checks.bounds_ok(stats, heart_container.get_child_count()):
     print("Health bounds check failed-- using default heart drawing logic.")
-    default_hearts()
+    default_hearts(stats, heart_container)
     return
   if stats.health_to_damage_multiplier != 4:
     print("Barbarians should have a health to damage multiplier of 4.")
     print("Using default heart drawing logic.")
-    default_hearts()
+    default_hearts(stats, heart_container)
     return
   
   var total_hearts: int = stats.max_health / stats.health_to_damage_multiplier
@@ -95,7 +100,7 @@ func barbarian_heart_drawing_logic(stats: Stats, heart_container: Node):
 func druid_heart_drawing_logic(stats: Stats, heart_container: Node):
   if !health_checks.bounds_ok(stats, heart_container.get_child_count()):
     print("Health bounds check failed-- using default heart drawing logic.")
-    default_hearts()
+    default_hearts(stats, heart_container)
     return
 
   var full_heart_count: int = stats.current_health / 2
@@ -116,7 +121,7 @@ func wizard_heart_drawing_logic(stats: Stats, heart_container: Node):
   # Draw purple hearts, with blue reserve mana
   if !health_checks.bounds_ok(stats, heart_container.get_child_count()):
     print("Health bounds check failed-- using default heart drawing logic.")
-    default_hearts(heart_container)
+    default_hearts(stats, heart_container)
     return
 
   var full_heart_count: int = stats.current_health / 2
@@ -142,7 +147,7 @@ func wizard_heart_drawing_logic(stats: Stats, heart_container: Node):
         current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
 
 
-func default_hearts(heart_container: Node):
+func default_hearts(_stats: Stats, heart_container: Node):
   # Clear heart containers or set them to empty.
   if heart_container == null:
     return

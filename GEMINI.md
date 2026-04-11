@@ -54,10 +54,15 @@ Hafnium is a 2D RPG/Action game built with **Godot 4**. It features single-playe
 3.  **Go Logic:** To work on the dungeon generator, navigate to `Hafnium/scripts/golang/` and use standard Go tools (`go build`, `go run`).
 
 ## Testing Plan
-We use the **GUT (Godot Unit Test)** plugin for automated testing.
-- **Unit Tests:** Located in `Hafnium/tests/unit/`.
-- **Running Tests:** Use the Gut panel in the Godot editor or run headlessly:
-  `godot --path Hafnium/ --headless -s addons/gut/gut_cmdln.gd -gdir=res://tests/unit -gexit`
+Hafnium includes a GUT-based unit test suite in `Hafnium/tests/unit`.
+
+Run the automated tests locally from the project root using the Godot CLI against the `Hafnium/` project and the GUT test suite.
+Example command:
+`godot --path Hafnium/ --headless -s addons/gut/gut_cmdln.gd -gdir=res://tests/unit -gexit`
+
+CI also runs this automated test suite using `lihop/setup-godot` (which supports graphical UI tests), so prefer keeping local test runs aligned with the CI workflow before submitting changes.
+
+Manual playtesting is still useful for gameplay verification, but it is no longer the only verification method.
 
 ## TODOs / Future Work
 - [ ] Complete the implementation of Wizard heart drawing logic in `class_handler.gd`.
