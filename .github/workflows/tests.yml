@@ -2,9 +2,8 @@ name: "Run Tests"
 
 on:
   push:
-    branches: [ "main", "feature/test-restructuring" ]
-  pull_request:
     branches: [ "main" ]
+  pull_request:
 
 jobs:
   run-tests:
