@@ -14,10 +14,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Setup Godot
-        uses: chickensoft-games/setup-godot@v2
+      - name: Setup Godot (Graphical Mode)
+        uses: lihop/setup-godot@v3
         with:
-          version: 4.3.0 # Using 4.3.0 as a stable target for "4.6" dev branch
+          version: 4.3-stable
       
       - name: Install GUT (since it is ignored by git)
         run: |
@@ -26,9 +26,11 @@ jobs:
           mv target_dir/addons/gut Hafnium/addons/
           rm -rf target_dir
       
-      - name: Import Resources
+      - name: Import Resources (Headless)
         run: godot --headless --path Hafnium/ --import --quit
 
-      - name: Run GUT Tests
+      - name: Run GUT Tests (Graphical)
         run: |
-          godot --headless --path Hafnium/ -s addons/gut/gut_cmdln.gd -gdir=res://tests/unit -gexit
+          # We run without --headless here to allow for UI/GPU features
+          # lihop/setup-godot handles the virtual display (Xvfb) automatically.
+          godot --path Hafnium/ -s addons/gut/gut_cmdln.gd -gdir=res://tests/unit -gexit
