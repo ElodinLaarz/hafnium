@@ -19,6 +19,9 @@ var invincibility_frame_length: float = 0.5
 # sum to 100 because I fear floats.
 var reward: Dictionary = {}
 
+func _init():
+	rng.randomize()
+
 # A function to identify this as an enemy.
 func is_enemy():
     pass

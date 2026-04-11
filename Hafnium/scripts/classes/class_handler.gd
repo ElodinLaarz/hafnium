@@ -55,8 +55,9 @@ var named_heart_lookup: Dictionary = {
 }
 
 func heart_texture(texture_rect: TextureRect, heart_name: HeartName) -> AtlasTexture:
-  var at: AtlasTexture = texture_rect.get_texture().duplicate()
-  at.set_region(named_heart_lookup[heart_name])
+  var at := AtlasTexture.new()
+  at.atlas = texture_rect.texture
+  at.region = named_heart_lookup[heart_name]
   return at
 
 var empty_heart: Rect2i = named_heart_lookup[HeartName.EMPTY]
@@ -111,16 +112,19 @@ func druid_heart_drawing_logic(stats: Stats, heart_container: Node):
     else:
       current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
 
-# TODO(ElodinLaarz): Implement this...
 func wizard_heart_drawing_logic(stats: Stats, heart_container: Node):
   # Draw purple hearts, with blue reserve mana
   if !health_checks.bounds_ok(stats, heart_container.get_child_count()):
     print("Health bounds check failed-- using default heart drawing logic.")
-    default_hearts()
+    default_hearts(heart_container)
     return
 
   var full_heart_count: int = stats.current_health / 2
   var partial_heart: int = stats.current_health % 2
+  
+  # Placeholder for mana logic: in the future, empty hearts should 
+  # show mana based on stats.resources["mana"]
+  var mana: int = stats.resources.get("mana", 0)
 
   for i in range(stats.max_health / 2):
     var current_heart: TextureRect = heart_container.get_child(i)
@@ -131,12 +135,20 @@ func wizard_heart_drawing_logic(stats: Stats, heart_container: Node):
         1: current_heart.texture = heart_texture(current_heart, HeartName.WIZARD_HALF_FULL_HALF_MANA)
         _: current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
     else:
-      current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
-  pass
+      # Use mana full texture if we have enough mana for this empty heart
+      if mana >= (i - full_heart_count) * 2:
+        current_heart.texture = heart_texture(current_heart, HeartName.WIZARD_FULL_MANA)
+      else:
+        current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
 
-func default_hearts():
-  # Draw empty heart containers.
-  pass
+
+func default_hearts(heart_container: Node):
+  # Clear heart containers or set them to empty.
+  if heart_container == null:
+    return
+  for i in range(heart_container.get_child_count()):
+    var current_heart: TextureRect = heart_container.get_child(i)
+    current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
 
 func hdl(pc: PlayerClass, cn: ClassName) -> bool:
   if !setup_hp(pc, cn):
@@ -204,12 +216,14 @@ func setup_attack(pc: PlayerClass, cn: ClassName) -> bool:
   
   var projectile_path = get_attack_projectile_path(cn)
   if projectile_path != "":
-    Common.player_attack_projectile = load(projectile_path)
+    pc.attack_projectile = load(projectile_path)
   
   match cn:
-    # TODO(ElodinLaarz): Implement the other classes...
     ClassName.WIZARD:
       pc.attack_logic = wizard_attack 
+    ClassName.BARBARIAN, ClassName.DRUID:
+      # TODO: Implement specific attack logic for these classes
+      pc.attack_logic = func(_stats): return true
     _:
       # Unmatched class
       return false
@@ -253,6 +267,7 @@ class PlayerClass:
   var class_handler := ClassHandler.new()
   var heart_drawing_logic: Callable
   var attack_logic: Callable
+  var attack_projectile: Resource
   var name: ClassName
   var stats: Stats
   func _init(cn: ClassName):
@@ -270,6 +285,9 @@ class PlayerClass:
       print("successfully set up class %s" % ClassName.keys()[cn])
     else:
       print("failed to set up class %s" % ClassName.keys()[cn])
+      # Fallback to avoid null callables
+      self.attack_logic = func(_stats): return false
+      self.heart_drawing_logic = class_handler.default_hearts
   
   func has_resource(resource: String, count: int) -> bool:
     if self.stats.resources.has(resource):
@@ -287,7 +305,9 @@ class PlayerClass:
     self.heart_drawing_logic.call(self.stats, heart_container)
 
   func attack() -> bool:
-    return self.attack_logic.call(self.stats)
+    if self.attack_logic:
+      return self.attack_logic.call(self.stats)
+    return false
 
 func create_class(cn: ClassName) -> PlayerClass:
   # Create a new player character of the given class.

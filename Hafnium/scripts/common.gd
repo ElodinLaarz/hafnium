@@ -28,8 +28,11 @@ func place_bomb() -> bool:
 func attack() -> bool:
   if !player_class.attack():
     return false
+  if !player_class.attack_projectile:
+    print("No attack projectile defined for class!")
+    return false
   var stats: Stats = player_class.stats
-  var p = player_attack_projectile.instantiate()
+  var p = player_class.attack_projectile.instantiate()
   p.rotation = PI+attack_spawn_angle # We should have projectiles point right, actually...
   var aim_dir = Vector2(cos(attack_spawn_angle), sin(attack_spawn_angle))
   p.position = player_character.position + aim_dir * attack_displacement_magnitude 

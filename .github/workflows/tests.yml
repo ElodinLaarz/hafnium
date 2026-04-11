@@ -17,11 +17,11 @@ jobs:
       - name: Setup Godot (Graphical Mode)
         uses: lihop/setup-godot@v3
         with:
-          version: 4.3-stable
+          version: 4.3-stable # Godot 4.3 for stable Forward+ features
       
       - name: Install GUT (since it is ignored by git)
         run: |
-          mkdir -p Hafnium/addons/gut
+          mkdir -p Hafnium/addons/
           git clone --depth 1 https://github.com/bitwes/Gut.git target_dir
           mv target_dir/addons/gut Hafnium/addons/
           rm -rf target_dir
