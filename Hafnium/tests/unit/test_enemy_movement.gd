@@ -29,7 +29,7 @@ func test_get_direction_to_player():
 
 func test_velocity_lerp():
 	var em = EnemyMovement.new()
-	em.CHASE_SPEED = 30  # Override for predictable test
+	em.chase_speed = 30  # Override for predictable test
 	em.set_chase_speed()
 	var start_v = Vector2.ZERO
 	var dir = Vector2(1, 0)

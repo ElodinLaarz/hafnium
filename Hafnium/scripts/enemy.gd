@@ -2,7 +2,7 @@ class_name Enemy
 extends CharacterBody2D
 
 var movement = EnemyMovement.new()
-var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+var rng = RandomNumberGenerator.new()
 var stats: Stats
 var chasing_player: bool = false
 var player: CharacterBody2D
