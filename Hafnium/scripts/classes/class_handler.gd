@@ -127,9 +127,10 @@ func wizard_heart_drawing_logic(stats: Stats, heart_container: Node):
   var full_heart_count: int = stats.current_health / 2
   var partial_heart: int = stats.current_health % 2
   
-  # Placeholder for mana logic: in the future, empty hearts should 
+  # Placeholder for mana logic: in the future, empty hearts should
   # show mana based on stats.resources["mana"]
-  var mana: int = stats.resources.get("mana", 0)
+  var mana_res = stats.resources.get("mana")
+  var mana: int = mana_res.current_resource if mana_res is Stats.ResourceStatus else 0
 
   for i in range(stats.max_health / 2):
     var current_heart: TextureRect = heart_container.get_child(i)
@@ -228,7 +229,7 @@ func setup_attack(pc: PlayerClass, cn: ClassName) -> bool:
       pc.attack_logic = wizard_attack 
     ClassName.BARBARIAN, ClassName.DRUID:
       # TODO: Implement specific attack logic for these classes
-      pc.attack_logic = func(_stats): return true
+      pc.attack_logic = func(_stats): return false
     _:
       # Unmatched class
       return false
@@ -258,12 +259,12 @@ func setup_damage(pc: PlayerClass, cn: ClassName):
 func setup_class_resources(pc: PlayerClass, cn: ClassName) -> bool:
   match cn:
     ClassName.BARBARIAN:
-      pc.stats.resources["bomb"] = 3
+      pc.stats.resources["bomb"] = Stats.ResourceStatus.new(Stats.ClassResource.BOMB, 3, 0)
     ClassName.DRUID:
-      pc.stats.resources["bomb"] = 2 
+      pc.stats.resources["bomb"] = Stats.ResourceStatus.new(Stats.ClassResource.BOMB, 2, 0)
     ClassName.WIZARD:
-      pc.stats.resources["bomb"] = 1
-      pc.stats.resources["mana"] = 4
+      pc.stats.resources["bomb"] = Stats.ResourceStatus.new(Stats.ClassResource.BOMB, 1, 0)
+      pc.stats.resources["mana"] = Stats.ResourceStatus.new(Stats.ClassResource.MANA, 4, 0)
     _:
       return false
   return true
@@ -296,13 +297,15 @@ class PlayerClass:
   
   func has_resource(resource: String, count: int) -> bool:
     if self.stats.resources.has(resource):
-      return self.stats.resources[resource] >= count
+      var res = self.stats.resources[resource]
+      return res.current_resource >= count
     return false
-  
+
   func use_resource(resource: String, count: int) -> bool:
     if self.stats.resources.has(resource):
-      if self.stats.resources[resource] >= count:
-        self.stats.resources[resource] -= count
+      var res = self.stats.resources[resource]
+      if res.current_resource >= count:
+        res.current_resource -= count
         return true
     return false
 

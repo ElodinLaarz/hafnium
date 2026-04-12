@@ -18,7 +18,33 @@ godot --path Hafnium/
 godot --path Hafnium/ --check-only --script scripts/common.gd
 ```
 
-There are no automated tests. Manual playtesting is the primary verification method.
+## Running Tests
+
+The project uses [GUT](https://github.com/bitwes/Gut) (Godot Unit Test). GUT is not committed; the CI workflow installs it from GitHub. To run tests locally, install GUT first:
+
+```bash
+cd Hafnium
+git clone --depth 1 https://github.com/bitwes/Gut.git _gut_tmp
+mkdir -p addons && mv _gut_tmp/addons/gut addons/ && rm -rf _gut_tmp
+```
+
+Then run tests using the provided scripts from inside `Hafnium/`:
+
+```bash
+# Linux/macOS
+./run_tests.sh
+
+# Windows (PowerShell)
+./run_tests.ps1
+```
+
+Or directly:
+
+```bash
+godot --path Hafnium/ --headless -s addons/gut/gut_cmdln.gd -gdir=res://tests/unit -gexit
+```
+
+Tests live in `Hafnium/tests/unit/`. CI runs them automatically on every push and PR via `.github/workflows/tests.yml`. Manual playtesting is used for gameplay verification only.
 
 ## Architecture
 
@@ -26,7 +52,7 @@ There are no automated tests. Manual playtesting is the primary verification met
 
 Two autoloads are registered in `project.godot`:
 
-- **`Common`** (`scripts/common.gd`) — Shared game state: holds references to the active `player_character`, `player_class`, `player_heart_containers`, and `player_attack_projectile`. Also handles `attack()`, `place_bomb()`, and `projectile_resolve()`. Most cross-system communication flows through `Common`.
+- **`Common`** (`scripts/common.gd`) — Shared game state: holds references to the active `player_character`, `player_class`, and `player_heart_containers`. Also handles `attack()`, `place_bomb()`, and `projectile_resolve()`. Most cross-system communication flows through `Common`.
 - **`MultiplayerManager`** (`scripts/mutiplayer/multiplayer_manager.gd`) — Manages ENet sessions. Host binds to `127.0.0.1:8080`; clients connect to the same. Multiplayer is currently localhost-only.
 
 ### Entry Point & Scene Flow
@@ -49,8 +75,9 @@ Two autoloads are registered in `project.godot`:
 ### Combat Flow
 
 1. Player input → `Common.attack()` or `Common.place_bomb()`
-2. `Common.attack()` checks cooldown via `player_class.attack()`, instantiates `player_attack_projectile`, sets velocity/damage/TTL from `Stats`
-3. Projectile collision → `Common.projectile_resolve(creature, proj)` applies damage; if fatal, `queue_free`s the enemy and spawns loot via `call_deferred`
+2. `Common.attack()` checks `player_class.attack_projectile` first (guard), then consumes the attack via `player_class.attack()` (which checks cooldown and sets it). The projectile is stored on `PlayerClass.attack_projectile` — `ClassHandler.setup_attack()` loads it from the path returned by `get_attack_projectile_path()`.
+3. The projectile is instantiated with velocity/damage/TTL derived from `Stats`, then added to the scene.
+4. Projectile collision → `Common.projectile_resolve(creature, proj)` applies damage; if fatal, `queue_free`s the enemy and spawns loot via `call_deferred`.
 
 **Important:** All `queue_free` and `add_child` calls that happen inside physics callbacks must use `call_deferred` / `call_deferred("add_child", ...)` to avoid modifying the scene tree during physics processing.
 

@@ -2,9 +2,6 @@ extends Node
 
 var bomb_weapon: Resource = load("res://scenes/weapons/player_bomb.tscn")
 
-# Not totally sure if this will work for melee attacks...
-var player_attack_projectile : Resource  # Should be initialized to the player's attack proj by the player
-
 signal start_game_type(object_to_free: Control, game_type: Common.GameType, save_file: String)
 const START_GAME_TYPE: String = "start_game_type"
 enum GameType {SINGLE_PLAYER, LOAD_GAME, MULTIPLAYER}
@@ -26,10 +23,10 @@ func place_bomb() -> bool:
   return true
 
 func attack() -> bool:
-  if !player_class.attack():
-    return false
   if !player_class.attack_projectile:
     print("No attack projectile defined for class!")
+    return false
+  if !player_class.attack():
     return false
   var stats: Stats = player_class.stats
   var p = player_class.attack_projectile.instantiate()
