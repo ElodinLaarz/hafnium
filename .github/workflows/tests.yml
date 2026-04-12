@@ -13,7 +13,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
+      - name: Check GDScript formatting
+        run: |
+          pip install gdtoolkit
+          find Hafnium/scripts Hafnium/tests -name "*.gd" -print0 | xargs -0 gdformat --check
+
       - name: Setup Godot (Graphical Mode)
         uses: lihop/setup-godot@v3
         with:

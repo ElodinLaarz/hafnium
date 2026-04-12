@@ -220,9 +220,7 @@ func setup_attack(pc: PlayerClass, cn: ClassName) -> bool:
     print("trouble setting up damage for %s" % cn)
     return false
   
-  var projectile_path = get_attack_projectile_path(cn)
-  if projectile_path != "":
-    pc.attack_projectile = load(projectile_path)
+  pc.attack_projectile_path = get_attack_projectile_path(cn)
   
   match cn:
     ClassName.WIZARD:
@@ -273,7 +271,7 @@ class PlayerClass:
   var class_handler := ClassHandler.new()
   var heart_drawing_logic: Callable
   var attack_logic: Callable
-  var attack_projectile: Resource
+  var attack_projectile_path: String = ""
   var name: ClassName
   var stats: Stats
   func _init(cn: ClassName):

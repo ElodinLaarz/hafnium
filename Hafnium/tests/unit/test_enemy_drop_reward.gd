@@ -22,12 +22,11 @@ func test_drop_reward_seeded_low():
 	# Based on the logic: if key >= rand_int: return reward
 	assert_not_null(result, "Should return a reward")
 
+class MockRNG extends RandomNumberGenerator:
+	var next_val = 0
+	func randi_range(_min, _max): return next_val
+
 func test_drop_reward_deterministic():
-	# Use a Mock RNG for absolute control
-	class MockRNG extends RandomNumberGenerator:
-		var next_val = 0
-		func randi_range(_min, _max): return next_val
-	
 	var e = enemy.new()
 	var mock_rng = MockRNG.new()
 	e.rng = mock_rng

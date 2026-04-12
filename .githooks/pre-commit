@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Auto-format staged GDScript files with gdformat and re-stage them.
+# gdformat is part of gdtoolkit: pip install gdtoolkit
+#
+# One-time setup (from repo root):
+#   git config core.hooksPath .githooks
+
+if ! command -v gdformat &> /dev/null; then
+    echo "[pre-commit] gdformat not found — skipping GDScript formatting."
+    echo "             Install with: pip install gdtoolkit"
+    exit 0
+fi
+
+STAGED=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.gd$' || true)
+
+if [ -z "$STAGED" ]; then
+    exit 0
+fi
+
+echo "[pre-commit] Formatting GDScript files..."
+echo "$STAGED" | tr '\n' '\0' | xargs -0 gdformat
+echo "$STAGED" | tr '\n' '\0' | xargs -0 git add
+echo "[pre-commit] Done."

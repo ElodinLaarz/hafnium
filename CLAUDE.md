@@ -18,6 +18,20 @@ godot --path Hafnium/
 godot --path Hafnium/ --check-only --script scripts/common.gd
 ```
 
+## One-time Setup
+
+After cloning, run these once:
+
+```bash
+# Point git to the committed hooks directory
+git config core.hooksPath .githooks
+
+# Install the GDScript formatter (Python 3)
+pip install gdtoolkit
+```
+
+The pre-commit hook (`./githooks/pre-commit`) will auto-format any staged `.gd` files with `gdformat` and re-stage them before each commit, so mixed-indentation errors never reach CI. If `gdformat` isn't installed the hook skips silently.
+
 ## Running Tests
 
 The project uses [GUT](https://github.com/bitwes/Gut) (Godot Unit Test). GUT is not committed; the CI workflow installs it from GitHub. To run tests locally, install GUT first:
@@ -75,8 +89,8 @@ Two autoloads are registered in `project.godot`:
 ### Combat Flow
 
 1. Player input → `Common.attack()` or `Common.place_bomb()`
-2. `Common.attack()` checks `player_class.attack_projectile` first (guard), then consumes the attack via `player_class.attack()` (which checks cooldown and sets it). The projectile is stored on `PlayerClass.attack_projectile` — `ClassHandler.setup_attack()` loads it from the path returned by `get_attack_projectile_path()`.
-3. The projectile is instantiated with velocity/damage/TTL derived from `Stats`, then added to the scene.
+2. `Common.attack()` checks `player_class.attack_projectile_path` first (guard — empty string means unimplemented), then consumes the attack via `player_class.attack()` (which checks cooldown and sets it). The path is stored as a plain string on `PlayerClass`; `ClassHandler.setup_attack()` writes it via `get_attack_projectile_path()`. The scene is loaded lazily at fire time so class setup never performs file I/O.
+3. The projectile scene is loaded and instantiated with velocity/damage/TTL derived from `Stats`, then added to the scene.
 4. Projectile collision → `Common.projectile_resolve(creature, proj)` applies damage; if fatal, `queue_free`s the enemy and spawns loot via `call_deferred`.
 
 **Important:** All `queue_free` and `add_child` calls that happen inside physics callbacks must use `call_deferred` / `call_deferred("add_child", ...)` to avoid modifying the scene tree during physics processing.

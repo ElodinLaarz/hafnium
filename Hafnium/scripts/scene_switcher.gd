@@ -15,13 +15,13 @@ func _ready():
 
 func main_scene_start(menu_caller: Control, game_type: Common.GameType, player_name: String):
   if game_type == Common.GameType.LOAD_GAME:
-    var menu_to_load: Control = character_select.instantiate()
-    menu_caller.queue_free()
-    add_child(menu_to_load)
-    return
+	var menu_to_load: Control = character_select.instantiate()
+	menu_caller.queue_free()
+	add_child(menu_to_load)
+	return
   if player_name == "":
-    print("Player name is empty, defaulting to wizard")
-    player_name = "wizard"
+	print("Player name is empty, defaulting to wizard")
+	player_name = "wizard"
   
   # var level_to_load: Node2D = main_scene.instantiate()
   var level_to_load: Node2D = level_one.instantiate()
@@ -29,15 +29,15 @@ func main_scene_start(menu_caller: Control, game_type: Common.GameType, player_n
   var ui: CanvasLayer = level_to_load.get_node("UI")
   var multiplayer_overlay: Control = ui.get_node(MULTIPLAYER_OVERLAY)
   match game_type:
-    Common.GameType.SINGLE_PLAYER:
-      multiplayer_overlay.visible = false
-    Common.GameType.MULTIPLAYER:
-      multiplayer_overlay.visible = true
-      
+	Common.GameType.SINGLE_PLAYER:
+	  multiplayer_overlay.visible = false
+	Common.GameType.MULTIPLAYER:
+	  multiplayer_overlay.visible = true
+	  
   var player_character: Node2D = load("res://scenes/player_character.tscn").instantiate()
   if !Common.load_player.call(player_name):
-    print("Unable to load player character: %s" % player_name)
-    return
+	print("Unable to load player character: %s" % player_name)
+	return
   var player_class: ClassHandler.PlayerClass = Common.player_class
   var ch: ClassHandler = ClassHandler.new()
   var player_sprite: AnimatedSprite2D = load(ch.Class_sprite_lookup[player_class.name]).instantiate()
@@ -55,8 +55,8 @@ func update_menu_options(main_menu: Control, new_options: Dictionary):
   # This does not work yet...
   var buttons: Array = main_menu.get_node("Buttons").get_children()
   for i in range(buttons.size()):
-    buttons[i].text = new_options[new_options.keys()[i]]
-    buttons[i].text = new_options[new_options.values()[i]]
+	buttons[i].text = new_options[new_options.keys()[i]]
+	buttons[i].text = new_options[new_options.values()[i]]
 
 func handle_game_start(main_menu: Control, game_type: Common.GameType, player_name: String):
   print("Game start: %s" % game_type)
