@@ -2,6 +2,7 @@ extends MultiplayerSynchronizer
 
 var input_direction: Vector2 = Vector2(0, 0)
 
+
 func _ready():
 	if get_multiplayer_authority() != multiplayer.get_unique_id():
 		set_process(false)

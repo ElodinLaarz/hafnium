@@ -1,5 +1,6 @@
-extends Node
 class_name Health
+extends Node
+
 
 func bounds_ok(stats: Stats, num_hearts: int) -> bool:
 	if stats.max_health % stats.health_to_damage_multiplier != 0:
@@ -16,4 +17,3 @@ func bounds_ok(stats: Stats, num_hearts: int) -> bool:
 		print("Health is negative: %d, expected positive value" % stats.current_health)
 		return false
 	return true
-

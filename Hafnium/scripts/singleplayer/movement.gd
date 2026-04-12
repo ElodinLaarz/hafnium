@@ -1,27 +1,43 @@
-extends Node
 class_name PlayerMovement
+extends Node
 
-# (ElodinLaarz): Values randomly chosen-- feel free to play around for something more fun. 
+# (ElodinLaarz): Values randomly chosen-- feel free to play around for something more fun.
 # Speed in pixels per second. -- The reason for not using consts in some places is so that
 # The player's top speeds an be modified, e.g. through equipment, buffs, etc.
-@export var WALKING_SPEED: int = 85
-@export var RUNNING_MULTIPLIER: float = 1.8
-@export var ACCEL: float = 10.0
-var RUNNING_SPEED: int = int(WALKING_SPEED * RUNNING_MULTIPLIER)
+@export var walking_speed: int = 85
+@export var running_multiplier: float = 1.8
+@export var accel: float = 10.0
+
+var running_speed: int = int(walking_speed * running_multiplier)
 # Current speed of player
 var player_speed: int
 # Speed of negatively accelerating player to be considered not running
-var RUN_TO_WALK_THRESHOLD: float = WALKING_SPEED * 0.5 
+var run_to_walk_threshold: float = walking_speed * 0.5
 var is_running: bool = false
 
+# max_double_click_delta is the largest time between when we consider an action
+# done twice. e.g. double-pressing a key.
+var max_double_click_delta: float = 0.5  # Units are seconds-- matching delta.
+var recently_pressed_action_times: Dictionary = {
+	"up": INF,
+	"down": INF,
+	"left": INF,
+	"right": INF,
+}  # Can I specify the types here...?
+var most_recent_action_name: String
+
+
 func set_max_speed_walk():
-	player_speed = WALKING_SPEED
-	
+	player_speed = walking_speed
+
+
 func set_max_speed_run():
-	player_speed = RUNNING_SPEED
+	player_speed = running_speed
+
 
 func velocity_lerp(delta: float, v: Vector2, player_direction: Vector2) -> Vector2:
-	return lerp(v, player_direction * player_speed, delta * ACCEL)
+	return lerp(v, player_direction * player_speed, delta * accel)
+
 
 # Overridable input methods for testing
 func get_raw_input() -> Vector2:
@@ -30,29 +46,23 @@ func get_raw_input() -> Vector2:
 		get_action_strength("down") - get_action_strength("up")
 	)
 
+
 func is_action_pressed(action: String) -> bool:
 	return Input.is_action_pressed(action)
+
 
 func is_action_just_pressed(action: String) -> bool:
 	return Input.is_action_just_pressed(action)
 
+
 func get_action_strength(action: String) -> float:
 	return Input.get_action_strength(action)
+
 
 # Create unit vector in direction determined by currently pressed keys.
 func unit_direction() -> Vector2:
 	return get_raw_input().normalized()
 
-# max_double_click_delta is the largest time between when we consider an action
-# done twice. e.g. double-pressing a key.
-var max_double_click_delta: float = 0.5 # Units are seconds-- matching delta.
-var recently_pressed_action_times: Dictionary = {
-	"up": INF,
-	"down": INF,
-	"left": INF,
-	"right": INF,
-} # Can I specify the types here...?
-var most_recent_action_name: String
 
 # still_running checks if a movement key is being held and
 # updates recently_pressed_action_times.
@@ -62,7 +72,7 @@ func still_running(delta: float, player_current_speed: float) -> bool:
 		print("OH NO! WE ARE NOT SUPPOSED TO BE HERE!")
 		print("still_running called when not running.")
 		#TODO(ElodinLaarz): How do errors work in Godot...?
-	is_running = player_current_speed > RUN_TO_WALK_THRESHOLD # Unless we're still pressing a key
+	is_running = player_current_speed > run_to_walk_threshold  # Unless we're still pressing a key
 	for action in recently_pressed_action_times:
 		# A little worried about ordering and what happens if more than
 		# one action is recently pressed...
@@ -75,6 +85,7 @@ func still_running(delta: float, player_current_speed: float) -> bool:
 			recently_pressed_action_times[action] = 0
 			most_recent_action_name = action
 	return is_running
+
 
 # Was not running but direction double-clicked, then run.
 # assumes (and checks) is_running = false
@@ -95,6 +106,7 @@ func started_running(delta: float) -> bool:
 			recently_pressed_action_times[action] = 0
 			most_recent_action_name = action
 	return is_running
+
 
 func check_is_running(delta: float, player_current_speed: float) -> bool:
 	if is_running:
