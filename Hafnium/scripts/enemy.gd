@@ -13,7 +13,12 @@ var invincibility_frame_length: float = 0.5
 # Keys are probability of the reward dropping and the value is the
 # packed resource and the quantity. For convenience, the keys
 # sum to 100 because I fear floats.
-var reward: Dictionary = {}
+var reward: Dictionary = {}:
+	set(value):
+		reward = value
+		_sorted_reward_keys = value.keys()
+		_sorted_reward_keys.sort()
+var _sorted_reward_keys: Array = []
 
 var _animated_sprite: AnimatedSprite2D
 
@@ -22,7 +27,7 @@ func _init():
 	rng.randomize()
 
 
-func _physics_process(delta):
+func _physics_process(delta: float):
 	handle_movement(delta)
 
 
@@ -31,8 +36,8 @@ func _process(delta: float):
 
 
 # A function to identify this as an enemy.
-func is_enemy():
-	pass
+func is_enemy() -> bool:
+	return true
 
 
 func handle_movement(delta: float):
@@ -52,11 +57,7 @@ func drop_reward() -> Array:
 	# key greater than or equal to the random integer.
 	var got_reward: Array = []
 	var rand_int = rng.randi_range(0, 100)
-	# Sort keys -- in the future, we should sort the keys from the
-	# start.
-	var keys = reward.keys()
-	keys.sort()
-	for key in keys:
+	for key in _sorted_reward_keys:
 		if key >= rand_int:
 			got_reward = reward[key]
 			break

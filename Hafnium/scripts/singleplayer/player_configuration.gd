@@ -32,15 +32,8 @@ var data = {
 		"wizard", ClassHandler.PlayerClass.new(ClassHandler.ClassName.WIZARD), 0, 2, 5
 	),
 	"barbarian":
-	(
-		PlayerConfiguration
-		. new(
-			"barbarian",
-			ClassHandler.PlayerClass.new(ClassHandler.ClassName.BARBARIAN),
-			0,
-			2,
-			5,
-		)
+	PlayerConfiguration.new(
+		"barbarian", ClassHandler.PlayerClass.new(ClassHandler.ClassName.BARBARIAN), 0, 2, 5
 	),
 }
 

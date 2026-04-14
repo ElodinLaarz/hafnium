@@ -38,8 +38,8 @@ func _process(delta: float):
 
 
 # Function for identifying if the CharacterBody is the player.
-func is_player():
-	pass
+func is_player() -> bool:
+	return true
 
 
 func load_player_data(player_name: String) -> bool:

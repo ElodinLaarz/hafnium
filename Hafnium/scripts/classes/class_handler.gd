@@ -52,13 +52,13 @@ func rect(row, col: int) -> Rect2i:
 
 
 func heart_texture(texture_rect: TextureRect, heart_name: HeartName) -> AtlasTexture:
-	var texture = texture_rect.texture
 	var at: AtlasTexture
-	if texture is AtlasTexture:
-		at = texture.duplicate()
+	if texture_rect.texture is AtlasTexture:
+		at = texture_rect.texture
 	else:
 		at = AtlasTexture.new()
-		at.atlas = texture
+		at.atlas = texture_rect.texture
+		texture_rect.texture = at
 	at.region = named_heart_lookup[heart_name]
 	return at
 
@@ -139,18 +139,21 @@ func wizard_heart_drawing_logic(stats: Stats, heart_container: Node):
 		var current_heart: TextureRect = heart_container.get_child(i)
 		if i < full_heart_count:
 			current_heart.texture = heart_texture(current_heart, HeartName.WIZARD_FULL)
-		elif i == full_heart_count:
-			match partial_heart:
-				1:
-					current_heart.texture = heart_texture(
-						current_heart, HeartName.WIZARD_HALF_FULL_HALF_MANA
-					)
-				_:
-					current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
+		elif i == full_heart_count and partial_heart == 1:
+			# Half-health heart: fill the other half with mana if available.
+			if mana >= 1:
+				current_heart.texture = heart_texture(
+					current_heart, HeartName.WIZARD_HALF_FULL_HALF_MANA
+				)
+			else:
+				current_heart.texture = heart_texture(current_heart, HeartName.RED_HALF)
 		else:
-			# Use mana full texture if we have enough mana for this empty heart
-			if mana >= (i - full_heart_count) * 2:
+			# Fully empty heart slot: fill with mana progressively.
+			var slot: int = i - full_heart_count
+			if mana >= (slot + 1) * 2:
 				current_heart.texture = heart_texture(current_heart, HeartName.WIZARD_FULL_MANA)
+			elif mana >= slot * 2 + 1:
+				current_heart.texture = heart_texture(current_heart, HeartName.WIZARD_HALF_MANA)
 			else:
 				current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
 
@@ -234,6 +237,8 @@ func setup_attack(pc: PlayerClass, cn: ClassName) -> bool:
 		return false
 
 	pc.attack_projectile_path = get_attack_projectile_path(cn)
+	if not pc.attack_projectile_path.is_empty():
+		pc._attack_scene = load(pc.attack_projectile_path)
 
 	match cn:
 		ClassName.WIZARD:
@@ -290,6 +295,7 @@ class PlayerClass:
 	var attack_projectile_path: String = ""
 	var name: ClassName
 	var stats: Stats
+	var _attack_scene: PackedScene
 
 	func _init(cn: ClassName):
 		self.name = cn

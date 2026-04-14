@@ -6,11 +6,11 @@ var noise: Noise
 var width: int = 500
 var height: int = 500
 var source_id: int = 0
-var water_atlas: Vector2 = Vector2i(1, 0)
+var water_atlas: Vector2i = Vector2i(1, 0)
 var sand_height: float = 0.5
-var sand_atlas: Vector2 = Vector2i(3, 0)
+var sand_atlas: Vector2i = Vector2i(3, 0)
 var mountain_height: float = 0.7
-var mountain_atlas: Vector2 = Vector2i(2, 0)
+var mountain_atlas: Vector2i = Vector2i(2, 0)
 
 @onready var tile_map = $TileMap
 

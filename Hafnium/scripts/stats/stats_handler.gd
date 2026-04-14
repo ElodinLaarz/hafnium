@@ -42,7 +42,7 @@ class ResourceStatus:
 	func update(delta: float):
 		if current_resource < max_resource:
 			recovery_progress += delta * recovery_rate
-			if recovery_progress >= 1:
+			while recovery_progress >= 1 and current_resource < max_resource:
 				current_resource += 1
 				recovery_progress -= 1
 		else:
@@ -81,8 +81,10 @@ func _init():
 # func bonus_effect()
 
 
-# Return if the health has reached zero.
+# Return if the health has reached zero. Returns false if already dead.
 func take_damage(d: int) -> bool:
+	if current_health <= 0:
+		return false
 	current_health -= d
 	if current_health <= 0:
 		current_health = 0
@@ -98,6 +100,6 @@ func enemy_init(params: EnemyStatsParams):
 	attack_speed = params.attack_speed
 
 
-func update(delta):
+func update(delta: float):
 	if attack_cooldown > 0:
 		attack_cooldown -= delta

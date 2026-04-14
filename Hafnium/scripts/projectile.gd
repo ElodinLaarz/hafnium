@@ -8,16 +8,16 @@ var damage: int = 1
 # var damage_area: float = 1 # Other characters within this area will also take damage.
 
 
-func _physics_process(delta):
+func _physics_process(delta: float):
 	decrement_time(delta)
 	move_and_slide()
 
 
-func is_projectile():
-	pass
+func is_projectile() -> bool:
+	return true
 
 
-func decrement_time(delta):
+func decrement_time(delta: float):
 	ttl -= delta
 	if ttl <= 0:
 		queue_free()
