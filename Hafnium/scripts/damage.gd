@@ -1,34 +1,28 @@
 class_name Damage
-extends Node
+extends RefCounted
 
 enum DamageType { BASIC, FIRE }
 
-
-class DamageResult:
-	var damage_type: DamageType
-	var damage_value: int
-
-	func _init(dt: DamageType, dv: int):
-		damage_type = dt
-		damage_value = dv
+var amount: int = 0
+var damage_type: DamageType = DamageType.BASIC
+var source: Node
+var source_team: int = -1
+var metadata: Dictionary = {}
 
 
-var damage_type: DamageType
-var damage_generator: Callable
+func _init(
+	p_amount: int = 0,
+	p_damage_type: DamageType = DamageType.BASIC,
+	p_source: Node = null,
+	p_source_team: int = -1,
+	p_metadata: Dictionary = {}
+):
+	amount = p_amount
+	damage_type = p_damage_type
+	source = p_source
+	source_team = p_source_team
+	metadata = p_metadata.duplicate(true)
 
 
-func basic_damage(min_damage: int, max_damage: int) -> Callable:
-	var rng = RandomNumberGenerator.new()
-	return func(): return rng.randi_range(min_damage, max_damage)
-
-
-func _init(dt: DamageType, dg: Callable):
-	self.damage_type = dt
-	self.damage_generator = dg
-
-
-func get_damage() -> DamageResult:
-	if not damage_generator:
-		print("No damage generator set for this damage object")
-		return DamageResult.new(DamageType.BASIC, 0)
-	return DamageResult.new(damage_type, damage_generator.call())
+static func basic(p_amount: int, p_source: Node = null, p_source_team: int = -1) -> Damage:
+	return Damage.new(p_amount, DamageType.BASIC, p_source, p_source_team)

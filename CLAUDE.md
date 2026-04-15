@@ -26,11 +26,11 @@ After cloning, run these once:
 # Point git to the committed hooks directory
 git config core.hooksPath .githooks
 
-# Install the GDScript formatter (Python 3)
+# Install the GDScript formatter and linter (Python 3)
 pip install gdtoolkit
 ```
 
-The pre-commit hook (`./githooks/pre-commit`) will auto-format any staged `.gd` files with `gdformat` and re-stage them before each commit, so mixed-indentation errors never reach CI. If `gdformat` isn't installed the hook skips silently.
+The pre-commit hook (`./githooks/pre-commit`) will auto-format any staged `.gd` files with `gdformat`, re-stage them, and then run `gdlint` before each commit. `gdlint` is a blocking check only, so lint issues still need to be fixed manually. If `gdtoolkit` isn't installed the hook skips those steps and prints the install command.
 
 ## Running Tests
 

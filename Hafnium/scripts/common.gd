@@ -8,6 +8,7 @@ const START_GAME_TYPE: String = "start_game_type"
 
 var bomb_weapon: Resource = load("res://scenes/weapons/player_bomb.tscn")
 
+var run_context
 var player_character: CharacterBody2D
 var player_class: ClassHandler.PlayerClass
 var player_heart_containers: Node
@@ -18,6 +19,8 @@ var attack_displacement_magnitude: float = 15
 
 
 func place_bomb() -> bool:
+	if run_context != null:
+		return run_context.place_primary_bomb()
 	if !player_class.use_resource("bomb", 1):
 		return false
 	var bomb = bomb_weapon.instantiate()
@@ -27,6 +30,8 @@ func place_bomb() -> bool:
 
 
 func attack() -> bool:
+	if run_context != null:
+		return run_context.perform_primary_attack(attack_spawn_angle)
 	if player_class.attack_projectile_path.is_empty():
 		print("No attack projectile defined for class!")
 		return false
@@ -47,6 +52,13 @@ func attack() -> bool:
 
 
 func projectile_resolve(creature: CharacterBody2D, proj: CharacterBody2D):
+	if (
+		run_context != null
+		and creature.has_method("receive_damage")
+		and proj.has_method("build_damage")
+	):
+		run_context.resolve_projectile_hit(creature, proj)
+		return
 	if !proj.has_method("is_projectile"):
 		print("requested projectile_resolve on a non-projectile!")
 		return
@@ -75,5 +87,11 @@ func projectile_resolve(creature: CharacterBody2D, proj: CharacterBody2D):
 
 
 func a_little_offset(max_offset: float) -> Vector2:
+	if run_context != null:
+		return run_context.random_offset(max_offset)
 	var random_modulus: float = randf_range(0, max_offset)
 	return random_modulus * Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
+
+
+func set_run_context(p_run_context) -> void:
+	run_context = p_run_context

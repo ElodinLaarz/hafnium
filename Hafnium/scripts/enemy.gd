@@ -1,14 +1,12 @@
 class_name Enemy
-extends CharacterBody2D
+extends "res://scripts/base_character.gd"
 
 var movement = EnemyMovement.new()
 var rng = RandomNumberGenerator.new()
-var stats: Stats
 var chasing_player: bool = false
 var player: CharacterBody2D
-var is_invincible: bool = false
-var invincibility_frame_timer: float = 0.0
-var invincibility_frame_length: float = 0.5
+var definition
+var loot_table
 
 # Keys are probability of the reward dropping and the value is the
 # packed resource and the quantity. For convenience, the keys
@@ -20,19 +18,14 @@ var reward: Dictionary = {}:
 		_sorted_reward_keys.sort()
 var _sorted_reward_keys: Array = []
 
-var _animated_sprite: AnimatedSprite2D
-
 
 func _init():
 	rng.randomize()
+	team = Team.ENEMY
 
 
 func _physics_process(delta: float):
 	handle_movement(delta)
-
-
-func _process(delta: float):
-	handle_timers(delta)
 
 
 # A function to identify this as an enemy.
@@ -51,7 +44,23 @@ func handle_movement(delta: float):
 	move_and_slide()
 
 
+func apply_definition(enemy_data) -> void:
+	definition = enemy_data
+	actor_definition_id = enemy_data.id
+	if stats == null:
+		stats = Stats.new()
+	stats.enemy_init(enemy_data.build_stats())
+	movement.chase_speed = enemy_data.speed
+	loot_table = enemy_data.loot_table
+
+
 func drop_reward() -> Array:
+	if loot_table != null:
+		var loot_drop = loot_table.roll_drop(rng)
+		if loot_drop == null:
+			return []
+		return [loot_drop.item_scene, loot_drop.count]
+
 	# Randomly choose a reward based on probabilities of each reward.
 	# Select random integer between 0 and 100 and choose the smallest
 	# key greater than or equal to the random integer.
@@ -62,12 +71,3 @@ func drop_reward() -> Array:
 			got_reward = reward[key]
 			break
 	return got_reward
-
-
-func handle_timers(delta: float):
-	if is_invincible:
-		invincibility_frame_timer += delta
-		if invincibility_frame_timer >= invincibility_frame_length:
-			is_invincible = false
-			invincibility_frame_timer = 0.0
-			_animated_sprite.play("idle")

@@ -1,11 +1,13 @@
 extends GutTest
 
+const CLASS_HANDLER_SCRIPT = preload("res://scripts/classes/class_handler.gd")
+
 # test_class_handler.gd
 # Tests for Hafnium/scripts/classes/class_handler.gd (class_name ClassHandler)
 
 
 func test_class_stats_wizard():
-	var ch = ClassHandler.new()
+	var ch = CLASS_HANDLER_SCRIPT.new()
 	var pc = ch.create_class(ClassHandler.ClassName.WIZARD)
 	assert_eq(pc.stats.max_health, 4, "Wizard should have 4 max health")
 	assert_eq(pc.stats.damage, 1, "Wizard should have 1 damage")
@@ -13,7 +15,7 @@ func test_class_stats_wizard():
 
 
 func test_class_stats_barbarian():
-	var ch = ClassHandler.new()
+	var ch = CLASS_HANDLER_SCRIPT.new()
 	var pc = ch.create_class(ClassHandler.ClassName.BARBARIAN)
 	assert_eq(pc.stats.max_health, 12, "Barbarian should have 12 max health")
 	assert_eq(pc.stats.health_to_damage_multiplier, 4, "Barbarian multiplier should be 4")
@@ -21,7 +23,7 @@ func test_class_stats_barbarian():
 
 
 func test_get_attack_projectile_path():
-	var ch = ClassHandler.new()
+	var ch = CLASS_HANDLER_SCRIPT.new()
 	var wizard_path = ch.get_attack_projectile_path(ClassHandler.ClassName.WIZARD)
 	assert_eq(
 		wizard_path, "res://scenes/weapons/bullets/fireball.tscn", "Wizard should use fireball"
@@ -32,7 +34,7 @@ func test_get_attack_projectile_path():
 
 
 func test_wizard_attack_logic():
-	var ch = ClassHandler.new()
+	var ch = CLASS_HANDLER_SCRIPT.new()
 	var pc = ch.create_class(ClassHandler.ClassName.WIZARD)
 
 	# Initial attack
@@ -46,7 +48,7 @@ func test_wizard_attack_logic():
 
 
 func test_has_resource_with_resource_status():
-	var ch = ClassHandler.new()
+	var ch = CLASS_HANDLER_SCRIPT.new()
 	var pc = ch.create_class(ClassHandler.ClassName.WIZARD)
 	assert_true(pc.has_resource("bomb", 1), "Wizard should have at least 1 bomb")
 	assert_false(pc.has_resource("bomb", 99), "Wizard should not have 99 bombs")
@@ -54,7 +56,7 @@ func test_has_resource_with_resource_status():
 
 
 func test_use_resource_decrements_resource_status():
-	var ch = ClassHandler.new()
+	var ch = CLASS_HANDLER_SCRIPT.new()
 	var pc = ch.create_class(ClassHandler.ClassName.WIZARD)
 	var bombs_before = pc.stats.resources["bomb"].current_resource
 	var used = pc.use_resource("bomb", 1)
@@ -65,14 +67,14 @@ func test_use_resource_decrements_resource_status():
 
 
 func test_use_resource_fails_when_insufficient():
-	var ch = ClassHandler.new()
+	var ch = CLASS_HANDLER_SCRIPT.new()
 	var pc = ch.create_class(ClassHandler.ClassName.WIZARD)
 	var used = pc.use_resource("bomb", 99)
 	assert_false(used, "use_resource should fail when count exceeds available")
 
 
 func test_barbarian_druid_attack_unimplemented():
-	var ch = ClassHandler.new()
+	var ch = CLASS_HANDLER_SCRIPT.new()
 	for cn in [ClassHandler.ClassName.BARBARIAN, ClassHandler.ClassName.DRUID]:
 		var pc = ch.create_class(cn)
 		assert_false(
