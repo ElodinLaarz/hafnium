@@ -7,34 +7,34 @@ const PRESET_BALANCED: String = "balanced"
 const PRESET_SNAPPY: String = "snappy"
 const PRESET_HEAVY: String = "heavy"
 
-var walk_speed: float = 85.0
-var run_multiplier: float = 1.8
-var accel: float = 10.0
-var decel: float = 24.0
-var turn_accel_multiplier: float = 1.25
-var run_double_tap_window: float = 0.5
+var walk_speed: float = 92.0
+var run_multiplier: float = 2.0
+var accel: float = 16.0
+var decel: float = 28.0
+var turn_accel_multiplier: float = 1.7
+var run_double_tap_window: float = 0.35
 
-var attack_buffer_window: float = 0.12
-var attack_move_slow_multiplier: float = 0.85
-var attack_move_slow_time: float = 0.1
-var projectile_life_multiplier: float = 1.0
+var attack_buffer_window: float = 0.1
+var attack_move_slow_multiplier: float = 0.92
+var attack_move_slow_time: float = 0.05
+var projectile_life_multiplier: float = 0.9
 
 var enable_hit_stop: bool = true
-var hit_stop_duration: float = 0.05
-var hit_stop_time_scale: float = 0.2
+var hit_stop_duration: float = 0.04
+var hit_stop_time_scale: float = 0.28
 var enable_screen_shake: bool = true
-var screen_shake_intensity: float = 2.5
-var screen_shake_duration: float = 0.08
+var screen_shake_intensity: float = 2.0
+var screen_shake_duration: float = 0.05
 var crit_chance: float = 0.5
-var crit_damage_multiplier: float = 2.0
-var crit_feedback_multiplier: float = 1.75
+var crit_damage_multiplier: float = 1.8
+var crit_feedback_multiplier: float = 1.6
 
-var _active_preset: String = PRESET_BALANCED
+var _active_preset: String = PRESET_SNAPPY
 var _suppress_signal: bool = false
 
 
 func _init() -> void:
-	apply_preset(PRESET_BALANCED)
+	apply_preset(PRESET_SNAPPY)
 
 
 func get_active_preset() -> String:
@@ -51,13 +51,13 @@ func is_modified_from_preset() -> bool:
 
 
 func reset_defaults() -> void:
-	apply_preset(PRESET_BALANCED)
+	apply_preset(PRESET_SNAPPY)
 
 
 func apply_preset(preset_name: String) -> void:
 	var safe_name: String = preset_name
 	if not _get_preset_names_dictionary().has(safe_name):
-		safe_name = PRESET_BALANCED
+		safe_name = PRESET_SNAPPY
 	_active_preset = safe_name
 	_suppress_signal = true
 	_apply_values(_get_preset_values(safe_name))

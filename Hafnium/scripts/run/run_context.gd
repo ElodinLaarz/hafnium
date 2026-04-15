@@ -141,7 +141,11 @@ func request_hit_feedback(is_crit: bool = false) -> void:
 		apply_hit_stop(
 			feel_tuning.hit_stop_duration * feedback_multiplier, crit_adjusted_time_scale
 		)
-	if feel_tuning.enable_screen_shake and feel_tuning.screen_shake_duration > 0:
+	if (
+		Common.player_screen_shake_enabled
+		and feel_tuning.enable_screen_shake
+		and feel_tuning.screen_shake_duration > 0
+	):
 		camera_shake_requested.emit(
 			feel_tuning.screen_shake_intensity * feedback_multiplier,
 			feel_tuning.screen_shake_duration * feedback_multiplier

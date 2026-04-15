@@ -1,11 +1,11 @@
 extends GutTest
 
 
-func test_default_preset_values_are_balanced() -> void:
+func test_default_preset_values_are_snappy() -> void:
 	var profile: FeelTuningProfile = FeelTuningProfile.new()
-	assert_eq(profile.get_active_preset(), FeelTuningProfile.PRESET_BALANCED)
-	assert_almost_eq(profile.walk_speed, 85.0, 0.001)
-	assert_almost_eq(profile.attack_buffer_window, 0.12, 0.001)
+	assert_eq(profile.get_active_preset(), FeelTuningProfile.PRESET_SNAPPY)
+	assert_almost_eq(profile.walk_speed, 92.0, 0.001)
+	assert_almost_eq(profile.attack_buffer_window, 0.1, 0.001)
 
 
 func test_apply_preset_changes_values() -> void:
