@@ -22,11 +22,11 @@ func instantiate_room(room_id: String) -> Node2D:
 	return null
 
 
-func get_room_data(room_id: String):
+func get_room_data(room_id: String) -> RoomData:
 	return ContentRegistry.require_room(room_id)
 
 
-func _apply_room_definition(room_root: Node, room_data) -> void:
+func _apply_room_definition(room_root: Node, room_data: RoomData) -> void:
 	var room_nodes: Array = [room_root]
 	room_nodes.append_array(room_root.find_children("*", "Node", true, false))
 	for node in room_nodes:

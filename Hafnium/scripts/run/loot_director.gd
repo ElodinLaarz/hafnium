@@ -4,11 +4,11 @@ extends Node
 var run_context
 
 
-func configure(p_run_context) -> void:
+func configure(p_run_context: RunContext) -> void:
 	run_context = p_run_context
 
 
-func spawn_drop(drop, spawn_position: Vector2) -> void:
+func spawn_drop(drop: LootDropData, spawn_position: Vector2) -> void:
 	if drop == null or drop.item_scene == null or run_context == null:
 		return
 	var entity_root: Node = run_context.get_world_entity_root()

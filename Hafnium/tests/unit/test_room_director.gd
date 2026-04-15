@@ -3,7 +3,7 @@ extends GutTest
 const ROOM_DIRECTOR_SCRIPT = preload("res://scripts/rooms/room_director.gd")
 
 
-func test_instantiate_room_applies_encounter_definition_to_room_root():
+func test_instantiate_room_applies_encounter_definition_to_room_root() -> void:
 	var room_director = ROOM_DIRECTOR_SCRIPT.new()
 	var room_root = room_director.instantiate_room("room:start")
 

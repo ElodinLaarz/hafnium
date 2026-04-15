@@ -10,20 +10,20 @@ class MockFailedRunContext:
 
 	var spawn_calls: Array[Vector2] = []
 
-	func spawn_enemy(_enemy_id: String, spawn_position: Vector2):
+	func spawn_enemy(_enemy_id: String, spawn_position: Vector2) -> Enemy:
 		spawn_calls.append(spawn_position)
 		return null
 
 
-func before_each():
+func before_each() -> void:
 	_previous_run_context = Common.run_context
 
 
-func after_each():
+func after_each() -> void:
 	Common.run_context = _previous_run_context
 
 
-func test_room_size_scales_with_room_index():
+func test_room_size_scales_with_room_index() -> void:
 	var room = INFINITE_ROOM_SCRIPT.new()
 	room.room_scale_tiles = 10
 	room.tile_size = 16
@@ -32,7 +32,7 @@ func test_room_size_scales_with_room_index():
 	assert_eq(room.get_room_half_extents(3), Vector2(240, 240))
 
 
-func test_spawn_positions_match_room_index_and_stay_inside_room():
+func test_spawn_positions_match_room_index_and_stay_inside_room() -> void:
 	var room = INFINITE_ROOM_SCRIPT.new()
 	room.room_scale_tiles = 12
 	room.tile_size = 16
@@ -49,7 +49,7 @@ func test_spawn_positions_match_room_index_and_stay_inside_room():
 		assert_lte(position.length(), max_spawn_radius + 0.001)
 
 
-func test_spawn_positions_stay_inside_small_rooms_with_large_spawn_margin():
+func test_spawn_positions_stay_inside_small_rooms_with_large_spawn_margin() -> void:
 	var room = INFINITE_ROOM_SCRIPT.new()
 	room.room_scale_tiles = 1
 	room.tile_size = 16
@@ -70,7 +70,7 @@ func test_spawn_positions_stay_inside_small_rooms_with_large_spawn_margin():
 		assert_lte(absf(position.y), half_extents.y + 0.001)
 
 
-func test_failed_enemy_spawns_schedule_room_advance():
+func test_failed_enemy_spawns_schedule_room_advance() -> void:
 	var room = INFINITE_ROOM_SCRIPT.new()
 	var mock_run_context = MockFailedRunContext.new()
 	Common.run_context = mock_run_context
@@ -84,10 +84,10 @@ func test_failed_enemy_spawns_schedule_room_advance():
 	)
 
 
-func test_enemy_defeated_only_counts_active_wave_members():
+func test_enemy_defeated_only_counts_active_wave_members() -> void:
 	var room = INFINITE_ROOM_SCRIPT.new()
-	var tracked_enemy := Node.new()
-	var stale_enemy := Node.new()
+	var tracked_enemy := Enemy.new()
+	var stale_enemy := Enemy.new()
 
 	room.current_room_index = 2
 	room.remaining_enemies = 1

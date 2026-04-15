@@ -70,7 +70,7 @@ func attach_world_root(root: Node2D) -> void:
 		room_entered.emit(room_id)
 
 
-func register_player(player) -> void:
+func register_player(player: PlayerCharacter) -> void:
 	if player == null:
 		return
 
@@ -106,11 +106,11 @@ func place_primary_bomb() -> bool:
 	return combat_director.place_bomb(primary_player)
 
 
-func resolve_projectile_hit(target, projectile) -> bool:
+func resolve_projectile_hit(target: BaseCharacter, projectile: Projectile) -> bool:
 	return combat_director.resolve_projectile_hit(target, projectile)
 
 
-func handle_enemy_defeated(enemy) -> void:
+func handle_enemy_defeated(enemy: Enemy) -> void:
 	if enemy == null:
 		return
 	enemy_defeated.emit(enemy)
@@ -122,7 +122,7 @@ func handle_enemy_defeated(enemy) -> void:
 		loot_director.spawn_drop(drop, enemy.position)
 
 
-func emit_resource_state(player) -> void:
+func emit_resource_state(player: PlayerCharacter) -> void:
 	if player == null or player.player_class == null:
 		return
 	for resource_name in player.player_class.stats.resources.keys():
@@ -130,7 +130,7 @@ func emit_resource_state(player) -> void:
 		resource_changed.emit(resource_name, resource.current_resource, resource.max_resource)
 
 
-func emit_currency_state(player) -> void:
+func emit_currency_state(player: PlayerCharacter) -> void:
 	if player == null:
 		return
 	currency_changed.emit(player.currency)
@@ -141,7 +141,7 @@ func random_offset(max_offset: float) -> Vector2:
 	return random_modulus * Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
 
 
-func spawn_enemy(enemy_id: String, spawn_position: Vector2):
+func spawn_enemy(enemy_id: String, spawn_position: Vector2) -> Enemy:
 	var entity_root: Node = get_world_entity_root()
 	if entity_root == null:
 		return null

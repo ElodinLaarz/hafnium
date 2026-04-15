@@ -6,11 +6,11 @@ const BOMB_SCENE: PackedScene = preload("res://scenes/weapons/player_bomb.tscn")
 var run_context
 
 
-func configure(p_run_context) -> void:
+func configure(p_run_context: RunContext) -> void:
 	run_context = p_run_context
 
 
-func fire_attack(player, angle: float) -> bool:
+func fire_attack(player: PlayerCharacter, angle: float) -> bool:
 	if (
 		run_context == null
 		or run_context.world_root == null
@@ -60,7 +60,7 @@ func fire_attack(player, angle: float) -> bool:
 	return true
 
 
-func place_bomb(player) -> bool:
+func place_bomb(player: PlayerCharacter) -> bool:
 	if (
 		run_context == null
 		or run_context.world_root == null
@@ -82,7 +82,7 @@ func place_bomb(player) -> bool:
 	return true
 
 
-func resolve_projectile_hit(target, projectile) -> bool:
+func resolve_projectile_hit(target: BaseCharacter, projectile: Projectile) -> bool:
 	if run_context == null or target == null or projectile == null:
 		return false
 	var damage: Damage = projectile.build_damage()

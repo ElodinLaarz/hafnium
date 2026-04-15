@@ -250,7 +250,7 @@ func _emit_room_state(room_index: int) -> void:
 	Common.run_context.room_entered.emit(room_data.id)
 
 
-func _on_enemy_defeated(enemy) -> void:
+func _on_enemy_defeated(enemy: Enemy) -> void:
 	if current_room_index <= 0 or remaining_enemies <= 0:
 		return
 	if enemy == null:
