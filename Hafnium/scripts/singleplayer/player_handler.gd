@@ -100,7 +100,7 @@ func handle_movement(delta: float) -> void:
 
 func handle_attack(delta: float) -> void:
 	aim.update_pivot(delta)
-	if Input.is_action_pressed(GameConstants.INPUT_ACTION_ATTACK):
+	if Input.is_action_just_pressed(GameConstants.INPUT_ACTION_ATTACK):
 		_attack_buffer_timer = _get_attack_buffer_window()
 	if _attack_buffer_timer > 0 and Common.attack():
 		_attack_buffer_timer = 0.0
@@ -200,7 +200,3 @@ func _apply_feel_tuning() -> void:
 	if feel_tuning == null:
 		return
 	movement.apply_tuning(feel_tuning)
-	if player_class != null and player_class.definition != null:
-		movement.walking_speed = int(round(player_class.definition.speed))
-		movement.running_speed = int(round(movement.walking_speed * movement.running_multiplier))
-		movement.run_to_walk_threshold = movement.walking_speed * RUN_TO_WALK_THRESHOLD_FACTOR

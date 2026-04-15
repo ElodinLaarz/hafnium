@@ -137,9 +137,9 @@ func request_hit_feedback(is_crit: bool = false) -> void:
 	if is_crit:
 		feedback_multiplier = feel_tuning.crit_feedback_multiplier
 	if feel_tuning.enable_hit_stop and feel_tuning.hit_stop_duration > 0:
+		var crit_adjusted_time_scale: float = feel_tuning.hit_stop_time_scale / feedback_multiplier
 		apply_hit_stop(
-			feel_tuning.hit_stop_duration * feedback_multiplier,
-			1.0 - ((1.0 - feel_tuning.hit_stop_time_scale) * feedback_multiplier)
+			feel_tuning.hit_stop_duration * feedback_multiplier, crit_adjusted_time_scale
 		)
 	if feel_tuning.enable_screen_shake and feel_tuning.screen_shake_duration > 0:
 		camera_shake_requested.emit(
