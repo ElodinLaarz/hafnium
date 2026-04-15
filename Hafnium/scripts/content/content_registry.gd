@@ -1,5 +1,9 @@
 extends Node
 
+const DEFAULT_RESOURCE_INDEX: int = 0
+const NON_POSITIVE_WEIGHT: int = 0
+const WEIGHTED_ROLL_MIN: int = 1
+
 const CHARACTER_RESOURCE_PATHS: Array[String] = [
 	"res://resources/characters/barbarian.tres",
 	"res://resources/characters/druid.tres",
@@ -84,7 +88,7 @@ func require_room(id: String) -> RoomData:
 
 func get_rooms_by_kind(room_kind: String) -> Array:
 	var rooms: Array = []
-	for room in room_defs.values():
+	for room: RoomData in room_defs.values():
 		if room.room_kind == room_kind:
 			rooms.append(room)
 	return rooms
@@ -96,19 +100,19 @@ func choose_weighted_room(room_kind: String, rng: RandomNumberGenerator) -> Room
 		return null
 
 	var total_weight: int = 0
-	for room in rooms:
-		total_weight += max(room.weight, 0)
+	for room: RoomData in rooms:
+		total_weight += max(room.weight, NON_POSITIVE_WEIGHT)
 
-	if total_weight <= 0:
-		return rooms[0]
+	if total_weight <= NON_POSITIVE_WEIGHT:
+		return rooms[DEFAULT_RESOURCE_INDEX]
 
-	var roll: int = rng.randi_range(1, total_weight)
+	var roll: int = rng.randi_range(WEIGHTED_ROLL_MIN, total_weight)
 	var cumulative: int = 0
-	for room in rooms:
-		cumulative += max(room.weight, 0)
+	for room: RoomData in rooms:
+		cumulative += max(room.weight, NON_POSITIVE_WEIGHT)
 		if roll <= cumulative:
 			return room
-	return rooms[0]
+	return rooms[DEFAULT_RESOURCE_INDEX]
 
 
 func _register_all(paths: Array, target: Dictionary, label: String) -> void:

@@ -1,26 +1,39 @@
 extends "res://scripts/enemy.gd"
 
+const GameConstants = preload("res://scripts/config/game_constants.gd")
 const RUBY_SCENE: PackedScene = preload("res://scenes/items/ruby.tscn")
-const DEFAULT_ENEMY_ID: String = "enemy:slime_basic"
+const DEFAULT_ENEMY_ID: String = GameConstants.ENEMY_ID_SLIME_BASIC
+
+const DEFAULT_SLIME_HEALTH: int = 2
+const DEFAULT_SLIME_DAMAGE: int = 1
+const DEFAULT_SLIME_SPEED: int = 90
+const DEFAULT_SLIME_ATTACK_COOLDOWN: int = 2
+const DEFAULT_SLIME_ATTACK_RANGE: int = 1
+
+const REWARD_THRESHOLD_NO_DROP: int = 25
+const REWARD_THRESHOLD_SINGLE_DROP: int = 50
+const REWARD_THRESHOLD_DOUBLE_DROP: int = 100
+const SINGLE_RUBY_DROP_COUNT: int = 1
+const DOUBLE_RUBY_DROP_COUNT: int = 2
 
 var slime_reward: Dictionary = {
 	# 25% of the time, you get nothing! :(
-	25: [],
+	REWARD_THRESHOLD_NO_DROP: [],
 	# 25% of the time, you get a ruby!
-	50: [RUBY_SCENE, 1],
+	REWARD_THRESHOLD_SINGLE_DROP: [RUBY_SCENE, SINGLE_RUBY_DROP_COUNT],
 	# 50% of the time, you get 2 rubies!
-	100: [RUBY_SCENE, 2]
+	REWARD_THRESHOLD_DOUBLE_DROP: [RUBY_SCENE, DOUBLE_RUBY_DROP_COUNT]
 }
 
 var slime_params: Stats.EnemyStatsParams = (
 	Stats
 	. EnemyStatsParams
 	. new(
-		2,  # health
-		1,  # damage
-		90,  # speed
-		2,  # attack_cooldown
-		1,  # attack_range
+		DEFAULT_SLIME_HEALTH,  # health
+		DEFAULT_SLIME_DAMAGE,  # damage
+		DEFAULT_SLIME_SPEED,  # speed
+		DEFAULT_SLIME_ATTACK_COOLDOWN,  # attack_cooldown
+		DEFAULT_SLIME_ATTACK_RANGE,  # attack_range
 	)
 )
 

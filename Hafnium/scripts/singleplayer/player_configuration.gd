@@ -1,9 +1,11 @@
 class_name PlayerConfigurationManager
 
+const GameConstants = preload("res://scripts/config/game_constants.gd")
+
 const PLAYER_IDS: Dictionary = {
-	"barbarian": "class:barbarian",
-	"druid": "class:druid",
-	"wizard": "class:wizard",
+	GameConstants.HEART_STYLE_BARBARIAN: GameConstants.CLASS_ID_BARBARIAN,
+	GameConstants.HEART_STYLE_DRUID: GameConstants.CLASS_ID_DRUID,
+	GameConstants.HEART_STYLE_WIZARD: GameConstants.CLASS_ID_WIZARD,
 }
 
 

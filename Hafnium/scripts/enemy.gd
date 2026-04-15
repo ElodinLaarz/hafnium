@@ -1,6 +1,9 @@
 class_name Enemy
 extends "res://scripts/base_character.gd"
 
+const LEGACY_REWARD_ROLL_MIN: int = 0
+const LEGACY_REWARD_ROLL_MAX: int = 100
+
 var movement: EnemyMovement = EnemyMovement.new()
 var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var chasing_player: bool = false
@@ -56,7 +59,7 @@ func apply_definition(enemy_data: EnemyData) -> void:
 
 func drop_reward() -> Array:
 	if loot_table != null:
-		var loot_drop = loot_table.roll_drop(rng)
+		var loot_drop: LootDropData = loot_table.roll_drop(rng)
 		if loot_drop == null:
 			return []
 		return [loot_drop.item_scene, loot_drop.count]
@@ -65,7 +68,7 @@ func drop_reward() -> Array:
 	# Select random integer between 0 and 100 and choose the smallest
 	# key greater than or equal to the random integer.
 	var got_reward: Array = []
-	var rand_int: int = rng.randi_range(0, 100)
+	var rand_int: int = rng.randi_range(LEGACY_REWARD_ROLL_MIN, LEGACY_REWARD_ROLL_MAX)
 	for key: int in _sorted_reward_keys:
 		if key >= rand_int:
 			got_reward = reward[key]

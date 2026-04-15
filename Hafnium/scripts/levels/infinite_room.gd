@@ -4,6 +4,10 @@ const ROOM_DATA_SCRIPT = preload("res://scripts/resources/room_data.gd")
 
 const FLOOR_COLOR: Color = Color(0.117647, 0.129412, 0.156863, 1.0)
 const BORDER_COLOR: Color = Color(0.345098, 0.392157, 0.470588, 1.0)
+const PREFERRED_RING_SPACING: float = 48.0
+const RING_ANGLE_STAGGER_DIVISOR: float = 8.0
+const BORDER_WIDTH: float = 6.0
+const COMBAT_ROOM_KIND: String = "combat"
 
 @export var room_scale_tiles: int = 12
 @export var tile_size: int = 16
@@ -58,10 +62,9 @@ func build_spawn_positions(spawn_count: int) -> Array[Vector2]:
 	var max_radius: float = max(available_radius, 0.0)
 	var safe_ring_capacity: int = max(ring_capacity, 1)
 	var estimated_ring_count: int = maxi(int(ceil(float(count) / float(safe_ring_capacity))), 1)
-	var preferred_ring_spacing: float = 48.0
 	var ring_count: int = estimated_ring_count
 	if max_radius > 0.0:
-		var max_supported_rings: int = maxi(int(floor(max_radius / preferred_ring_spacing)), 1)
+		var max_supported_rings: int = maxi(int(floor(max_radius / PREFERRED_RING_SPACING)), 1)
 		ring_count = mini(estimated_ring_count, max_supported_rings)
 	var radius_step: float = 0.0
 	if ring_count > 0 and max_radius > 0.0:
@@ -75,7 +78,7 @@ func build_spawn_positions(spawn_count: int) -> Array[Vector2]:
 		var radius: float = 0.0
 		if radius_step > 0.0:
 			radius = min(radius_step * float(clamped_ring_index + 1), max_radius)
-		var angle_offset: float = float(clamped_ring_index) * PI / 8.0
+		var angle_offset: float = float(clamped_ring_index) * PI / RING_ANGLE_STAGGER_DIVISOR
 		var angle: float = angle_offset + TAU * float(slot_index) / float(max(slots_in_ring, 1))
 		spawn_positions.append(Vector2.RIGHT.rotated(angle) * radius)
 
@@ -137,12 +140,12 @@ func _advance_to_next_room() -> void:
 
 func _build_wave_enemy_ids(room_index: int) -> Array[String]:
 	var enemy_ids: Array[String] = []
-	var encounter = ContentRegistry.require_encounter(encounter_definition_id)
+	var encounter: EncounterData = ContentRegistry.require_encounter(encounter_definition_id)
 	if encounter == null or encounter.spawns.is_empty():
 		return enemy_ids
 
 	var configured_enemy_ids: Array[String] = []
-	for spawn_entry in encounter.spawns:
+	for spawn_entry: EncounterSpawnData in encounter.spawns:
 		if spawn_entry == null or spawn_entry.enemy_id.is_empty():
 			continue
 		for _i: int in range(max(spawn_entry.count, 1)):
@@ -192,7 +195,7 @@ func _rebuild_room_geometry(room_index: int) -> void:
 	generated_room.add_child(floor)
 
 	var border: Line2D = Line2D.new()
-	border.width = 6.0
+	border.width = BORDER_WIDTH
 	border.closed = true
 	border.default_color = BORDER_COLOR
 	border.points = floor_points
@@ -244,7 +247,7 @@ func _emit_room_state(room_index: int) -> void:
 
 	var room_data: RoomData = ROOM_DATA_SCRIPT.new()
 	room_data.id = "Room %d" % room_index
-	room_data.room_kind = "combat"
+	room_data.room_kind = COMBAT_ROOM_KIND
 	room_data.encounter_id = encounter_definition_id
 	Common.run_context.current_room = room_data
 	Common.run_context.room_entered.emit(room_data.id)

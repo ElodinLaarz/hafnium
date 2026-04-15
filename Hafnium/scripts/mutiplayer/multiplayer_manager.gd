@@ -1,13 +1,14 @@
 extends Node
 
 const MULTIPLAYER_PLAYER: Resource = preload("res://scenes/multiplayer_player.tscn")
+const GameConstants = preload("res://scripts/config/game_constants.gd")
 
 const MAIN_SCENE: String = "MainScene"
 const MULTIPLAYER_PLAYERS_NAME: String = "Players"
 const SINGLE_PLAYER_NAME: String = "Player"  # To remove single player controller.
 
-const SERVER_PORT: int = 8080
-const SERVER_IP: String = "127.0.0.1"
+const SERVER_PORT: int = GameConstants.DEFAULT_SERVER_PORT
+const SERVER_IP: String = GameConstants.LOCAL_SERVER_IP
 
 var _main_scene: Node
 
@@ -28,7 +29,7 @@ func become_host() -> void:
 	multiplayer.peer_disconnected.connect(_del_player)
 
 	_remove_single_player()
-	_add_player_to_game(1)  # Add the host player
+	_add_player_to_game(GameConstants.HOST_PLAYER_ID)  # Add the host player
 
 
 func join_game() -> void:

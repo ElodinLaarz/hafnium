@@ -5,6 +5,8 @@ signal start_game_type(object_to_free: Control, game_type: GameType, save_file: 
 enum GameType { SINGLE_PLAYER, LOAD_GAME, MULTIPLAYER }
 
 const START_GAME_TYPE: String = "start_game_type"
+const GameConstants = preload("res://scripts/config/game_constants.gd")
+const LEGACY_REWARD_SCATTER_RADIUS: float = 5.0
 
 var bomb_weapon: Resource = load("res://scenes/weapons/player_bomb.tscn")
 
@@ -15,13 +17,13 @@ var player_heart_containers: Node
 var load_player: Callable
 
 var attack_spawn_angle: float = 0
-var attack_displacement_magnitude: float = 15
+var attack_displacement_magnitude: float = GameConstants.ATTACK_SPAWN_DISPLACEMENT
 
 
 func place_bomb() -> bool:
 	if run_context != null:
 		return run_context.place_primary_bomb()
-	if !player_class.use_resource("bomb", 1):
+	if !player_class.use_resource(GameConstants.RESOURCE_BOMB, 1):
 		return false
 	var bomb: Node2D = bomb_weapon.instantiate()
 	bomb.position = player_character.position
@@ -80,7 +82,7 @@ func projectile_resolve(creature: CharacterBody2D, proj: CharacterBody2D) -> voi
 			var count: int = reward_details[1]
 			for i: int in range(count):
 				var r: Node2D = reward.instantiate()
-				r.position = reward_spawn_pos + a_little_offset(5)
+				r.position = reward_spawn_pos + a_little_offset(LEGACY_REWARD_SCATTER_RADIUS)
 				get_parent().call_deferred("add_child", r)
 		else:
 			print("No reward to drop. :(")

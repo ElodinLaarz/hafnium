@@ -15,7 +15,7 @@ const SpawnDirectorScript = preload("res://scripts/run/spawn_director.gd")
 const LootDirectorScript = preload("res://scripts/run/loot_director.gd")
 const RoomDirectorScript = preload("res://scripts/rooms/room_director.gd")
 const LootDropDataScript = preload("res://scripts/resources/loot_drop_data.gd")
-const PLAYER_TEAM: int = 1
+const GameConstants = preload("res://scripts/config/game_constants.gd")
 
 var floor_seed: int = 0
 var floor_graph: Array[Dictionary] = []
@@ -24,7 +24,7 @@ var current_room: RoomData
 var active_players: Array[PlayerCharacter] = []
 var primary_player: PlayerCharacter
 
-var attack_displacement_magnitude: float = 15.0
+var attack_displacement_magnitude: float = GameConstants.ATTACK_SPAWN_DISPLACEMENT
 
 var combat_director: CombatDirector = CombatDirectorScript.new()
 var spawn_director: SpawnDirector = SpawnDirectorScript.new()
@@ -79,7 +79,7 @@ func register_player(player: PlayerCharacter) -> void:
 
 	active_players.append(player)
 	player.set_run_context(self)
-	player.team = PLAYER_TEAM
+	player.team = GameConstants.PLAYER_TEAM
 	player_registered.emit(player)
 
 	if primary_player == null:

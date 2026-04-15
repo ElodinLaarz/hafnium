@@ -10,6 +10,8 @@ enum ClassResource {
 	BOMB,
 }
 
+const GameConstants = preload("res://scripts/config/game_constants.gd")
+
 # Usually the value is 2 for players since 1 damage = 1/2 heart for
 # most classes.
 # Exceptions to this are (1) the Barbarian for which 1 heart = 4
@@ -63,7 +65,7 @@ func _init() -> void:
 	projectile_speed = 0
 	attack_cooldown = 0
 	resources = {
-		"bomb": ResourceStatus.new(ClassResource.BOMB, 0, 0),
+		GameConstants.RESOURCE_BOMB: ResourceStatus.new(ClassResource.BOMB, 0, 0),
 	}
 
 

@@ -1,6 +1,10 @@
 class_name PlayerCharacter
 extends "res://scripts/base_character.gd"
 
+const GameConstants = preload("res://scripts/config/game_constants.gd")
+const PLAYER_INVINCIBILITY_DURATION: float = 1.5
+const RUN_TO_WALK_THRESHOLD_FACTOR: float = 0.5
+
 # TODO(ElodinLaarz): Add Class Choice.
 var player_class: ClassHandler.PlayerClass
 var movement: PlayerMovement = PlayerMovement.new()
@@ -16,7 +20,7 @@ var currency: int = 0
 
 
 func _init() -> void:
-	invincibility_frame_length = 1.5
+	invincibility_frame_length = PLAYER_INVINCIBILITY_DURATION
 	Common.player_character = self
 	Common.load_player = load_player_data
 
@@ -56,7 +60,7 @@ func load_player_data(player_name: String) -> bool:
 		if player_class.definition != null:
 			movement.walking_speed = player_class.definition.speed
 			movement.running_speed = int(movement.walking_speed * movement.running_multiplier)
-			movement.run_to_walk_threshold = movement.walking_speed * 0.5
+			movement.run_to_walk_threshold = movement.walking_speed * RUN_TO_WALK_THRESHOLD_FACTOR
 		return true
 	return false
 
@@ -83,10 +87,10 @@ func handle_movement(delta: float) -> void:
 func handle_attack(_delta: float) -> void:
 	aim.update_pivot(_delta)
 	# Allow it to be held down.
-	if Input.is_action_pressed("attack"):
+	if Input.is_action_pressed(GameConstants.INPUT_ACTION_ATTACK):
 		if Common.attack():
 			print("attacking!")
-	if Input.is_action_just_pressed("secondary_attack"):
+	if Input.is_action_just_pressed(GameConstants.INPUT_ACTION_SECONDARY_ATTACK):
 		if Common.place_bomb():
 			print("bomb placed!")
 

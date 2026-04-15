@@ -2,6 +2,8 @@ class_name CombatDirector
 extends Node
 
 const BOMB_SCENE: PackedScene = preload("res://scenes/weapons/player_bomb.tscn")
+const GameConstants = preload("res://scripts/config/game_constants.gd")
+const ZERO_SPEED_PROJECTILE_TTL: float = 0.1
 
 var run_context: RunContext
 
@@ -26,7 +28,7 @@ func fire_attack(player: PlayerCharacter, angle: float) -> bool:
 		player.player_class.definition != null
 		and not player.player_class.definition.attack_projectile_id.is_empty()
 	):
-		var projectile_data = ContentRegistry.require_projectile(
+		var projectile_data: ProjectileData = ContentRegistry.require_projectile(
 			player.player_class.definition.attack_projectile_id
 		)
 		if projectile_data != null:
@@ -68,7 +70,7 @@ func place_bomb(player: PlayerCharacter) -> bool:
 		or player.player_class == null
 	):
 		return false
-	if not player.player_class.use_resource("bomb", 1):
+	if not player.player_class.use_resource(GameConstants.RESOURCE_BOMB, 1):
 		return false
 	var entity_root: Node = run_context.get_world_entity_root()
 	if entity_root == null:
@@ -102,5 +104,5 @@ func resolve_projectile_hit(target: BaseCharacter, projectile: Projectile) -> bo
 
 func _calculate_ttl(stats: Stats) -> float:
 	if stats.projectile_speed <= 0:
-		return 0.1
+		return ZERO_SPEED_PROJECTILE_TTL
 	return stats.attack_range / stats.projectile_speed

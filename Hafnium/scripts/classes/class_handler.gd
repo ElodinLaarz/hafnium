@@ -20,10 +20,13 @@ enum HeartName {
 	BARBARIAN_1_4,
 }
 
+const GameConstants = preload("res://scripts/config/game_constants.gd")
+const HEART_ATLAS_TILE_SIZE: int = 16
+
 const CHARACTER_IDS_BY_ENUM: Dictionary = {
-	ClassName.BARBARIAN: "class:barbarian",
-	ClassName.DRUID: "class:druid",
-	ClassName.WIZARD: "class:wizard",
+	ClassName.BARBARIAN: GameConstants.CLASS_ID_BARBARIAN,
+	ClassName.DRUID: GameConstants.CLASS_ID_DRUID,
+	ClassName.WIZARD: GameConstants.CLASS_ID_WIZARD,
 }
 
 var class_sprite_lookup: Dictionary = {
@@ -54,7 +57,12 @@ var health_checks: Health = Health.new()
 
 
 func rect(row: int, col: int) -> Rect2i:
-	return Rect2i(row * 16, col * 16, 16, 16)
+	return Rect2i(
+		row * HEART_ATLAS_TILE_SIZE,
+		col * HEART_ATLAS_TILE_SIZE,
+		HEART_ATLAS_TILE_SIZE,
+		HEART_ATLAS_TILE_SIZE
+	)
 
 
 func heart_texture(texture_rect: TextureRect, heart_name: HeartName) -> AtlasTexture:
@@ -138,7 +146,7 @@ func wizard_heart_drawing_logic(stats: Stats, heart_container: Node) -> void:
 
 	# Placeholder for mana logic: in the future, empty hearts should
 	# show mana based on stats.resources["mana"]
-	var mana_res: Stats.ResourceStatus = stats.resources.get("mana")
+	var mana_res: Stats.ResourceStatus = stats.resources.get(GameConstants.RESOURCE_MANA)
 	var mana: int = mana_res.current_resource if mana_res is Stats.ResourceStatus else 0
 
 	for i: int in range(stats.max_health / 2):
@@ -217,13 +225,13 @@ func setup_heart_drawing(pc: PlayerClass, cn: ClassName) -> bool:
 
 func setup_heart_drawing_from_style(pc: PlayerClass, heart_style: String) -> bool:
 	match heart_style:
-		"barbarian":
+		GameConstants.HEART_STYLE_BARBARIAN:
 			pc.heart_drawing_logic = barbarian_heart_drawing_logic
-		"druid":
+		GameConstants.HEART_STYLE_DRUID:
 			pc.heart_drawing_logic = druid_heart_drawing_logic
-		"wizard":
+		GameConstants.HEART_STYLE_WIZARD:
 			pc.heart_drawing_logic = wizard_heart_drawing_logic
-		"default":
+		GameConstants.HEART_STYLE_DEFAULT:
 			pc.heart_drawing_logic = default_hearts
 		_:
 			print("Unexpected heart style: ", heart_style)
@@ -329,12 +337,20 @@ func setup_damage(pc: PlayerClass, cn: ClassName) -> bool:
 func setup_class_resources(pc: PlayerClass, cn: ClassName) -> bool:
 	match cn:
 		ClassName.BARBARIAN:
-			pc.stats.resources["bomb"] = Stats.ResourceStatus.new(Stats.ClassResource.BOMB, 3, 0)
+			pc.stats.resources[GameConstants.RESOURCE_BOMB] = Stats.ResourceStatus.new(
+				Stats.ClassResource.BOMB, 3, 0
+			)
 		ClassName.DRUID:
-			pc.stats.resources["bomb"] = Stats.ResourceStatus.new(Stats.ClassResource.BOMB, 2, 0)
+			pc.stats.resources[GameConstants.RESOURCE_BOMB] = Stats.ResourceStatus.new(
+				Stats.ClassResource.BOMB, 2, 0
+			)
 		ClassName.WIZARD:
-			pc.stats.resources["bomb"] = Stats.ResourceStatus.new(Stats.ClassResource.BOMB, 1, 0)
-			pc.stats.resources["mana"] = Stats.ResourceStatus.new(Stats.ClassResource.MANA, 4, 0)
+			pc.stats.resources[GameConstants.RESOURCE_BOMB] = Stats.ResourceStatus.new(
+				Stats.ClassResource.BOMB, 1, 0
+			)
+			pc.stats.resources[GameConstants.RESOURCE_MANA] = Stats.ResourceStatus.new(
+				Stats.ClassResource.MANA, 4, 0
+			)
 		_:
 			return false
 	return true

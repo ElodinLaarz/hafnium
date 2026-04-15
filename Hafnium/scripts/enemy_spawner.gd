@@ -1,12 +1,17 @@
 class_name EnemySpawner
 extends Node2D
 
+const DEFAULT_SPAWN_RATE: float = 1.0
+const DEFAULT_SPAWN_RADIUS: float = 100.0
+const PRIMARY_ENCOUNTER_ENTRY_INDEX: int = 0
+const MIN_ENEMY_COUNT: int = 1
+
 @export var encounter_definition_id: String = "encounter:slime_loop"
 
 var enemy_resource: Resource = load("res://scenes/npcs/slime.tscn")
 var last_spawn_time: float = 0.0
-var spawn_rate: float = 1.0
-var spawn_radius: float = 100.0
+var spawn_rate: float = DEFAULT_SPAWN_RATE
+var spawn_radius: float = DEFAULT_SPAWN_RADIUS
 
 
 func _ready() -> void:
@@ -23,8 +28,8 @@ func _process(delta: float) -> void:
 func spawn() -> void:
 	var encounter: EncounterData = ContentRegistry.require_encounter(encounter_definition_id)
 	if Common.run_context != null and encounter != null and not encounter.spawns.is_empty():
-		var entry = encounter.spawns[0]
-		for _i: int in range(max(entry.count, 1)):
+		var entry = encounter.spawns[PRIMARY_ENCOUNTER_ENTRY_INDEX]
+		for _i: int in range(max(entry.count, MIN_ENEMY_COUNT)):
 			Common.run_context.spawn_enemy(
 				entry.enemy_id, position + Common.a_little_offset(spawn_radius)
 			)

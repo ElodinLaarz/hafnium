@@ -3,6 +3,7 @@ extends Node
 
 const PLAYER_HEART: PackedScene = preload("res://scenes/interface/lifebar/heart.tscn")
 const INTERFACE_UPDATER: GDScript = preload("res://scripts/interface/update_interface.gd")
+const GameConstants = preload("res://scripts/config/game_constants.gd")
 
 var run_context: RunContext
 var tracked_player: PlayerCharacter
@@ -86,7 +87,7 @@ func _on_health_changed(_current_health: int, _max_health: int) -> void:
 
 
 func _on_resource_changed(resource_name: String, current_value: int, max_value: int) -> void:
-	if resource_name == "bomb":
+	if resource_name == GameConstants.RESOURCE_BOMB:
 		interface_values.bombs = current_value
 		interface_values.bomb_max = max_value
 		INTERFACE_UPDATER.update_interface(_get_interface_root(), interface_values)
@@ -109,7 +110,9 @@ func _render_player_state() -> void:
 	interface_values.max_health = tracked_player.player_class.stats.max_health
 	interface_values.currency = tracked_player.currency
 	interface_values.bomb_max = tracked_player.bomb_max
-	var bomb_status: Stats.ResourceStatus = tracked_player.player_class.stats.resources.get("bomb")
+	var bomb_status: Stats.ResourceStatus = tracked_player.player_class.stats.resources.get(
+		GameConstants.RESOURCE_BOMB
+	)
 	interface_values.bombs = bomb_status.current_resource if bomb_status != null else 0
 	interface_values.room_name = (
 		run_context.current_room.id
