@@ -3,7 +3,7 @@ extends Node
 
 const BOMB_SCENE: PackedScene = preload("res://scenes/weapons/player_bomb.tscn")
 
-var run_context
+var run_context: Variant
 
 
 func configure(p_run_context: RunContext) -> void:
@@ -26,7 +26,7 @@ func fire_attack(player: PlayerCharacter, angle: float) -> bool:
 		player.player_class.definition != null
 		and not player.player_class.definition.attack_projectile_id.is_empty()
 	):
-		var projectile_data = ContentRegistry.require_projectile(
+		var projectile_data: Variant = ContentRegistry.require_projectile(
 			player.player_class.definition.attack_projectile_id
 		)
 		if projectile_data != null:
@@ -40,13 +40,13 @@ func fire_attack(player: PlayerCharacter, angle: float) -> bool:
 	if projectile_parent == null:
 		return false
 
-	var projectile = projectile_scene.instantiate()
+	var projectile: Variant = projectile_scene.instantiate()
 	if not (projectile is Projectile):
 		projectile.free()
 		return false
 
 	var stats: Stats = player.player_class.stats
-	var aim_dir := Vector2(cos(angle), sin(angle))
+	var aim_dir: Variant = Vector2(cos(angle), sin(angle))
 	projectile.rotation = PI + angle
 	projectile.position = player.position + aim_dir * run_context.attack_displacement_magnitude
 	projectile.velocity = aim_dir * stats.projectile_speed
@@ -74,7 +74,7 @@ func place_bomb(player: PlayerCharacter) -> bool:
 	if entity_root == null:
 		return false
 
-	var bomb = BOMB_SCENE.instantiate()
+	var bomb: Variant = BOMB_SCENE.instantiate()
 	if bomb is Node2D:
 		bomb.position = player.position
 	entity_root.add_child(bomb)
@@ -92,7 +92,7 @@ func resolve_projectile_hit(target: BaseCharacter, projectile: Projectile) -> bo
 		return false
 
 	projectile.call_deferred("queue_free")
-	var defeated = target.receive_damage(damage)
+	var defeated: Variant = target.receive_damage(damage)
 	if defeated:
 		if target is Enemy:
 			run_context.handle_enemy_defeated(target)

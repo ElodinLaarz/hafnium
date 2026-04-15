@@ -16,7 +16,7 @@ func _init(
 	p_source: Node = null,
 	p_source_team: int = -1,
 	p_metadata: Dictionary = {}
-):
+) -> void:
 	amount = p_amount
 	damage_type = p_damage_type
 	source = p_source

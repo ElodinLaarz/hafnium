@@ -19,6 +19,7 @@ jobs:
           pip install gdtoolkit
           find Hafnium/scripts Hafnium/tests -name "*.gd" -print0 | xargs -0 gdformat --check
           find Hafnium/scripts Hafnium/tests -name "*.gd" -print0 | xargs -0 gdlint
+          python .githooks/check_gdscript_type_hints.py Hafnium/scripts Hafnium/tests
 
       - name: Setup Godot (Graphical Mode)
         uses: lihop/setup-godot@v3

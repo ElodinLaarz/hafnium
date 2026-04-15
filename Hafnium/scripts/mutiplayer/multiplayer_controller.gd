@@ -31,7 +31,7 @@ var recently_pressed_action_times: Dictionary = {
 var most_recent_action_name: String
 
 
-func _ready():
+func _ready() -> void:
 	var multiplayer_camera: Camera2D = $MultiplayerCamera
 	if multiplayer.get_unique_id() == player_id:
 		multiplayer_camera.make_current()
@@ -40,7 +40,7 @@ func _ready():
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _physics_process(delta: float):  # Should this be _process?
+func _physics_process(delta: float) -> void:  # Should this be _process?
 	if multiplayer.is_server():
 		_apply_movement_from_input(delta)
 
@@ -62,7 +62,7 @@ func still_running(delta: float, player_current_speed: float) -> bool:
 		print("still_running called when not running.")
 		#TODO(ElodinLaarz): How do errors work in Godot...?
 	is_running = player_current_speed > run_to_walk_threshold  # Unless we're still pressing a key
-	for action in recently_pressed_action_times:
+	for action: String in recently_pressed_action_times.keys():
 		# A little worried about ordering and what happens if more than
 		# one action is recently pressed...
 
@@ -82,7 +82,7 @@ func started_running(delta: float) -> bool:
 	if is_running:
 		print("OH NO! WE ARE NOT SUPPOSED TO BE HERE!")
 		print("started_running called when already running.")
-	for action in recently_pressed_action_times:
+	for action: String in recently_pressed_action_times.keys():
 		recently_pressed_action_times[action] += delta
 		# If not running, then run when movement action is a repeat of
 		# the most recent action. e.g. double-pressing "up".
@@ -104,7 +104,7 @@ func check_is_running(delta: float, player_current_speed: float) -> bool:
 	return started_running(delta)
 
 
-func _apply_movement_from_input(delta: float):
+func _apply_movement_from_input(delta: float) -> void:
 	player_speed = walking_speed  # Default to walking, unless running.
 	if check_is_running(delta, velocity.length()):
 		player_speed = running_speed

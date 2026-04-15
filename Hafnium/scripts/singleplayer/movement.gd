@@ -27,11 +27,11 @@ var recently_pressed_action_times: Dictionary = {
 var most_recent_action_name: String
 
 
-func set_max_speed_walk():
+func set_max_speed_walk() -> void:
 	player_speed = walking_speed
 
 
-func set_max_speed_run():
+func set_max_speed_run() -> void:
 	player_speed = running_speed
 
 
@@ -73,7 +73,7 @@ func still_running(delta: float, player_current_speed: float) -> bool:
 		print("still_running called when not running.")
 		#TODO(ElodinLaarz): How do errors work in Godot...?
 	is_running = player_current_speed > run_to_walk_threshold  # Unless we're still pressing a key
-	for action in recently_pressed_action_times:
+	for action: Variant in recently_pressed_action_times:
 		# A little worried about ordering and what happens if more than
 		# one action is recently pressed...
 
@@ -93,7 +93,7 @@ func started_running(delta: float) -> bool:
 	if is_running:
 		print("OH NO! WE ARE NOT SUPPOSED TO BE HERE!")
 		print("started_running called when already running.")
-	for action in recently_pressed_action_times:
+	for action: Variant in recently_pressed_action_times:
 		recently_pressed_action_times[action] += delta
 		# If not running, then run when movement action is a repeat of
 		# the most recent action. e.g. double-pressing "up".

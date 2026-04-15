@@ -17,7 +17,7 @@ func polar_coordinates(cartesian: Vector2) -> PolarCoordinate:
 	var y: float = cartesian.y
 
 	var radius: float = sqrt(pow(x, 2) + pow(y, 2))
-	var angle = atan2(y, x)
+	var angle: Variant = atan2(y, x)
 
 	return PolarCoordinate.new(radius, angle)
 
@@ -32,7 +32,7 @@ func unit_direction_to_mouse(source_position: Vector2) -> Vector2:
 	return direction.normalized()
 
 
-func update_pivot(_delta: float):
+func update_pivot(_delta: float) -> void:
 	if not pivot:
 		print("UH OH! No Pivot?? :O")
 		return
@@ -52,6 +52,6 @@ class PolarCoordinate:
 	var radius: float
 	var angle: float
 
-	func _init(r: float, a: float):
+	func _init(r: float, a: float) -> void:
 		radius = r
 		angle = a

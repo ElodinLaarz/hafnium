@@ -8,7 +8,7 @@ const START_GAME_TYPE: String = "start_game_type"
 
 var bomb_weapon: Resource = load("res://scenes/weapons/player_bomb.tscn")
 
-var run_context
+var run_context: Variant
 var player_character: CharacterBody2D
 var player_class: ClassHandler.PlayerClass
 var player_heart_containers: Node
@@ -23,7 +23,7 @@ func place_bomb() -> bool:
 		return run_context.place_primary_bomb()
 	if !player_class.use_resource("bomb", 1):
 		return false
-	var bomb = bomb_weapon.instantiate()
+	var bomb: Node2D = bomb_weapon.instantiate()
 	bomb.position = player_character.position
 	get_parent().add_child(bomb)
 	return true
@@ -38,9 +38,9 @@ func attack() -> bool:
 	if !player_class.attack():
 		return false
 	var stats: Stats = player_class.stats
-	var p = player_class.get_attack_scene().instantiate()
+	var p: Projectile = player_class.get_attack_scene().instantiate()
 	p.rotation = PI + attack_spawn_angle  # We should have projectiles point right, actually...
-	var aim_dir = Vector2(cos(attack_spawn_angle), sin(attack_spawn_angle))
+	var aim_dir: Vector2 = Vector2(cos(attack_spawn_angle), sin(attack_spawn_angle))
 	p.position = player_character.position + aim_dir * attack_displacement_magnitude
 	# Have the proj have a non-zero velocity in the direction
 	# of the aim sight.
@@ -51,7 +51,7 @@ func attack() -> bool:
 	return true
 
 
-func projectile_resolve(creature: CharacterBody2D, proj: CharacterBody2D):
+func projectile_resolve(creature: CharacterBody2D, proj: CharacterBody2D) -> void:
 	if (
 		run_context != null
 		and creature.has_method("receive_damage")
@@ -66,20 +66,20 @@ func projectile_resolve(creature: CharacterBody2D, proj: CharacterBody2D):
 		# Only deal damage to enemies.
 		return
 	proj.call_deferred("queue_free")
-	var damage = proj.damage
-	var creature_defeated = creature.stats.take_damage(damage)
+	var damage: int = proj.damage
+	var creature_defeated: bool = creature.stats.take_damage(damage)
 	# Get damage value from proj and apply health reduction
 	# to creature.
 	# Returns true when creature has 0 health.
 	if creature_defeated:
 		creature.call_deferred("queue_free")
-		var reward_spawn_pos = creature.position
-		var reward_details = creature.drop_reward()
+		var reward_spawn_pos: Vector2 = creature.position
+		var reward_details: Array = creature.drop_reward()
 		if len(reward_details) > 0:
-			var reward = reward_details[0]
-			var count = reward_details[1]
-			for i in range(count):
-				var r = reward.instantiate()
+			var reward: PackedScene = reward_details[0]
+			var count: int = reward_details[1]
+			for i: int in range(count):
+				var r: Node2D = reward.instantiate()
 				r.position = reward_spawn_pos + a_little_offset(5)
 				get_parent().call_deferred("add_child", r)
 		else:
@@ -93,5 +93,5 @@ func a_little_offset(max_offset: float) -> Vector2:
 	return random_modulus * Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
 
 
-func set_run_context(p_run_context) -> void:
+func set_run_context(p_run_context: Variant) -> void:
 	run_context = p_run_context

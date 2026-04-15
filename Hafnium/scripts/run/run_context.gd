@@ -3,33 +3,33 @@ extends Node
 
 signal run_started(seed: int)
 signal room_entered(room_id: String)
-signal player_registered(player)
-signal primary_player_changed(player)
+signal player_registered(player: PlayerCharacter)
+signal primary_player_changed(player: PlayerCharacter)
 signal health_changed(current_health: int, max_health: int)
 signal resource_changed(resource_name: String, current_value: int, max_value: int)
 signal currency_changed(current_currency: int)
-signal enemy_defeated(enemy)
+signal enemy_defeated(enemy: Enemy)
 
 const CombatDirectorScript = preload("res://scripts/combat/combat_director.gd")
 const SpawnDirectorScript = preload("res://scripts/run/spawn_director.gd")
 const LootDirectorScript = preload("res://scripts/run/loot_director.gd")
 const RoomDirectorScript = preload("res://scripts/rooms/room_director.gd")
 const LootDropDataScript = preload("res://scripts/resources/loot_drop_data.gd")
-const PLAYER_TEAM := 1
+const PLAYER_TEAM: int = 1
 
 var floor_seed: int = 0
 var floor_graph: Array[Dictionary] = []
 var world_root: Node2D
-var current_room
-var active_players: Array = []
-var primary_player
+var current_room: RoomData
+var active_players: Array[PlayerCharacter] = []
+var primary_player: PlayerCharacter
 
 var attack_displacement_magnitude: float = 15.0
 
-var combat_director = CombatDirectorScript.new()
-var spawn_director = SpawnDirectorScript.new()
-var loot_director = LootDirectorScript.new()
-var room_director = RoomDirectorScript.new()
+var combat_director: CombatDirector = CombatDirectorScript.new()
+var spawn_director: SpawnDirector = SpawnDirectorScript.new()
+var loot_director: LootDirector = LootDirectorScript.new()
+var room_director: RoomDirector = RoomDirectorScript.new()
 
 
 func _ready() -> void:
@@ -116,7 +116,7 @@ func handle_enemy_defeated(enemy: Enemy) -> void:
 	enemy_defeated.emit(enemy)
 	var reward_details: Array = enemy.drop_reward()
 	if reward_details.size() >= 2 and reward_details[0] != null:
-		var drop = LootDropDataScript.new()
+		var drop: LootDropData = LootDropDataScript.new()
 		drop.item_scene = reward_details[0]
 		drop.count = reward_details[1]
 		loot_director.spawn_drop(drop, enemy.position)
@@ -125,7 +125,7 @@ func handle_enemy_defeated(enemy: Enemy) -> void:
 func emit_resource_state(player: PlayerCharacter) -> void:
 	if player == null or player.player_class == null:
 		return
-	for resource_name in player.player_class.stats.resources.keys():
+	for resource_name: String in player.player_class.stats.resources.keys():
 		var resource: Stats.ResourceStatus = player.player_class.stats.resources[resource_name]
 		resource_changed.emit(resource_name, resource.current_resource, resource.max_resource)
 

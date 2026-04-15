@@ -1,12 +1,12 @@
 class_name Enemy
 extends "res://scripts/base_character.gd"
 
-var movement = EnemyMovement.new()
-var rng = RandomNumberGenerator.new()
+var movement: Variant = EnemyMovement.new()
+var rng: Variant = RandomNumberGenerator.new()
 var chasing_player: bool = false
 var player: CharacterBody2D
-var definition
-var loot_table
+var definition: Variant
+var loot_table: Variant
 
 # Keys are probability of the reward dropping and the value is the
 # packed resource and the quantity. For convenience, the keys
@@ -19,12 +19,12 @@ var reward: Dictionary = {}:
 var _sorted_reward_keys: Array = []
 
 
-func _init():
+func _init() -> void:
 	rng.randomize()
 	team = Team.ENEMY
 
 
-func _physics_process(delta: float):
+func _physics_process(delta: float) -> void:
 	handle_movement(delta)
 
 
@@ -33,7 +33,7 @@ func is_enemy() -> bool:
 	return true
 
 
-func handle_movement(delta: float):
+func handle_movement(delta: float) -> void:
 	if chasing_player:
 		movement.set_chase_speed()
 	else:
@@ -44,7 +44,7 @@ func handle_movement(delta: float):
 	move_and_slide()
 
 
-func apply_definition(enemy_data) -> void:
+func apply_definition(enemy_data: Variant) -> void:
 	definition = enemy_data
 	actor_definition_id = enemy_data.id
 	if stats == null:
@@ -56,7 +56,7 @@ func apply_definition(enemy_data) -> void:
 
 func drop_reward() -> Array:
 	if loot_table != null:
-		var loot_drop = loot_table.roll_drop(rng)
+		var loot_drop: Variant = loot_table.roll_drop(rng)
 		if loot_drop == null:
 			return []
 		return [loot_drop.item_scene, loot_drop.count]
@@ -65,8 +65,8 @@ func drop_reward() -> Array:
 	# Select random integer between 0 and 100 and choose the smallest
 	# key greater than or equal to the random integer.
 	var got_reward: Array = []
-	var rand_int = rng.randi_range(0, 100)
-	for key in _sorted_reward_keys:
+	var rand_int: Variant = rng.randi_range(0, 100)
+	for key: Variant in _sorted_reward_keys:
 		if key >= rand_int:
 			got_reward = reward[key]
 			break

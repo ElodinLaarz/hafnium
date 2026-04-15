@@ -7,9 +7,9 @@ extends GutTest
 # Mock class to override input
 class MockPlayerMovement:
 	extends PlayerMovement
-	var mock_raw_input = Vector2.ZERO
-	var mock_just_pressed = {}
-	var mock_strength = {}
+	var mock_raw_input: Variant = Vector2.ZERO
+	var mock_just_pressed: Variant = {}
+	var mock_strength: Variant = {}
 
 	func get_raw_input() -> Vector2:
 		return mock_raw_input
@@ -21,16 +21,16 @@ class MockPlayerMovement:
 		return mock_strength.get(action, 0.0)
 
 
-func test_unit_direction_normalization():
-	var pm = MockPlayerMovement.new()
+func test_unit_direction_normalization() -> void:
+	var pm: Variant = MockPlayerMovement.new()
 	pm.mock_raw_input = Vector2(1, 1)  # Diagonal
-	var dir = pm.unit_direction()
+	var dir: Variant = pm.unit_direction()
 	assert_almost_eq(dir.length(), 1.0, 0.001, "Unit direction should be normalized")
 	assert_almost_eq(dir.x, 0.707, 0.001)
 
 
-func test_check_is_running_double_tap():
-	var pm = MockPlayerMovement.new()
+func test_check_is_running_double_tap() -> void:
+	var pm: Variant = MockPlayerMovement.new()
 	# First tap
 	pm.mock_just_pressed["up"] = true
 	pm.check_is_running(0.1, 0.0)
@@ -41,21 +41,21 @@ func test_check_is_running_double_tap():
 
 	# Second tap within threshold (0.5)
 	pm.mock_just_pressed["up"] = true
-	var running = pm.check_is_running(0.1, 0.0)
+	var running: Variant = pm.check_is_running(0.1, 0.0)
 	assert_true(running, "Should start running after double tap")
 
 
-func test_check_is_running_stop_threshold():
-	var pm = MockPlayerMovement.new()
+func test_check_is_running_stop_threshold() -> void:
+	var pm: Variant = MockPlayerMovement.new()
 	pm.is_running = true
 	# No keys pressed, speed drops below threshold (85 * 0.5 = 42.5)
-	var running = pm.check_is_running(0.1, 10.0)
+	var running: Variant = pm.check_is_running(0.1, 10.0)
 	assert_false(running, "Should stop running when speed is below threshold and no keys pressed")
 
 
-func test_velocity_lerp_walking():
-	var pm = MockPlayerMovement.new()
+func test_velocity_lerp_walking() -> void:
+	var pm: Variant = MockPlayerMovement.new()
 	pm.set_max_speed_walk()  # 85
-	var next_v = pm.velocity_lerp(0.1, Vector2.ZERO, Vector2(1, 0))
+	var next_v: Variant = pm.velocity_lerp(0.1, Vector2.ZERO, Vector2(1, 0))
 	# lerp(0, 85, 0.1 * 10.0) -> lerp(0, 85, 1.0) = 85
 	assert_eq(next_v, Vector2(85, 0), "Velocity should reach target speed at delta * ACCEL = 1.0")
