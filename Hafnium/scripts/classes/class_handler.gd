@@ -237,8 +237,6 @@ func setup_attack(pc: PlayerClass, cn: ClassName) -> bool:
 		return false
 
 	pc.attack_projectile_path = get_attack_projectile_path(cn)
-	if not pc.attack_projectile_path.is_empty():
-		pc._attack_scene = load(pc.attack_projectile_path)
 
 	match cn:
 		ClassName.WIZARD:
@@ -332,6 +330,11 @@ class PlayerClass:
 
 	func draw_hearts(heart_container: Node):
 		self.heart_drawing_logic.call(self.stats, heart_container)
+
+	func get_attack_scene() -> PackedScene:
+		if _attack_scene == null and not attack_projectile_path.is_empty():
+			_attack_scene = load(attack_projectile_path)
+		return _attack_scene
 
 	func attack() -> bool:
 		if self.attack_logic:
