@@ -1,0 +1,18 @@
+extends GutTest
+
+const ROOM_DIRECTOR_SCRIPT = preload("res://scripts/rooms/room_director.gd")
+
+
+func test_instantiate_room_applies_encounter_definition_to_room_root():
+	var room_director = ROOM_DIRECTOR_SCRIPT.new()
+	var room_root = room_director.instantiate_room("room:start")
+
+	assert_ne(room_root, null, "Expected start room to instantiate")
+	assert_eq(
+		room_root.get("encounter_definition_id"),
+		"encounter:slime_loop",
+		"Room root should receive the configured encounter id"
+	)
+
+	if room_root != null:
+		room_root.free()

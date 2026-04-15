@@ -49,7 +49,28 @@ func test_spawn_positions_match_room_index_and_stay_inside_room():
 		assert_lte(position.length(), max_spawn_radius + 0.001)
 
 
-func test_failed_enemy_spawns_do_not_advance_room():
+func test_spawn_positions_stay_inside_small_rooms_with_large_spawn_margin():
+	var room = INFINITE_ROOM_SCRIPT.new()
+	room.room_scale_tiles = 1
+	room.tile_size = 16
+	room.spawn_margin = 20.0
+
+	var room_index := 1
+	var positions: Array[Vector2] = room.build_spawn_positions(room_index)
+	var half_extents: Vector2 = room.get_room_half_extents(room_index)
+
+	assert_lt(
+		min(half_extents.x, half_extents.y) - room.spawn_margin,
+		0.0,
+		"Test setup should exercise the clamped spawn-radius edge case"
+	)
+	assert_eq(positions.size(), room_index)
+	for position in positions:
+		assert_lte(absf(position.x), half_extents.x + 0.001)
+		assert_lte(absf(position.y), half_extents.y + 0.001)
+
+
+func test_failed_enemy_spawns_schedule_room_advance():
 	var room = INFINITE_ROOM_SCRIPT.new()
 	var mock_run_context = MockFailedRunContext.new()
 	Common.run_context = mock_run_context
@@ -58,6 +79,26 @@ func test_failed_enemy_spawns_do_not_advance_room():
 
 	assert_eq(mock_run_context.spawn_calls.size(), 3)
 	assert_eq(room.remaining_enemies, 0)
-	assert_false(
-		room._advance_scheduled, "Room progression should stay put when every enemy spawn fails"
+	assert_true(
+		room._advance_scheduled, "Room progression should auto-advance when every enemy spawn fails"
 	)
+
+
+func test_enemy_defeated_only_counts_active_wave_members():
+	var room = INFINITE_ROOM_SCRIPT.new()
+	var tracked_enemy := Node.new()
+	var stale_enemy := Node.new()
+
+	room.current_room_index = 2
+	room.remaining_enemies = 1
+	room._active_wave_enemy_ids[tracked_enemy.get_instance_id()] = true
+
+	room._on_enemy_defeated(stale_enemy)
+
+	assert_eq(room.remaining_enemies, 1, "Untracked enemies should not affect wave progress")
+	assert_false(room._advance_scheduled)
+
+	room._on_enemy_defeated(tracked_enemy)
+
+	assert_eq(room.remaining_enemies, 0)
+	assert_true(room._advance_scheduled)

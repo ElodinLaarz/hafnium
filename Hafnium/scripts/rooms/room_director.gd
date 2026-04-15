@@ -27,7 +27,9 @@ func get_room_data(room_id: String):
 
 
 func _apply_room_definition(room_root: Node, room_data) -> void:
-	for node in room_root.find_children("*", "Node", true, false):
+	var room_nodes: Array = [room_root]
+	room_nodes.append_array(room_root.find_children("*", "Node", true, false))
+	for node in room_nodes:
 		if (
 			node != null
 			and node.get("encounter_definition_id") != null

@@ -36,6 +36,10 @@ func fire_attack(player, angle: float) -> bool:
 	if projectile_scene == null:
 		return false
 
+	var projectile_parent: Node = run_context.get_world_entity_root()
+	if projectile_parent == null:
+		return false
+
 	var projectile = projectile_scene.instantiate()
 	if not (projectile is Projectile):
 		projectile.free()
@@ -51,7 +55,7 @@ func fire_attack(player, angle: float) -> bool:
 	projectile.source_actor = player
 	projectile.source_team = player.get_team()
 	projectile.damage_payload = Damage.basic(stats.damage, player, player.get_team())
-	run_context.world_root.add_child(projectile)
+	projectile_parent.add_child(projectile)
 	run_context.emit_resource_state(player)
 	return true
 
@@ -66,10 +70,14 @@ func place_bomb(player) -> bool:
 		return false
 	if not player.player_class.use_resource("bomb", 1):
 		return false
+	var entity_root: Node = run_context.get_world_entity_root()
+	if entity_root == null:
+		return false
+
 	var bomb = BOMB_SCENE.instantiate()
 	if bomb is Node2D:
 		bomb.position = player.position
-	run_context.world_root.add_child(bomb)
+	entity_root.add_child(bomb)
 	run_context.emit_resource_state(player)
 	return true
 

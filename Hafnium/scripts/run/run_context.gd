@@ -8,7 +8,7 @@ signal primary_player_changed(player)
 signal health_changed(current_health: int, max_health: int)
 signal resource_changed(resource_name: String, current_value: int, max_value: int)
 signal currency_changed(current_currency: int)
-signal enemy_defeated(enemy_id: String)
+signal enemy_defeated(enemy)
 
 const CombatDirectorScript = preload("res://scripts/combat/combat_director.gd")
 const SpawnDirectorScript = preload("res://scripts/run/spawn_director.gd")
@@ -113,7 +113,7 @@ func resolve_projectile_hit(target, projectile) -> bool:
 func handle_enemy_defeated(enemy) -> void:
 	if enemy == null:
 		return
-	enemy_defeated.emit(enemy.actor_definition_id)
+	enemy_defeated.emit(enemy)
 	var reward_details: Array = enemy.drop_reward()
 	if reward_details.size() >= 2 and reward_details[0] != null:
 		var drop = LootDropDataScript.new()
@@ -142,9 +142,20 @@ func random_offset(max_offset: float) -> Vector2:
 
 
 func spawn_enemy(enemy_id: String, spawn_position: Vector2):
+	var entity_root: Node = get_world_entity_root()
+	if entity_root == null:
+		return null
+	return spawn_director.spawn_enemy(enemy_id, entity_root, spawn_position)
+
+
+func get_world_entity_root() -> Node:
 	if world_root == null:
 		return null
-	return spawn_director.spawn_enemy(enemy_id, world_root, spawn_position)
+	if world_root.has_method("get_dynamic_entity_root"):
+		var entity_root: Node = world_root.get_dynamic_entity_root()
+		if entity_root != null:
+			return entity_root
+	return world_root
 
 
 func _attach_director(director: Node) -> void:
