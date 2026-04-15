@@ -30,7 +30,7 @@ git config core.hooksPath .githooks
 pip install gdtoolkit
 ```
 
-The pre-commit hook (`./githooks/pre-commit`) will auto-format any staged `.gd` files with `gdformat`, re-stage them, and then run `gdlint` before each commit. `gdlint` is a blocking check only, so lint issues still need to be fixed manually. If `gdtoolkit` isn't installed the hook skips those steps and prints the install command.
+The pre-commit hook (`./githooks/pre-commit`) will auto-format any staged `.gd` files with `gdformat`, re-stage them, run `gdlint`, and then run the GUT unit test suite before each commit. `gdlint` is a blocking check only, so lint issues still need to be fixed manually. If `gdtoolkit` isn't installed the formatting and lint steps are skipped with an install message. If GUT is not installed locally, the hook prints a warning and skips the test step.
 
 ## Running Tests
 

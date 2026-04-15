@@ -10,6 +10,10 @@
 
 set -euo pipefail
 
+REPO_ROOT=$(git rev-parse --show-toplevel)
+PROJECT_DIR="$REPO_ROOT/Hafnium"
+GUT_RUNNER="$PROJECT_DIR/addons/gut/gut_cmdln.gd"
+
 mapfile -d '' STAGED_FILES < <(git diff --cached --name-only -z --diff-filter=ACM -- '*.gd')
 
 if [ "${#STAGED_FILES[@]}" -eq 0 ]; then
@@ -32,6 +36,17 @@ else
     echo "[pre-commit] Linting GDScript files..."
     if ! gdlint "${STAGED_FILES[@]}"; then
         echo "[pre-commit] gdlint found errors. gdformat was applied, but gdlint issues must be fixed manually."
+        exit 1
+    fi
+fi
+
+if [ ! -f "$GUT_RUNNER" ]; then
+    echo "[pre-commit] GUT not found — skipping unit tests."
+    echo "             Install locally before relying on presubmit tests."
+else
+    echo "[pre-commit] Running GUT tests..."
+    if ! bash "$PROJECT_DIR/run_tests.sh"; then
+        echo "[pre-commit] GUT tests failed."
         exit 1
     fi
 fi
