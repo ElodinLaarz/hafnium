@@ -15,7 +15,7 @@ var mountain_atlas: Vector2i = Vector2i(2, 0)
 @onready var tile_map = $TileMap
 
 
-func _ready():
+func _ready() -> void:
 	noise = noise_height_texture.noise
 	generate_world()
 
@@ -31,13 +31,13 @@ func standardize_height_cellular(val: float) -> float:
 	return val + 1
 
 
-func generate_world():
+func generate_world() -> void:
 	# var noise_vals = []
-	for x in range(width):
-		for y in range(height):
-			var standard_noise_val = standardize_height_perlin(noise.get_noise_2d(x, y))
+	for x: Variant in range(width):
+		for y: Variant in range(height):
+			var standard_noise_val: Variant = standardize_height_perlin(noise.get_noise_2d(x, y))
 			var current_location: Vector2 = Vector2(x - width / 2, y - height / 2)
-			var atlas_choice = water_atlas
+			var atlas_choice: Variant = water_atlas
 			if standard_noise_val >= mountain_height:
 				atlas_choice = mountain_atlas
 			elif standard_noise_val >= sand_height:

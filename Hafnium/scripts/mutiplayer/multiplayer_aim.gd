@@ -7,7 +7,7 @@ const AIM_RADIUS: float = 8  # In pixels...?
 
 
 # Called every frame. '_delta' is the elapsed time since the previous frame.
-func _process(_delta: float):
+func _process(_delta: float) -> void:
 	var pivot_position: Vector2 = pivot.global_position
 	var unit_displacement: Vector2 = unit_direction_to_mouse(pivot_position)
 	position = pivot.position + AIM_RADIUS * unit_displacement
@@ -23,7 +23,7 @@ func polar_coordinates(cartesian: Vector2) -> PolarCoordinate:
 	var y: float = cartesian.y
 
 	var radius: float = sqrt(pow(x, 2) + pow(y, 2))
-	var angle = atan2(y, x)
+	var angle: float = atan2(y, x)
 
 	return PolarCoordinate.new(radius, angle)
 
@@ -42,6 +42,6 @@ class PolarCoordinate:
 	var radius: float
 	var angle: float
 
-	func _init(r: float, a: float):
+	func _init(r: float, a: float) -> void:
 		radius = r
 		angle = a

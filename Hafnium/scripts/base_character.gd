@@ -9,7 +9,7 @@ enum Team { NEUTRAL, PLAYER, ENEMY }
 var stats: Stats
 var team: Team = Team.NEUTRAL
 var actor_definition_id: String = ""
-var run_context
+var run_context: RunContext
 var is_invincible: bool = false
 var invincibility_frame_timer: float = 0.0
 var invincibility_frame_length: float = 0.5
@@ -17,11 +17,11 @@ var invincibility_frame_length: float = 0.5
 var _animated_sprite: AnimatedSprite2D
 
 
-func _process(delta: float):
+func _process(delta: float) -> void:
 	handle_timers(delta)
 
 
-func handle_timers(delta: float):
+func handle_timers(delta: float) -> void:
 	if is_invincible:
 		invincibility_frame_timer += delta
 		if invincibility_frame_timer >= invincibility_frame_length:
@@ -30,12 +30,12 @@ func handle_timers(delta: float):
 			_on_invincibility_ended()
 
 
-func _on_invincibility_ended():
+func _on_invincibility_ended() -> void:
 	if _animated_sprite:
 		_animated_sprite.play("idle")
 
 
-func set_run_context(p_run_context) -> void:
+func set_run_context(p_run_context: RunContext) -> void:
 	run_context = p_run_context
 
 
@@ -50,7 +50,7 @@ func can_receive_damage(payload: Damage) -> bool:
 func receive_damage(payload: Damage) -> bool:
 	if payload == null:
 		return false
-	var is_dead := take_damage(payload.amount)
+	var is_dead: bool = take_damage(payload.amount)
 	damage_received.emit(payload, stats.current_health if stats != null else 0)
 	return is_dead
 
@@ -79,5 +79,5 @@ func take_damage(d: int) -> bool:
 	return is_dead
 
 
-func die():
+func die() -> void:
 	actor_died.emit(self, Damage.basic(0, self, team))

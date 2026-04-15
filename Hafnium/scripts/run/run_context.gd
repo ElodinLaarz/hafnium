@@ -3,33 +3,33 @@ extends Node
 
 signal run_started(seed: int)
 signal room_entered(room_id: String)
-signal player_registered(player)
-signal primary_player_changed(player)
+signal player_registered(player: PlayerCharacter)
+signal primary_player_changed(player: PlayerCharacter)
 signal health_changed(current_health: int, max_health: int)
 signal resource_changed(resource_name: String, current_value: int, max_value: int)
 signal currency_changed(current_currency: int)
-signal enemy_defeated(enemy_id: String)
+signal enemy_defeated(enemy: Enemy)
 
 const CombatDirectorScript = preload("res://scripts/combat/combat_director.gd")
 const SpawnDirectorScript = preload("res://scripts/run/spawn_director.gd")
 const LootDirectorScript = preload("res://scripts/run/loot_director.gd")
 const RoomDirectorScript = preload("res://scripts/rooms/room_director.gd")
 const LootDropDataScript = preload("res://scripts/resources/loot_drop_data.gd")
-const PLAYER_TEAM := 1
+const PLAYER_TEAM: int = 1
 
 var floor_seed: int = 0
 var floor_graph: Array[Dictionary] = []
 var world_root: Node2D
-var current_room
-var active_players: Array = []
-var primary_player
+var current_room: RoomData
+var active_players: Array[PlayerCharacter] = []
+var primary_player: PlayerCharacter
 
 var attack_displacement_magnitude: float = 15.0
 
-var combat_director = CombatDirectorScript.new()
-var spawn_director = SpawnDirectorScript.new()
-var loot_director = LootDirectorScript.new()
-var room_director = RoomDirectorScript.new()
+var combat_director: CombatDirector = CombatDirectorScript.new()
+var spawn_director: SpawnDirector = SpawnDirectorScript.new()
+var loot_director: LootDirector = LootDirectorScript.new()
+var room_director: RoomDirector = RoomDirectorScript.new()
 
 
 func _ready() -> void:
@@ -70,7 +70,7 @@ func attach_world_root(root: Node2D) -> void:
 		room_entered.emit(room_id)
 
 
-func register_player(player) -> void:
+func register_player(player: PlayerCharacter) -> void:
 	if player == null:
 		return
 
@@ -106,31 +106,31 @@ func place_primary_bomb() -> bool:
 	return combat_director.place_bomb(primary_player)
 
 
-func resolve_projectile_hit(target, projectile) -> bool:
+func resolve_projectile_hit(target: BaseCharacter, projectile: Projectile) -> bool:
 	return combat_director.resolve_projectile_hit(target, projectile)
 
 
-func handle_enemy_defeated(enemy) -> void:
+func handle_enemy_defeated(enemy: Enemy) -> void:
 	if enemy == null:
 		return
-	enemy_defeated.emit(enemy.actor_definition_id)
+	enemy_defeated.emit(enemy)
 	var reward_details: Array = enemy.drop_reward()
 	if reward_details.size() >= 2 and reward_details[0] != null:
-		var drop = LootDropDataScript.new()
+		var drop: LootDropData = LootDropDataScript.new()
 		drop.item_scene = reward_details[0]
 		drop.count = reward_details[1]
 		loot_director.spawn_drop(drop, enemy.position)
 
 
-func emit_resource_state(player) -> void:
+func emit_resource_state(player: PlayerCharacter) -> void:
 	if player == null or player.player_class == null:
 		return
-	for resource_name in player.player_class.stats.resources.keys():
+	for resource_name: String in player.player_class.stats.resources.keys():
 		var resource: Stats.ResourceStatus = player.player_class.stats.resources[resource_name]
 		resource_changed.emit(resource_name, resource.current_resource, resource.max_resource)
 
 
-func emit_currency_state(player) -> void:
+func emit_currency_state(player: PlayerCharacter) -> void:
 	if player == null:
 		return
 	currency_changed.emit(player.currency)
@@ -141,10 +141,21 @@ func random_offset(max_offset: float) -> Vector2:
 	return random_modulus * Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
 
 
-func spawn_enemy(enemy_id: String, spawn_position: Vector2):
+func spawn_enemy(enemy_id: String, spawn_position: Vector2) -> Enemy:
+	var entity_root: Node = get_world_entity_root()
+	if entity_root == null:
+		return null
+	return spawn_director.spawn_enemy(enemy_id, entity_root, spawn_position)
+
+
+func get_world_entity_root() -> Node:
 	if world_root == null:
 		return null
-	return spawn_director.spawn_enemy(enemy_id, world_root, spawn_position)
+	if world_root.has_method("get_dynamic_entity_root"):
+		var entity_root: Node = world_root.get_dynamic_entity_root()
+		if entity_root != null:
+			return entity_root
+	return world_root
 
 
 func _attach_director(director: Node) -> void:

@@ -5,17 +5,19 @@ const RUN_CONTEXT_SCRIPT = preload("res://scripts/run/run_context.gd")
 
 const PLAYER_SPRITE_NAME: String = "PlayerSprite"
 
-var character_select = load("res://scenes/character_select.tscn")
+var character_select: Variant = load("res://scenes/character_select.tscn")
 
 var curret_game_type: Common.GameType = Common.GameType.SINGLE_PLAYER
-var active_run_context
+var active_run_context: Variant
 
 
-func _ready():
+func _ready() -> void:
 	Common.start_game_type.connect(handle_game_start)
 
 
-func main_scene_start(menu_caller: Control, game_type: Common.GameType, player_name: String):
+func main_scene_start(
+	menu_caller: Control, game_type: Common.GameType, player_name: String
+) -> void:
 	if game_type == Common.GameType.LOAD_GAME:
 		var menu_to_load: Control = character_select.instantiate()
 		menu_caller.queue_free()
@@ -74,14 +76,14 @@ func main_scene_start(menu_caller: Control, game_type: Common.GameType, player_n
 	menu_caller.queue_free()
 
 
-func update_menu_options(main_menu: Control, new_options: Dictionary):
+func update_menu_options(main_menu: Control, new_options: Dictionary) -> void:
 	# This does not work yet...
 	var buttons: Array = main_menu.get_node("Buttons").get_children()
-	for i in range(buttons.size()):
+	for i: Variant in range(buttons.size()):
 		buttons[i].text = new_options[new_options.keys()[i]]
 		buttons[i].text = new_options[new_options.values()[i]]
 
 
-func handle_game_start(main_menu: Control, game_type: Common.GameType, player_name: String):
+func handle_game_start(main_menu: Control, game_type: Common.GameType, player_name: String) -> void:
 	print("Game start: %s" % game_type)
 	main_scene_start(main_menu, game_type, player_name)

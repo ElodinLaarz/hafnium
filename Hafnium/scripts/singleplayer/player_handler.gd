@@ -3,8 +3,8 @@ extends "res://scripts/base_character.gd"
 
 # TODO(ElodinLaarz): Add Class Choice.
 var player_class: ClassHandler.PlayerClass
-var movement = PlayerMovement.new()
-var aim = PlayerAim.new()
+var movement: Variant = PlayerMovement.new()
+var aim: Variant = PlayerAim.new()
 
 var enemy_body: CharacterBody2D
 var enemy_in_attack_range: bool = false
@@ -15,19 +15,19 @@ var bomb_max: int = 3
 var currency: int = 0
 
 
-func _init():
+func _init() -> void:
 	invincibility_frame_length = 1.5
 	Common.player_character = self
 	Common.load_player = load_player_data
 
 
-func _ready():
+func _ready() -> void:
 	_animated_sprite = $PlayerSprite
 	ready_aim()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float):
+func _process(delta: float) -> void:
 	handle_movement(delta)
 	handle_attack(delta)
 	handle_stats(delta)
@@ -61,13 +61,13 @@ func load_player_data(player_name: String) -> bool:
 	return false
 
 
-func ready_aim():
+func ready_aim() -> void:
 	aim.aim_sight = get_node("Main Camera/PlayerPivot/Aim Sight")
 	aim.camera = get_node("Main Camera")
 	aim.pivot = get_node("Main Camera/PlayerPivot")
 
 
-func handle_movement(delta: float):
+func handle_movement(delta: float) -> void:
 	movement.set_max_speed_walk()  # Default to walking, unless running.
 	if movement.check_is_running(delta, velocity.length()):
 		movement.set_max_speed_run()
@@ -80,7 +80,7 @@ func handle_movement(delta: float):
 	move_and_slide()
 
 
-func handle_attack(_delta: float):
+func handle_attack(_delta: float) -> void:
 	aim.update_pivot(_delta)
 	# Allow it to be held down.
 	if Input.is_action_pressed("attack"):
@@ -91,20 +91,20 @@ func handle_attack(_delta: float):
 			print("bomb placed!")
 
 
-func handle_stats(delta: float):
+func handle_stats(delta: float) -> void:
 	player_class.stats.update(delta)
 	if enemy_in_attack_range and enemy_body != null:
 		enemy_attack(enemy_body)
 
 
-func _on_hitbox_body_entered(body):
+func _on_hitbox_body_entered(body: Variant) -> void:
 	if body.has_method("is_enemy"):
 		enemy_in_attack_range = true
 		enemy_body = body
 		enemy_attack(body)
 
 
-func _on_hitbox_body_exited(body):
+func _on_hitbox_body_exited(body: Variant) -> void:
 	if body.has_method("is_enemy"):
 		enemy_in_attack_range = false
 
@@ -117,14 +117,14 @@ func take_damage(d: int) -> bool:
 	return is_dead
 
 
-func enemy_attack(e: Enemy):
+func enemy_attack(e: Enemy) -> void:
 	if not e:
 		print("uh oh...")
 		return
 	take_damage(e.stats.damage)
 
 
-func add_currency(c: int):
+func add_currency(c: int) -> void:
 	currency += c
 	if run_context != null:
 		run_context.emit_currency_state(self)

@@ -20,7 +20,7 @@ enum HeartName {
 	BARBARIAN_1_4,
 }
 
-const CHARACTER_IDS_BY_ENUM := {
+const CHARACTER_IDS_BY_ENUM: Variant = {
 	ClassName.BARBARIAN: "class:barbarian",
 	ClassName.DRUID: "class:druid",
 	ClassName.WIZARD: "class:wizard",
@@ -53,7 +53,7 @@ var empty_heart: Rect2i = named_heart_lookup[HeartName.EMPTY]
 var health_checks: Health = Health.new()
 
 
-func rect(row, col: int) -> Rect2i:
+func rect(row: Variant, col: int) -> Rect2i:
 	return Rect2i(row * 16, col * 16, 16, 16)
 
 
@@ -69,7 +69,7 @@ func heart_texture(texture_rect: TextureRect, heart_name: HeartName) -> AtlasTex
 	return at
 
 
-func barbarian_heart_drawing_logic(stats: Stats, heart_container: Node):
+func barbarian_heart_drawing_logic(stats: Stats, heart_container: Node) -> void:
 	if !health_checks.bounds_ok(stats, heart_container.get_child_count()):
 		print("Health bounds check failed-- using default heart drawing logic.")
 		default_hearts(stats, heart_container)
@@ -85,7 +85,7 @@ func barbarian_heart_drawing_logic(stats: Stats, heart_container: Node):
 	var full_heart_count: int = stats.current_health / stats.health_to_damage_multiplier
 	var partial_heart: int = stats.current_health % stats.health_to_damage_multiplier
 
-	for i in range(total_hearts):
+	for i: Variant in range(total_hearts):
 		var current_heart: TextureRect = heart_container.get_child(i)
 		if i < full_heart_count:
 			current_heart.texture = heart_texture(current_heart, HeartName.BARBARIAN_FULL)
@@ -103,7 +103,7 @@ func barbarian_heart_drawing_logic(stats: Stats, heart_container: Node):
 			current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
 
 
-func druid_heart_drawing_logic(stats: Stats, heart_container: Node):
+func druid_heart_drawing_logic(stats: Stats, heart_container: Node) -> void:
 	if !health_checks.bounds_ok(stats, heart_container.get_child_count()):
 		print("Health bounds check failed-- using default heart drawing logic.")
 		default_hearts(stats, heart_container)
@@ -112,7 +112,7 @@ func druid_heart_drawing_logic(stats: Stats, heart_container: Node):
 	var full_heart_count: int = stats.current_health / 2
 	var partial_heart: int = stats.current_health % 2
 
-	for i in range(stats.max_health / 2):
+	for i: Variant in range(stats.max_health / 2):
 		var current_heart: TextureRect = heart_container.get_child(i)
 		if i < full_heart_count:
 			current_heart.texture = heart_texture(current_heart, HeartName.DRUID_FULL)
@@ -126,7 +126,7 @@ func druid_heart_drawing_logic(stats: Stats, heart_container: Node):
 			current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
 
 
-func wizard_heart_drawing_logic(stats: Stats, heart_container: Node):
+func wizard_heart_drawing_logic(stats: Stats, heart_container: Node) -> void:
 	# Draw purple hearts, with blue reserve mana
 	if !health_checks.bounds_ok(stats, heart_container.get_child_count()):
 		print("Health bounds check failed-- using default heart drawing logic.")
@@ -138,10 +138,10 @@ func wizard_heart_drawing_logic(stats: Stats, heart_container: Node):
 
 	# Placeholder for mana logic: in the future, empty hearts should
 	# show mana based on stats.resources["mana"]
-	var mana_res = stats.resources.get("mana")
+	var mana_res: Variant = stats.resources.get("mana")
 	var mana: int = mana_res.current_resource if mana_res is Stats.ResourceStatus else 0
 
-	for i in range(stats.max_health / 2):
+	for i: Variant in range(stats.max_health / 2):
 		var current_heart: TextureRect = heart_container.get_child(i)
 		if i < full_heart_count:
 			current_heart.texture = heart_texture(current_heart, HeartName.WIZARD_FULL)
@@ -164,30 +164,30 @@ func wizard_heart_drawing_logic(stats: Stats, heart_container: Node):
 				current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
 
 
-func default_hearts(_stats: Stats, heart_container: Node):
+func default_hearts(_stats: Stats, heart_container: Node) -> void:
 	# Clear heart containers or set them to empty.
 	if heart_container == null:
 		return
-	for i in range(heart_container.get_child_count()):
+	for i: Variant in range(heart_container.get_child_count()):
 		var current_heart: TextureRect = heart_container.get_child(i)
 		current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
 
 
 func hdl(pc: PlayerClass, cn: ClassName) -> bool:
-	var data = get_character_data(cn)
+	var data: Variant = get_character_data(cn)
 	if data == null:
 		print("No character data found for %s" % cn)
 		return false
 	return setup_from_data(pc, data)
 
 
-func get_character_data(cn: ClassName):
+func get_character_data(cn: ClassName) -> Variant:
 	if not CHARACTER_IDS_BY_ENUM.has(cn):
 		return null
 	return ContentRegistry.require_character(CHARACTER_IDS_BY_ENUM[cn])
 
 
-func setup_from_data(pc: PlayerClass, data) -> bool:
+func setup_from_data(pc: PlayerClass, data: Variant) -> bool:
 	pc.definition = data
 	data.apply_to_stats(pc.stats)
 	pc.stats.speed = data.speed
@@ -232,7 +232,7 @@ func setup_heart_drawing_from_style(pc: PlayerClass, heart_style: String) -> boo
 	return true
 
 
-func setup_hp(pc: PlayerClass, cn: ClassName):
+func setup_hp(pc: PlayerClass, cn: ClassName) -> Variant:
 	match cn:
 		ClassName.BARBARIAN:
 			pc.stats.health_to_damage_multiplier = 4
@@ -248,7 +248,7 @@ func setup_hp(pc: PlayerClass, cn: ClassName):
 	return true
 
 
-func wizard_attack(stats: Stats):
+func wizard_attack(stats: Stats) -> Variant:
 	# Add cooldown and stuff
 	if stats.attack_cooldown > 0:
 		return false
@@ -257,15 +257,15 @@ func wizard_attack(stats: Stats):
 
 
 func get_attack_projectile_path(cn: ClassName) -> String:
-	var data = get_character_data(cn)
+	var data: Variant = get_character_data(cn)
 	return get_projectile_path_from_definition(data)
 
 
-func get_projectile_path_from_definition(data) -> String:
+func get_projectile_path_from_definition(data: Variant) -> String:
 	if data == null:
 		return ""
 	if not data.attack_projectile_id.is_empty():
-		var projectile_data = ContentRegistry.require_projectile(data.attack_projectile_id)
+		var projectile_data: Variant = ContentRegistry.require_projectile(data.attack_projectile_id)
 		if projectile_data != null and projectile_data.projectile_scene != null:
 			return projectile_data.projectile_scene.resource_path
 	if data.attack_projectile_scene == null:
@@ -273,10 +273,10 @@ func get_projectile_path_from_definition(data) -> String:
 	return data.attack_projectile_scene.resource_path
 
 
-func build_attack_logic(data) -> Callable:
+func build_attack_logic(data: Variant) -> Callable:
 	if data == null or data.attack_projectile_scene == null:
-		return func(_stats): return false
-	return func(stats: Stats):
+		return func(_stats: Variant) -> bool: return false
+	return func(stats: Stats) -> bool:
 		if stats.attack_cooldown > 0:
 			return false
 		stats.attack_cooldown = stats.attack_speed
@@ -295,14 +295,14 @@ func setup_attack(pc: PlayerClass, cn: ClassName) -> bool:
 			pc.attack_logic = wizard_attack
 		ClassName.BARBARIAN, ClassName.DRUID:
 			# TODO: Implement specific attack logic for these classes
-			pc.attack_logic = func(_stats): return false
+			pc.attack_logic = func(_stats: Variant) -> bool: return false
 		_:
 			# Unmatched class
 			return false
 	return true
 
 
-func setup_damage(pc: PlayerClass, cn: ClassName):
+func setup_damage(pc: PlayerClass, cn: ClassName) -> Variant:
 	match cn:
 		ClassName.BARBARIAN:
 			pc.stats.damage = 3
@@ -339,8 +339,8 @@ func setup_class_resources(pc: PlayerClass, cn: ClassName) -> bool:
 
 
 class PlayerClass:
-	var class_handler := ClassHandler.new()
-	var definition
+	var class_handler: Variant = ClassHandler.new()
+	var definition: Variant
 	var heart_drawing_logic: Callable
 	var attack_logic: Callable
 	var attack_projectile_path: String = ""
@@ -348,7 +348,7 @@ class PlayerClass:
 	var stats: Stats
 	var _attack_scene: PackedScene
 
-	func _init(cn: ClassName):
+	func _init(cn: ClassName) -> void:
 		self.name = cn
 		self.stats = Stats.new()
 		# Each class has a different heart drawing logic
@@ -364,24 +364,24 @@ class PlayerClass:
 		else:
 			print("failed to set up class %s" % ClassName.keys()[cn])
 			# Fallback to avoid null callables
-			self.attack_logic = func(_stats): return false
+			self.attack_logic = func(_stats: Variant) -> bool: return false
 			self.heart_drawing_logic = class_handler.default_hearts
 
 	func has_resource(resource: String, count: int) -> bool:
 		if self.stats.resources.has(resource):
-			var res = self.stats.resources[resource]
+			var res: Variant = self.stats.resources[resource]
 			return res.current_resource >= count
 		return false
 
 	func use_resource(resource: String, count: int) -> bool:
 		if self.stats.resources.has(resource):
-			var res = self.stats.resources[resource]
+			var res: Variant = self.stats.resources[resource]
 			if res.current_resource >= count:
 				res.current_resource -= count
 				return true
 		return false
 
-	func draw_hearts(heart_container: Node):
+	func draw_hearts(heart_container: Node) -> void:
 		self.heart_drawing_logic.call(self.stats, heart_container)
 
 	func get_attack_scene() -> PackedScene:

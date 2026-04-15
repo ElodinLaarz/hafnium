@@ -9,11 +9,11 @@ var is_running: bool = false
 var enemy_speed: int = idle_speed
 
 
-func set_idle_speed():
+func set_idle_speed() -> void:
 	enemy_speed = idle_speed
 
 
-func set_chase_speed():
+func set_chase_speed() -> void:
 	enemy_speed = chase_speed
 
 

@@ -1,9 +1,9 @@
 extends "res://scripts/enemy.gd"
 
-const RUBY_SCENE = preload("res://scenes/items/ruby.tscn")
-const DEFAULT_ENEMY_ID := "enemy:slime_basic"
+const RUBY_SCENE: PackedScene = preload("res://scenes/items/ruby.tscn")
+const DEFAULT_ENEMY_ID: Variant = "enemy:slime_basic"
 
-var slime_reward = {
+var slime_reward: Variant = {
 	# 25% of the time, you get nothing! :(
 	25: [],
 	# 25% of the time, you get a ruby!
@@ -24,14 +24,14 @@ var slime_params: Stats.EnemyStatsParams = (
 	)
 )
 
-@onready var _slime_animated_sprite = $SlimeSprite
+@onready var _slime_animated_sprite: AnimatedSprite2D = $SlimeSprite
 
 
-func _init():
+func _init() -> void:
 	self.chasing_player = false
 	self.player = null
 	self.stats = Stats.new()
-	var enemy_data = ContentRegistry.require_enemy(DEFAULT_ENEMY_ID)
+	var enemy_data: Variant = ContentRegistry.require_enemy(DEFAULT_ENEMY_ID)
 	if enemy_data != null:
 		apply_definition(enemy_data)
 	else:
@@ -39,22 +39,22 @@ func _init():
 		self.reward = slime_reward
 
 
-func _ready():
+func _ready() -> void:
 	self._animated_sprite = _slime_animated_sprite
 
 
-func _on_detection_body_entered(body: CharacterBody2D):
+func _on_detection_body_entered(body: CharacterBody2D) -> void:
 	self.player = body
 	self.chasing_player = true
 
 
-func _on_detection_body_exited(body):
+func _on_detection_body_exited(body: Variant) -> void:
 	if self.player == body:
 		self.player = null
 		self.chasing_player = false
 
 
-func _on_hitbox_body_entered(body: Node2D):
+func _on_hitbox_body_entered(body: Node2D) -> void:
 	if body.has_method("is_projectile"):
 		var hp: int = self.stats.current_health
 		if Common.run_context != null:

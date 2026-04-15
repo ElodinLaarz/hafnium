@@ -53,7 +53,7 @@ var _current_health: int = 0
 var _max_health: int = 0
 
 
-func _init():
+func _init() -> void:
 	current_health = 0
 	max_health = 0
 	damage = 0
@@ -82,7 +82,7 @@ func take_damage(d: int) -> bool:
 	return false
 
 
-func enemy_init(params: EnemyStatsParams):
+func enemy_init(params: EnemyStatsParams) -> void:
 	max_health = params.max_health
 	current_health = max_health
 	damage = params.damage
@@ -91,14 +91,14 @@ func enemy_init(params: EnemyStatsParams):
 	attack_speed = params.attack_speed
 
 
-func update(delta: float):
+func update(delta: float) -> void:
 	if attack_cooldown > 0:
 		attack_cooldown -= delta
 		if attack_cooldown < 0:
 			attack_cooldown = 0
-	for resource_name in resources.keys():
+	for resource_name: String in resources.keys():
 		var resource: ResourceStatus = resources[resource_name]
-		var before := resource.current_resource
+		var before: int = resource.current_resource
 		resource.update(delta)
 		if resource.current_resource != before:
 			resource_changed.emit(resource_name, resource.current_resource, resource.max_resource)
@@ -111,14 +111,14 @@ class ResourceStatus:
 	var recovery_progress: float
 	var recovery_rate: float
 
-	func _init(p_resource_type: ClassResource, p_max_resource: int, p_recovery_rate: float):
+	func _init(p_resource_type: ClassResource, p_max_resource: int, p_recovery_rate: float) -> void:
 		self.resource_type = p_resource_type
 		self.max_resource = p_max_resource
 		self.current_resource = p_max_resource
 		self.recovery_rate = p_recovery_rate
 		self.recovery_progress = 0
 
-	func update(delta: float):
+	func update(delta: float) -> void:
 		if current_resource < max_resource:
 			recovery_progress += delta * recovery_rate
 			while recovery_progress >= 1 and current_resource < max_resource:
@@ -137,7 +137,7 @@ class EnemyStatsParams:
 
 	func _init(
 		p_max_health: int, p_damage: int, p_speed: int, p_attack_speed: float, p_attack_range: int
-	):
+	) -> void:
 		self.max_health = p_max_health
 		self.damage = p_damage
 		self.speed = p_speed

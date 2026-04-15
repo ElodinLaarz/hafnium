@@ -26,6 +26,8 @@ Common="*res://scripts/common.gd"
 
 [debug]
 
+gdscript/warnings/untyped_declaration=2
+gdscript/warnings/inferred_declaration=2
 gdscript/warnings/integer_division=0
 
 [display]

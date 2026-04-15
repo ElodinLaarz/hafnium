@@ -6,14 +6,14 @@ extends CharacterBody2D
 var ttl: float = 1.0  # Seconds to live.
 var damage: int = 1
 var damage_payload: Damage
-var source_actor
+var source_actor: Variant
 var source_team: int = 0
 # Implement this later...
 # var damage_type: DamageType = DamageType.PHYSICAL
 # var damage_area: float = 1 # Other characters within this area will also take damage.
 
 
-func _physics_process(delta: float):
+func _physics_process(delta: float) -> void:
 	decrement_time(delta)
 	move_and_slide()
 
@@ -22,7 +22,7 @@ func is_projectile() -> bool:
 	return true
 
 
-func decrement_time(delta: float):
+func decrement_time(delta: float) -> void:
 	ttl -= delta
 	if ttl <= 0:
 		queue_free()

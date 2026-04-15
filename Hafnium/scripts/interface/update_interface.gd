@@ -22,7 +22,7 @@ static func update_interface(interface_root: Node, iv: InterfaceValues) -> void:
 		level_label.text = "Room: %s" % iv.room_name
 
 
-func update(iv: InterfaceValues):
+func update(iv: InterfaceValues) -> void:
 	update_interface(get_parent() if get_parent() is Control else null, iv)
 
 
