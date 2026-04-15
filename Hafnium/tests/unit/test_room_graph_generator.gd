@@ -4,8 +4,8 @@ const ROOM_GRAPH_GENERATOR_SCRIPT = preload("res://scripts/rooms/room_graph_gene
 
 
 func test_generate_floor_returns_seeded_three_room_path() -> void:
-	var generator: Variant = ROOM_GRAPH_GENERATOR_SCRIPT.new()
-	var floor: Variant = generator.generate_floor(12345)
+	var generator: RoomGraphGenerator = ROOM_GRAPH_GENERATOR_SCRIPT.new()
+	var floor: Array[Dictionary] = generator.generate_floor(12345)
 
 	assert_eq(floor.size(), 3, "Default floor graph should have entrance, combat, and boss nodes")
 	assert_eq(floor[0]["room_kind"], "entrance")
@@ -15,9 +15,9 @@ func test_generate_floor_returns_seeded_three_room_path() -> void:
 
 func test_generated_rooms_use_registered_room_ids() -> void:
 	ContentRegistry.reload_defaults()
-	var generator: Variant = ROOM_GRAPH_GENERATOR_SCRIPT.new()
-	var floor: Variant = generator.generate_floor(9876)
+	var generator: RoomGraphGenerator = ROOM_GRAPH_GENERATOR_SCRIPT.new()
+	var floor: Array[Dictionary] = generator.generate_floor(9876)
 
-	for room: Variant in floor:
+	for room: Dictionary in floor:
 		assert_true(room.has("room_id"), "Every generated node should contain a room id")
 		assert_ne(room["room_id"], "", "Room id should not be empty")

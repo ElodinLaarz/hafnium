@@ -1,10 +1,12 @@
 class_name CharacterData
 extends Resource
 
+const GameConstants = preload("res://scripts/config/game_constants.gd")
+
 @export var id: String = ""
 @export var display_name: String = ""
 @export var legacy_class_name: int = -1
-@export var heart_style: String = "default"
+@export var heart_style: String = GameConstants.HEART_STYLE_DEFAULT
 @export var sprite_scene: PackedScene
 @export var attack_projectile_id: String = ""
 @export var attack_projectile_scene: PackedScene
@@ -35,10 +37,10 @@ func apply_to_stats(stats: Stats) -> void:
 	stats.projectile_speed = projectile_speed
 	stats.health_to_damage_multiplier = health_to_damage_multiplier
 
-	stats.resources["bomb"] = Stats.ResourceStatus.new(
+	stats.resources[GameConstants.RESOURCE_BOMB] = Stats.ResourceStatus.new(
 		Stats.ClassResource.BOMB, bomb_max, bomb_recovery_rate
 	)
 	if mana_max > 0:
-		stats.resources["mana"] = Stats.ResourceStatus.new(
+		stats.resources[GameConstants.RESOURCE_MANA] = Stats.ResourceStatus.new(
 			Stats.ClassResource.MANA, mana_max, mana_recovery_rate
 		)

@@ -2,8 +2,10 @@ class_name CombatDirector
 extends Node
 
 const BOMB_SCENE: PackedScene = preload("res://scenes/weapons/player_bomb.tscn")
+const GameConstants = preload("res://scripts/config/game_constants.gd")
+const ZERO_SPEED_PROJECTILE_TTL: float = 0.1
 
-var run_context: Variant
+var run_context: RunContext
 
 
 func configure(p_run_context: RunContext) -> void:
@@ -26,12 +28,14 @@ func fire_attack(player: PlayerCharacter, angle: float) -> bool:
 		player.player_class.definition != null
 		and not player.player_class.definition.attack_projectile_id.is_empty()
 	):
-		var projectile_data: Variant = ContentRegistry.require_projectile(
+		# ID-based lookup keeps class definitions data-driven while allowing scene swaps.
+		var projectile_data: ProjectileData = ContentRegistry.require_projectile(
 			player.player_class.definition.attack_projectile_id
 		)
 		if projectile_data != null:
 			projectile_scene = projectile_data.projectile_scene
 	if projectile_scene == null:
+		# Backward-compatible fallback for classes still carrying direct scene references.
 		projectile_scene = player.player_class.get_attack_scene()
 	if projectile_scene == null:
 		return false
@@ -40,13 +44,14 @@ func fire_attack(player: PlayerCharacter, angle: float) -> bool:
 	if projectile_parent == null:
 		return false
 
-	var projectile: Variant = projectile_scene.instantiate()
+	var projectile: Node = projectile_scene.instantiate()
 	if not (projectile is Projectile):
+		# Failing closed here prevents non-projectile scenes from entering combat loops.
 		projectile.free()
 		return false
 
 	var stats: Stats = player.player_class.stats
-	var aim_dir: Variant = Vector2(cos(angle), sin(angle))
+	var aim_dir: Vector2 = Vector2(cos(angle), sin(angle))
 	projectile.rotation = PI + angle
 	projectile.position = player.position + aim_dir * run_context.attack_displacement_magnitude
 	projectile.velocity = aim_dir * stats.projectile_speed
@@ -68,13 +73,13 @@ func place_bomb(player: PlayerCharacter) -> bool:
 		or player.player_class == null
 	):
 		return false
-	if not player.player_class.use_resource("bomb", 1):
+	if not player.player_class.use_resource(GameConstants.RESOURCE_BOMB, 1):
 		return false
 	var entity_root: Node = run_context.get_world_entity_root()
 	if entity_root == null:
 		return false
 
-	var bomb: Variant = BOMB_SCENE.instantiate()
+	var bomb: Node2D = BOMB_SCENE.instantiate()
 	if bomb is Node2D:
 		bomb.position = player.position
 	entity_root.add_child(bomb)
@@ -92,7 +97,7 @@ func resolve_projectile_hit(target: BaseCharacter, projectile: Projectile) -> bo
 		return false
 
 	projectile.call_deferred("queue_free")
-	var defeated: Variant = target.receive_damage(damage)
+	var defeated: bool = target.receive_damage(damage)
 	if defeated:
 		if target is Enemy:
 			run_context.handle_enemy_defeated(target)
@@ -102,5 +107,6 @@ func resolve_projectile_hit(target: BaseCharacter, projectile: Projectile) -> bo
 
 func _calculate_ttl(stats: Stats) -> float:
 	if stats.projectile_speed <= 0:
-		return 0.1
+		# Avoid division by zero while still allowing melee-style placeholder projectiles.
+		return ZERO_SPEED_PROJECTILE_TTL
 	return stats.attack_range / stats.projectile_speed

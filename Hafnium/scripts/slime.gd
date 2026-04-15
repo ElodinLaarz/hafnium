@@ -1,26 +1,39 @@
 extends "res://scripts/enemy.gd"
 
+const GameConstants = preload("res://scripts/config/game_constants.gd")
 const RUBY_SCENE: PackedScene = preload("res://scenes/items/ruby.tscn")
-const DEFAULT_ENEMY_ID: Variant = "enemy:slime_basic"
+const DEFAULT_ENEMY_ID: String = GameConstants.ENEMY_ID_SLIME_BASIC
 
-var slime_reward: Variant = {
+const DEFAULT_SLIME_HEALTH: int = 2
+const DEFAULT_SLIME_DAMAGE: int = 1
+const DEFAULT_SLIME_SPEED: int = 90
+const DEFAULT_SLIME_ATTACK_COOLDOWN: int = 2
+const DEFAULT_SLIME_ATTACK_RANGE: int = 1
+
+const REWARD_THRESHOLD_NO_DROP: int = 25
+const REWARD_THRESHOLD_SINGLE_DROP: int = 50
+const REWARD_THRESHOLD_DOUBLE_DROP: int = 100
+const SINGLE_RUBY_DROP_COUNT: int = 1
+const DOUBLE_RUBY_DROP_COUNT: int = 2
+
+var slime_reward: Dictionary = {
 	# 25% of the time, you get nothing! :(
-	25: [],
+	REWARD_THRESHOLD_NO_DROP: [],
 	# 25% of the time, you get a ruby!
-	50: [RUBY_SCENE, 1],
+	REWARD_THRESHOLD_SINGLE_DROP: [RUBY_SCENE, SINGLE_RUBY_DROP_COUNT],
 	# 50% of the time, you get 2 rubies!
-	100: [RUBY_SCENE, 2]
+	REWARD_THRESHOLD_DOUBLE_DROP: [RUBY_SCENE, DOUBLE_RUBY_DROP_COUNT]
 }
 
 var slime_params: Stats.EnemyStatsParams = (
 	Stats
 	. EnemyStatsParams
 	. new(
-		2,  # health
-		1,  # damage
-		90,  # speed
-		2,  # attack_cooldown
-		1,  # attack_range
+		DEFAULT_SLIME_HEALTH,  # health
+		DEFAULT_SLIME_DAMAGE,  # damage
+		DEFAULT_SLIME_SPEED,  # speed
+		DEFAULT_SLIME_ATTACK_COOLDOWN,  # attack_cooldown
+		DEFAULT_SLIME_ATTACK_RANGE,  # attack_range
 	)
 )
 
@@ -31,7 +44,7 @@ func _init() -> void:
 	self.chasing_player = false
 	self.player = null
 	self.stats = Stats.new()
-	var enemy_data: Variant = ContentRegistry.require_enemy(DEFAULT_ENEMY_ID)
+	var enemy_data: EnemyData = ContentRegistry.require_enemy(DEFAULT_ENEMY_ID)
 	if enemy_data != null:
 		apply_definition(enemy_data)
 	else:
@@ -48,7 +61,7 @@ func _on_detection_body_entered(body: CharacterBody2D) -> void:
 	self.chasing_player = true
 
 
-func _on_detection_body_exited(body: Variant) -> void:
+func _on_detection_body_exited(body: CharacterBody2D) -> void:
 	if self.player == body:
 		self.player = null
 		self.chasing_player = false

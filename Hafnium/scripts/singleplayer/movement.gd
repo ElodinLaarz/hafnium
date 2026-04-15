@@ -1,6 +1,11 @@
 class_name PlayerMovement
 extends Node
 
+const GameConstants = preload("res://scripts/config/game_constants.gd")
+
+const RUN_TO_WALK_THRESHOLD_FACTOR: float = 0.5
+const MAX_DOUBLE_CLICK_DELTA: float = 0.5
+
 # (ElodinLaarz): Values randomly chosen-- feel free to play around for something more fun.
 # Speed in pixels per second. -- The reason for not using consts in some places is so that
 # The player's top speeds an be modified, e.g. through equipment, buffs, etc.
@@ -12,17 +17,17 @@ var running_speed: int = int(walking_speed * running_multiplier)
 # Current speed of player
 var player_speed: int
 # Speed of negatively accelerating player to be considered not running
-var run_to_walk_threshold: float = walking_speed * 0.5
+var run_to_walk_threshold: float = walking_speed * RUN_TO_WALK_THRESHOLD_FACTOR
 var is_running: bool = false
 
 # max_double_click_delta is the largest time between when we consider an action
 # done twice. e.g. double-pressing a key.
-var max_double_click_delta: float = 0.5  # Units are seconds-- matching delta.
+var max_double_click_delta: float = MAX_DOUBLE_CLICK_DELTA  # Units are seconds-- matching delta.
 var recently_pressed_action_times: Dictionary = {
-	"up": INF,
-	"down": INF,
-	"left": INF,
-	"right": INF,
+	GameConstants.INPUT_ACTION_UP: INF,
+	GameConstants.INPUT_ACTION_DOWN: INF,
+	GameConstants.INPUT_ACTION_LEFT: INF,
+	GameConstants.INPUT_ACTION_RIGHT: INF,
 }  # Can I specify the types here...?
 var most_recent_action_name: String
 
@@ -42,8 +47,14 @@ func velocity_lerp(delta: float, v: Vector2, player_direction: Vector2) -> Vecto
 # Overridable input methods for testing
 func get_raw_input() -> Vector2:
 	return Vector2(
-		get_action_strength("right") - get_action_strength("left"),
-		get_action_strength("down") - get_action_strength("up")
+		(
+			get_action_strength(GameConstants.INPUT_ACTION_RIGHT)
+			- get_action_strength(GameConstants.INPUT_ACTION_LEFT)
+		),
+		(
+			get_action_strength(GameConstants.INPUT_ACTION_DOWN)
+			- get_action_strength(GameConstants.INPUT_ACTION_UP)
+		)
 	)
 
 
@@ -73,7 +84,7 @@ func still_running(delta: float, player_current_speed: float) -> bool:
 		print("still_running called when not running.")
 		#TODO(ElodinLaarz): How do errors work in Godot...?
 	is_running = player_current_speed > run_to_walk_threshold  # Unless we're still pressing a key
-	for action: Variant in recently_pressed_action_times:
+	for action: String in recently_pressed_action_times:
 		# A little worried about ordering and what happens if more than
 		# one action is recently pressed...
 
@@ -93,7 +104,7 @@ func started_running(delta: float) -> bool:
 	if is_running:
 		print("OH NO! WE ARE NOT SUPPOSED TO BE HERE!")
 		print("started_running called when already running.")
-	for action: Variant in recently_pressed_action_times:
+	for action: String in recently_pressed_action_times:
 		recently_pressed_action_times[action] += delta
 		# If not running, then run when movement action is a repeat of
 		# the most recent action. e.g. double-pressing "up".

@@ -5,10 +5,10 @@ const RUN_CONTEXT_SCRIPT = preload("res://scripts/run/run_context.gd")
 
 const PLAYER_SPRITE_NAME: String = "PlayerSprite"
 
-var character_select: Variant = load("res://scenes/character_select.tscn")
+var character_select: PackedScene = load("res://scenes/character_select.tscn")
 
 var curret_game_type: Common.GameType = Common.GameType.SINGLE_PLAYER
-var active_run_context: Variant
+var active_run_context: RunContext
 
 
 func _ready() -> void:
@@ -79,7 +79,7 @@ func main_scene_start(
 func update_menu_options(main_menu: Control, new_options: Dictionary) -> void:
 	# This does not work yet...
 	var buttons: Array = main_menu.get_node("Buttons").get_children()
-	for i: Variant in range(buttons.size()):
+	for i: int in range(buttons.size()):
 		buttons[i].text = new_options[new_options.keys()[i]]
 		buttons[i].text = new_options[new_options.values()[i]]
 

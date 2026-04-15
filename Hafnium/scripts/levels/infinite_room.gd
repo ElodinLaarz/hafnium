@@ -2,8 +2,12 @@ extends Node2D
 
 const ROOM_DATA_SCRIPT = preload("res://scripts/resources/room_data.gd")
 
-const FLOOR_COLOR: Variant = Color(0.117647, 0.129412, 0.156863, 1.0)
-const BORDER_COLOR: Variant = Color(0.345098, 0.392157, 0.470588, 1.0)
+const FLOOR_COLOR: Color = Color(0.117647, 0.129412, 0.156863, 1.0)
+const BORDER_COLOR: Color = Color(0.345098, 0.392157, 0.470588, 1.0)
+const PREFERRED_RING_SPACING: float = 48.0
+const RING_ANGLE_STAGGER_DIVISOR: float = 8.0
+const BORDER_WIDTH: float = 6.0
+const COMBAT_ROOM_KIND: String = "combat"
 
 @export var room_scale_tiles: int = 12
 @export var tile_size: int = 16
@@ -26,6 +30,7 @@ func _ready() -> void:
 		Common.run_context != null
 		and not Common.run_context.enemy_defeated.is_connected(_on_enemy_defeated)
 	):
+		# Room progression is driven by global combat events, not local enemy bookkeeping.
 		Common.run_context.enemy_defeated.connect(_on_enemy_defeated)
 	call_deferred("_start_initial_room")
 
@@ -38,7 +43,7 @@ func get_room_size_tiles(room_index: int) -> Vector2i:
 
 
 func get_room_half_extents(room_index: int) -> Vector2:
-	var room_size_tiles: Variant = get_room_size_tiles(room_index)
+	var room_size_tiles: Vector2i = get_room_size_tiles(room_index)
 	return Vector2(room_size_tiles.x * tile_size, room_size_tiles.y * tile_size) * 0.5
 
 
@@ -51,23 +56,22 @@ func get_dynamic_entity_root() -> Node:
 func build_spawn_positions(spawn_count: int) -> Array[Vector2]:
 	var spawn_positions: Array[Vector2] = []
 	var count: int = max(spawn_count, 1)
-	var half_extents: Variant = get_room_half_extents(
+	var half_extents: Vector2 = get_room_half_extents(
 		current_room_index if current_room_index > 0 else count
 	)
 	var available_radius: float = min(half_extents.x, half_extents.y) - spawn_margin
 	var max_radius: float = max(available_radius, 0.0)
 	var safe_ring_capacity: int = max(ring_capacity, 1)
 	var estimated_ring_count: int = maxi(int(ceil(float(count) / float(safe_ring_capacity))), 1)
-	var preferred_ring_spacing: float = 48.0
 	var ring_count: int = estimated_ring_count
 	if max_radius > 0.0:
-		var max_supported_rings: int = maxi(int(floor(max_radius / preferred_ring_spacing)), 1)
+		var max_supported_rings: int = maxi(int(floor(max_radius / PREFERRED_RING_SPACING)), 1)
 		ring_count = mini(estimated_ring_count, max_supported_rings)
 	var radius_step: float = 0.0
 	if ring_count > 0 and max_radius > 0.0:
 		radius_step = max_radius / float(ring_count)
 
-	for i: Variant in range(count):
+	for i: int in range(count):
 		var ring_index: int = i / safe_ring_capacity
 		var slot_index: int = i % safe_ring_capacity
 		var slots_in_ring: int = mini(count - ring_index * safe_ring_capacity, safe_ring_capacity)
@@ -75,7 +79,8 @@ func build_spawn_positions(spawn_count: int) -> Array[Vector2]:
 		var radius: float = 0.0
 		if radius_step > 0.0:
 			radius = min(radius_step * float(clamped_ring_index + 1), max_radius)
-		var angle_offset: float = float(clamped_ring_index) * PI / 8.0
+		var angle_offset: float = float(clamped_ring_index) * PI / RING_ANGLE_STAGGER_DIVISOR
+		# Offset each ring so enemies do not line up on straight radial lanes.
 		var angle: float = angle_offset + TAU * float(slot_index) / float(max(slots_in_ring, 1))
 		spawn_positions.append(Vector2.RIGHT.rotated(angle) * radius)
 
@@ -109,14 +114,14 @@ func _spawn_wave(room_index: int) -> void:
 		_schedule_room_advance()
 		return
 
-	var spawn_positions: Variant = build_spawn_positions(wave_enemy_ids.size())
+	var spawn_positions: Array[Vector2] = build_spawn_positions(wave_enemy_ids.size())
 	var attempted_spawn_count: int = 0
 	var successful_spawn_count: int = 0
-	for i: Variant in range(wave_enemy_ids.size()):
+	for i: int in range(wave_enemy_ids.size()):
 		attempted_spawn_count += 1
 		var enemy_id: String = wave_enemy_ids[i]
 		var spawn_position: Vector2 = spawn_positions[i]
-		var enemy: Variant = Common.run_context.spawn_enemy(enemy_id, spawn_position)
+		var enemy: Enemy = Common.run_context.spawn_enemy(enemy_id, spawn_position)
 		if enemy != null:
 			successful_spawn_count += 1
 			remaining_enemies += 1
@@ -137,21 +142,21 @@ func _advance_to_next_room() -> void:
 
 func _build_wave_enemy_ids(room_index: int) -> Array[String]:
 	var enemy_ids: Array[String] = []
-	var encounter: Variant = ContentRegistry.require_encounter(encounter_definition_id)
+	var encounter: EncounterData = ContentRegistry.require_encounter(encounter_definition_id)
 	if encounter == null or encounter.spawns.is_empty():
 		return enemy_ids
 
 	var configured_enemy_ids: Array[String] = []
-	for spawn_entry: Variant in encounter.spawns:
+	for spawn_entry: EncounterSpawnData in encounter.spawns:
 		if spawn_entry == null or spawn_entry.enemy_id.is_empty():
 			continue
-		for _i: Variant in range(max(spawn_entry.count, 1)):
+		for _i: int in range(max(spawn_entry.count, 1)):
 			configured_enemy_ids.append(spawn_entry.enemy_id)
 
 	if configured_enemy_ids.is_empty():
 		return enemy_ids
 
-	for i: Variant in range(max(room_index, 1)):
+	for i: int in range(max(room_index, 1)):
 		enemy_ids.append(configured_enemy_ids[i % configured_enemy_ids.size()])
 	return enemy_ids
 
@@ -160,24 +165,25 @@ func _schedule_room_advance() -> void:
 	if _advance_scheduled:
 		return
 	_advance_scheduled = true
+	# Deferred transition avoids mutating room state from inside defeat signal handlers.
 	call_deferred("_advance_to_next_room")
 
 
 func _clear_dynamic_children() -> void:
 	if generated_room != null:
-		for child: Variant in generated_room.get_children():
+		for child: Node in generated_room.get_children():
 			child.queue_free()
 
 	if dynamic_entities != null:
-		for child: Variant in dynamic_entities.get_children():
+		for child: Node in dynamic_entities.get_children():
 			child.queue_free()
 
 
 func _rebuild_room_geometry(room_index: int) -> void:
 	if generated_room == null:
 		return
-	var half_extents: Variant = get_room_half_extents(room_index)
-	var floor_points: Variant = PackedVector2Array(
+	var half_extents: Vector2 = get_room_half_extents(room_index)
+	var floor_points: PackedVector2Array = PackedVector2Array(
 		[
 			Vector2(-half_extents.x, -half_extents.y),
 			Vector2(half_extents.x, -half_extents.y),
@@ -186,19 +192,19 @@ func _rebuild_room_geometry(room_index: int) -> void:
 		]
 	)
 
-	var floor: Variant = Polygon2D.new()
+	var floor: Polygon2D = Polygon2D.new()
 	floor.polygon = floor_points
 	floor.color = FLOOR_COLOR
 	generated_room.add_child(floor)
 
-	var border: Variant = Line2D.new()
-	border.width = 6.0
+	var border: Line2D = Line2D.new()
+	border.width = BORDER_WIDTH
 	border.closed = true
 	border.default_color = BORDER_COLOR
 	border.points = floor_points
 	generated_room.add_child(border)
 
-	var walls: Variant = StaticBody2D.new()
+	var walls: StaticBody2D = StaticBody2D.new()
 	generated_room.add_child(walls)
 
 	_add_wall(
@@ -224,8 +230,8 @@ func _rebuild_room_geometry(room_index: int) -> void:
 
 
 func _add_wall(parent: Node, wall_position: Vector2, wall_size: Vector2) -> void:
-	var collision_shape: Variant = CollisionShape2D.new()
-	var rectangle: Variant = RectangleShape2D.new()
+	var collision_shape: CollisionShape2D = CollisionShape2D.new()
+	var rectangle: RectangleShape2D = RectangleShape2D.new()
 	rectangle.size = wall_size
 	collision_shape.shape = rectangle
 	collision_shape.position = wall_position
@@ -242,9 +248,10 @@ func _emit_room_state(room_index: int) -> void:
 	if Common.run_context == null:
 		return
 
-	var room_data: Variant = ROOM_DATA_SCRIPT.new()
+	var room_data: RoomData = ROOM_DATA_SCRIPT.new()
+	# Synthetic RoomData keeps HUD/observers updated even though rooms are procedural.
 	room_data.id = "Room %d" % room_index
-	room_data.room_kind = "combat"
+	room_data.room_kind = COMBAT_ROOM_KIND
 	room_data.encounter_id = encounter_definition_id
 	Common.run_context.current_room = room_data
 	Common.run_context.room_entered.emit(room_data.id)

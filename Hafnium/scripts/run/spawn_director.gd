@@ -1,19 +1,19 @@
 class_name SpawnDirector
 extends Node
 
-var run_context: Variant
+var run_context: RunContext
 
 
-func configure(p_run_context: Variant) -> void:
+func configure(p_run_context: RunContext) -> void:
 	run_context = p_run_context
 
 
-func spawn_enemy(enemy_id: String, spawn_parent: Node, spawn_position: Vector2) -> Variant:
-	var enemy_data: Variant = ContentRegistry.require_enemy(enemy_id)
+func spawn_enemy(enemy_id: String, spawn_parent: Node, spawn_position: Vector2) -> Enemy:
+	var enemy_data: EnemyData = ContentRegistry.require_enemy(enemy_id)
 	if enemy_data == null or enemy_data.actor_scene == null:
 		return null
 
-	var enemy: Variant = enemy_data.actor_scene.instantiate()
+	var enemy: Node = enemy_data.actor_scene.instantiate()
 	if enemy is Enemy:
 		enemy.apply_definition(enemy_data)
 		enemy.position = spawn_position
