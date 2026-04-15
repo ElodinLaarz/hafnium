@@ -1,38 +1,24 @@
-[gd_scene load_steps=9 format=3 uid="uid://2fbyvsx3kw4n"]
+[gd_scene format=3 uid="uid://2fbyvsx3kw4n"]
 
-[ext_resource type="Script" path="res://scripts/projectile.gd" id="1_etc0n"]
-[ext_resource type="Texture2D" path="res://sprites/not_my_art/fireball.png" id="1_s85b4"]
+[ext_resource type="Script" uid="uid://dxrmqf8o2rksy" path="res://scripts/projectile.gd" id="1_etc0n"]
+[ext_resource type="Texture2D" uid="uid://dqcy5m0qbu5a2" path="res://sprites/not_my_art/fireball.png" id="1_s85b4"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_264gt"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_2xshj"]
 atlas = ExtResource("1_s85b4")
-region = Rect2(0, 0, 128, 128)
+region = Rect2(0, 0, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_gc4ax"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_iurok"]
 atlas = ExtResource("1_s85b4")
-region = Rect2(128, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_3pnu3"]
-atlas = ExtResource("1_s85b4")
-region = Rect2(0, 128, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_022yf"]
-atlas = ExtResource("1_s85b4")
-region = Rect2(128, 128, 128, 128)
+region = Rect2(16, 0, 16, 16)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_q36fl"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_264gt")
+"texture": SubResource("AtlasTexture_2xshj")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_gc4ax")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_3pnu3")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_022yf")
+"texture": SubResource("AtlasTexture_iurok")
 }],
 "loop": true,
 "name": &"default",
@@ -40,19 +26,18 @@ animations = [{
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ra1i3"]
-radius = 2.0
+radius = 8.0
 
-[node name="Fireball" type="CharacterBody2D"]
+[node name="Fireball" type="CharacterBody2D" unique_id=167876864]
+z_index = 2
 collision_layer = 4
 collision_mask = 0
 script = ExtResource("1_etc0n")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(4, -3.55271e-15)
-scale = Vector2(0.1, 0.1)
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=439011483]
+rotation = 3.1415927
 sprite_frames = SubResource("SpriteFrames_q36fl")
 autoplay = "default"
-frame_progress = 0.341923
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1397363795]
 shape = SubResource("CircleShape2D_ra1i3")
