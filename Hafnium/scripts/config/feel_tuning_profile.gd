@@ -17,6 +17,7 @@ var run_double_tap_window: float = 0.5
 var attack_buffer_window: float = 0.12
 var attack_move_slow_multiplier: float = 0.85
 var attack_move_slow_time: float = 0.1
+var projectile_life_multiplier: float = 1.0
 
 var enable_hit_stop: bool = true
 var hit_stop_duration: float = 0.05
@@ -84,6 +85,8 @@ func set_float_value(key: String, value: float) -> void:
 			attack_move_slow_multiplier = value
 		"attack_move_slow_time":
 			attack_move_slow_time = value
+		"projectile_life_multiplier":
+			projectile_life_multiplier = value
 		"hit_stop_duration":
 			hit_stop_duration = value
 		"hit_stop_time_scale":
@@ -131,6 +134,7 @@ func clamp_values() -> void:
 	attack_buffer_window = clampf(attack_buffer_window, 0.0, 0.35)
 	attack_move_slow_multiplier = clampf(attack_move_slow_multiplier, 0.2, 1.0)
 	attack_move_slow_time = clampf(attack_move_slow_time, 0.0, 0.4)
+	projectile_life_multiplier = clampf(projectile_life_multiplier, 0.25, 3.0)
 	hit_stop_duration = clampf(hit_stop_duration, 0.0, 0.2)
 	hit_stop_time_scale = clampf(hit_stop_time_scale, 0.05, 1.0)
 	screen_shake_intensity = clampf(screen_shake_intensity, 0.0, 12.0)
@@ -183,6 +187,7 @@ func _get_preset_values(preset_name: String) -> Dictionary:
 				"attack_buffer_window": 0.1,
 				"attack_move_slow_multiplier": 0.92,
 				"attack_move_slow_time": 0.05,
+				"projectile_life_multiplier": 0.9,
 				"enable_hit_stop": true,
 				"hit_stop_duration": 0.04,
 				"hit_stop_time_scale": 0.28,
@@ -204,6 +209,7 @@ func _get_preset_values(preset_name: String) -> Dictionary:
 				"attack_buffer_window": 0.15,
 				"attack_move_slow_multiplier": 0.75,
 				"attack_move_slow_time": 0.15,
+				"projectile_life_multiplier": 1.2,
 				"enable_hit_stop": true,
 				"hit_stop_duration": 0.07,
 				"hit_stop_time_scale": 0.16,
@@ -225,6 +231,7 @@ func _get_preset_values(preset_name: String) -> Dictionary:
 				"attack_buffer_window": 0.12,
 				"attack_move_slow_multiplier": 0.85,
 				"attack_move_slow_time": 0.1,
+				"projectile_life_multiplier": 1.0,
 				"enable_hit_stop": true,
 				"hit_stop_duration": 0.05,
 				"hit_stop_time_scale": 0.2,

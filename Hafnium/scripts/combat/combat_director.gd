@@ -120,7 +120,11 @@ func resolve_projectile_hit(target: BaseCharacter, projectile: Projectile) -> bo
 
 
 func _calculate_ttl(stats: Stats) -> float:
+	var feel_tuning: FeelTuningProfile = Common.get_feel_tuning()
+	var life_multiplier: float = (
+		feel_tuning.projectile_life_multiplier if feel_tuning != null else 1.0
+	)
 	if stats.projectile_speed <= 0:
 		# Avoid division by zero while still allowing melee-style placeholder projectiles.
-		return ZERO_SPEED_PROJECTILE_TTL
-	return stats.attack_range / stats.projectile_speed
+		return ZERO_SPEED_PROJECTILE_TTL * life_multiplier
+	return (stats.attack_range / stats.projectile_speed) * life_multiplier

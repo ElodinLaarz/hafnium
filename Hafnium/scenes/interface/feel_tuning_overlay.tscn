@@ -176,6 +176,19 @@ step = 0.01
 custom_minimum_size = Vector2(64, 0)
 text = "0.00"
 
+[node name="ProjectileLifeMultiplier" type="HBoxContainer" parent="Panel/Container/Scroll/Margin/Rows"]
+[node name="Label" type="Label" parent="Panel/Container/Scroll/Margin/Rows/ProjectileLifeMultiplier"]
+custom_minimum_size = Vector2(180, 0)
+text = "Projectile Life Mult"
+[node name="Slider" type="HSlider" parent="Panel/Container/Scroll/Margin/Rows/ProjectileLifeMultiplier"]
+size_flags_horizontal = 3
+min_value = 0.25
+max_value = 3.0
+step = 0.05
+[node name="Value" type="Label" parent="Panel/Container/Scroll/Margin/Rows/ProjectileLifeMultiplier"]
+custom_minimum_size = Vector2(64, 0)
+text = "0.00"
+
 [node name="EnableHitStop" type="HBoxContainer" parent="Panel/Container/Scroll/Margin/Rows"]
 [node name="Label" type="Label" parent="Panel/Container/Scroll/Margin/Rows/EnableHitStop"]
 custom_minimum_size = Vector2(180, 0)

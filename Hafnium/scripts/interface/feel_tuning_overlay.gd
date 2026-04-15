@@ -61,6 +61,9 @@ func _bind_controls() -> void:
 	_register_slider(
 		"Panel/Container/Scroll/Margin/Rows/AttackMoveSlowTime", "attack_move_slow_time"
 	)
+	_register_slider(
+		"Panel/Container/Scroll/Margin/Rows/ProjectileLifeMultiplier", "projectile_life_multiplier"
+	)
 	_register_slider("Panel/Container/Scroll/Margin/Rows/HitStopDuration", "hit_stop_duration")
 	_register_slider("Panel/Container/Scroll/Margin/Rows/HitStopTimeScale", "hit_stop_time_scale")
 	_register_slider(
@@ -83,8 +86,11 @@ func _bind_controls() -> void:
 
 func _register_slider(path: String, key: String) -> void:
 	var row: HBoxContainer = get_node(path)
+	var label: Label = row.get_node("Label")
 	var slider: HSlider = row.get_node("Slider")
 	var value_label: Label = row.get_node("Value")
+	label.custom_minimum_size.x = 120.0
+	value_label.custom_minimum_size.x = 52.0
 	_slider_map[key] = slider
 	_value_labels[key] = value_label
 	slider.value_changed.connect(
