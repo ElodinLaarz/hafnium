@@ -47,10 +47,11 @@ func test_bounds_ok_over_max_health():
 	assert_false(h.bounds_ok(s, 5), "Should fail if current_health > max_health")
 
 
-func test_bounds_ok_negative_health():
+func test_current_health_clamps_negative_values_to_zero():
 	var h = Health.new()
 	var s = Stats.new()
 	s.max_health = 10
 	s.current_health = -1
 	s.health_to_damage_multiplier = 2
-	assert_false(h.bounds_ok(s, 5), "Should fail if health is negative")
+	assert_eq(s.current_health, 0, "Setter should clamp current health to zero")
+	assert_true(h.bounds_ok(s, 5), "Clamped zero health should still satisfy bounds checks")

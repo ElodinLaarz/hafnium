@@ -59,13 +59,22 @@ func take_damage(d: int) -> bool:
 	if is_invincible:
 		return false
 
+	if stats == null:
+		push_error(
+			(
+				"BaseCharacter.take_damage() called before stats was initialized for actor_definition_id='%s'"
+				% actor_definition_id
+			)
+		)
+		return false
+
 	if _animated_sprite:
 		_animated_sprite.play("invincibility_frames")
 
 	var is_dead: bool = stats.take_damage(d)
 	if is_dead:
 		die()
-	else:
+	elif stats.current_health > 0:
 		is_invincible = true
 	return is_dead
 

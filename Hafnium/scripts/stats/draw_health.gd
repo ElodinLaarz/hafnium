@@ -89,17 +89,17 @@ func _on_resource_changed(resource_name: String, current_value: int, max_value: 
 	if resource_name == "bomb":
 		interface_values.bombs = current_value
 		interface_values.bomb_max = max_value
-		INTERFACE_UPDATER.update_interface(self, interface_values)
+		INTERFACE_UPDATER.update_interface(_get_interface_root(), interface_values)
 
 
 func _on_currency_changed(current_currency: int) -> void:
 	interface_values.currency = current_currency
-	INTERFACE_UPDATER.update_interface(self, interface_values)
+	INTERFACE_UPDATER.update_interface(_get_interface_root(), interface_values)
 
 
 func _on_room_entered(room_id: String) -> void:
 	interface_values.room_name = room_id
-	INTERFACE_UPDATER.update_interface(self, interface_values)
+	INTERFACE_UPDATER.update_interface(_get_interface_root(), interface_values)
 
 
 func _render_player_state() -> void:
@@ -116,4 +116,13 @@ func _render_player_state() -> void:
 		if run_context != null and run_context.current_room != null
 		else "Unknown"
 	)
-	INTERFACE_UPDATER.update_interface(self, interface_values)
+	INTERFACE_UPDATER.update_interface(_get_interface_root(), interface_values)
+
+
+func _get_interface_root() -> Node:
+	if get_node_or_null("CounterMargins") != null:
+		return self
+	var parent := get_parent()
+	if parent != null and parent.get_node_or_null("CounterMargins") != null:
+		return parent
+	return self

@@ -15,15 +15,6 @@ enum ClassResource {
 # Exceptions to this are (1) the Barbarian for which 1 heart = 4
 # points of damage, and (2) Enemies which have a 1:1 ratio.
 var health_to_damage_multiplier: int = 2
-var current_health: int:
-	set(value):
-		current_health = value
-		health_changed.emit(current_health, max_health)
-
-var max_health: int:
-	set(value):
-		max_health = value
-		health_changed.emit(current_health, max_health)
 
 var damage: int
 var speed: int
@@ -35,46 +26,31 @@ var attack_cooldown: float
 
 var resources: Dictionary
 
+var current_health: int:
+	get:
+		return _current_health
+	set(value):
+		var clamped_value: int = maxi(value, 0)
+		if _current_health == clamped_value:
+			return
+		_current_health = clamped_value
+		health_changed.emit(_current_health, _max_health)
 
-class ResourceStatus:
-	var resource_type: ClassResource
-	var current_resource: int
-	var max_resource: int
-	var recovery_progress: float
-	var recovery_rate: float
+var max_health: int:
+	get:
+		return _max_health
+	set(value):
+		var clamped_value: int = maxi(value, 0)
+		if _max_health == clamped_value:
+			return
+		_max_health = clamped_value
+		if _current_health > _max_health:
+			current_health = _max_health
+			return
+		health_changed.emit(_current_health, _max_health)
 
-	func _init(p_resource_type: ClassResource, p_max_resource: int, p_recovery_rate: float):
-		self.resource_type = p_resource_type
-		self.max_resource = p_max_resource
-		self.current_resource = p_max_resource
-		self.recovery_rate = p_recovery_rate
-		self.recovery_progress = 0
-
-	func update(delta: float):
-		if current_resource < max_resource:
-			recovery_progress += delta * recovery_rate
-			while recovery_progress >= 1 and current_resource < max_resource:
-				current_resource += 1
-				recovery_progress -= 1
-		else:
-			recovery_progress = 0
-
-
-class EnemyStatsParams:
-	var max_health: int
-	var damage: int
-	var speed: int
-	var attack_speed: float
-	var attack_range: int
-
-	func _init(
-		p_max_health: int, p_damage: int, p_speed: int, p_attack_speed: float, p_attack_range: int
-	):
-		self.max_health = p_max_health
-		self.damage = p_damage
-		self.speed = p_speed
-		self.attack_speed = p_attack_speed
-		self.attack_range = p_attack_range
+var _current_health: int = 0
+var _max_health: int = 0
 
 
 func _init():
@@ -126,3 +102,44 @@ func update(delta: float):
 		resource.update(delta)
 		if resource.current_resource != before:
 			resource_changed.emit(resource_name, resource.current_resource, resource.max_resource)
+
+
+class ResourceStatus:
+	var resource_type: ClassResource
+	var current_resource: int
+	var max_resource: int
+	var recovery_progress: float
+	var recovery_rate: float
+
+	func _init(p_resource_type: ClassResource, p_max_resource: int, p_recovery_rate: float):
+		self.resource_type = p_resource_type
+		self.max_resource = p_max_resource
+		self.current_resource = p_max_resource
+		self.recovery_rate = p_recovery_rate
+		self.recovery_progress = 0
+
+	func update(delta: float):
+		if current_resource < max_resource:
+			recovery_progress += delta * recovery_rate
+			while recovery_progress >= 1 and current_resource < max_resource:
+				current_resource += 1
+				recovery_progress -= 1
+		else:
+			recovery_progress = 0
+
+
+class EnemyStatsParams:
+	var max_health: int
+	var damage: int
+	var speed: int
+	var attack_speed: float
+	var attack_range: int
+
+	func _init(
+		p_max_health: int, p_damage: int, p_speed: int, p_attack_speed: float, p_attack_range: int
+	):
+		self.max_health = p_max_health
+		self.damage = p_damage
+		self.speed = p_speed
+		self.attack_speed = p_attack_speed
+		self.attack_range = p_attack_range

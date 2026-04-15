@@ -11,7 +11,12 @@ func configure(p_run_context) -> void:
 
 
 func fire_attack(player, angle: float) -> bool:
-	if run_context == null or player == null or player.player_class == null:
+	if (
+		run_context == null
+		or run_context.world_root == null
+		or player == null
+		or player.player_class == null
+	):
 		return false
 	if not player.player_class.attack():
 		return false
@@ -33,6 +38,7 @@ func fire_attack(player, angle: float) -> bool:
 
 	var projectile = projectile_scene.instantiate()
 	if not (projectile is Projectile):
+		projectile.free()
 		return false
 
 	var stats: Stats = player.player_class.stats
@@ -51,7 +57,12 @@ func fire_attack(player, angle: float) -> bool:
 
 
 func place_bomb(player) -> bool:
-	if run_context == null or player == null or player.player_class == null:
+	if (
+		run_context == null
+		or run_context.world_root == null
+		or player == null
+		or player.player_class == null
+	):
 		return false
 	if not player.player_class.use_resource("bomb", 1):
 		return false
@@ -64,13 +75,16 @@ func place_bomb(player) -> bool:
 
 
 func resolve_projectile_hit(target, projectile) -> bool:
-	if target == null or projectile == null:
+	if run_context == null or target == null or projectile == null:
 		return false
-	if not target.can_receive_damage(projectile.build_damage()):
+	var damage: Damage = projectile.build_damage()
+	if damage == null:
+		return false
+	if not target.can_receive_damage(damage):
 		return false
 
 	projectile.call_deferred("queue_free")
-	var defeated = target.receive_damage(projectile.build_damage())
+	var defeated = target.receive_damage(damage)
 	if defeated:
 		if target is Enemy:
 			run_context.handle_enemy_defeated(target)
