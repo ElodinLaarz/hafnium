@@ -17,7 +17,7 @@ func polar_coordinates(cartesian: Vector2) -> PolarCoordinate:
 	var y: float = cartesian.y
 
 	var radius: float = sqrt(pow(x, 2) + pow(y, 2))
-	var angle: Variant = atan2(y, x)
+	var angle: float = atan2(y, x)
 
 	return PolarCoordinate.new(radius, angle)
 

@@ -4,9 +4,9 @@ extends Node
 const PLAYER_HEART: PackedScene = preload("res://scenes/interface/lifebar/heart.tscn")
 const INTERFACE_UPDATER: GDScript = preload("res://scripts/interface/update_interface.gd")
 
-var run_context: Variant
-var tracked_player: Variant
-var interface_values: Variant = INTERFACE_UPDATER.InterfaceValues.new()
+var run_context: RunContext
+var tracked_player: PlayerCharacter
+var interface_values: INTERFACE_UPDATER.InterfaceValues = INTERFACE_UPDATER.InterfaceValues.new()
 
 
 func _ready() -> void:
@@ -21,12 +21,12 @@ func dequeue_children(parent: Node) -> void:
 func set_num_hearts(heart_container: Node, num_hearts: int) -> void:
 	if heart_container.get_child_count() != num_hearts:
 		dequeue_children(heart_container)
-		for i: Variant in range(num_hearts):
+		for i: int in range(num_hearts):
 			var heart: Node = PLAYER_HEART.instantiate()
 			heart_container.add_child(heart)
 
 
-func check_and_create_hearts(player: Variant) -> void:
+func check_and_create_hearts(player: PlayerCharacter) -> void:
 	if player == null or player.player_class == null:
 		print("Error: Player class not set.")
 		return
@@ -72,7 +72,7 @@ func _bind_run_context() -> void:
 		_on_primary_player_changed(run_context.primary_player)
 
 
-func _on_primary_player_changed(player: Variant) -> void:
+func _on_primary_player_changed(player: PlayerCharacter) -> void:
 	tracked_player = player
 	check_and_create_hearts(player)
 	_render_player_state()
@@ -122,7 +122,7 @@ func _render_player_state() -> void:
 func _get_interface_root() -> Node:
 	if get_node_or_null("CounterMargins") != null:
 		return self
-	var parent: Variant = get_parent()
+	var parent: Node = get_parent()
 	if parent != null and parent.get_node_or_null("CounterMargins") != null:
 		return parent
 	return self

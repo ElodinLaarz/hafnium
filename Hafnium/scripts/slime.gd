@@ -1,9 +1,9 @@
 extends "res://scripts/enemy.gd"
 
 const RUBY_SCENE: PackedScene = preload("res://scenes/items/ruby.tscn")
-const DEFAULT_ENEMY_ID: Variant = "enemy:slime_basic"
+const DEFAULT_ENEMY_ID: String = "enemy:slime_basic"
 
-var slime_reward: Variant = {
+var slime_reward: Dictionary = {
 	# 25% of the time, you get nothing! :(
 	25: [],
 	# 25% of the time, you get a ruby!
@@ -31,7 +31,7 @@ func _init() -> void:
 	self.chasing_player = false
 	self.player = null
 	self.stats = Stats.new()
-	var enemy_data: Variant = ContentRegistry.require_enemy(DEFAULT_ENEMY_ID)
+	var enemy_data: EnemyData = ContentRegistry.require_enemy(DEFAULT_ENEMY_ID)
 	if enemy_data != null:
 		apply_definition(enemy_data)
 	else:
@@ -48,7 +48,7 @@ func _on_detection_body_entered(body: CharacterBody2D) -> void:
 	self.chasing_player = true
 
 
-func _on_detection_body_exited(body: Variant) -> void:
+func _on_detection_body_exited(body: CharacterBody2D) -> void:
 	if self.player == body:
 		self.player = null
 		self.chasing_player = false

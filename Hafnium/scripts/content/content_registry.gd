@@ -1,23 +1,23 @@
 extends Node
 
-const CHARACTER_RESOURCE_PATHS: Variant = [
+const CHARACTER_RESOURCE_PATHS: Array[String] = [
 	"res://resources/characters/barbarian.tres",
 	"res://resources/characters/druid.tres",
 	"res://resources/characters/wizard.tres",
 ]
-const ENEMY_RESOURCE_PATHS: Variant = [
+const ENEMY_RESOURCE_PATHS: Array[String] = [
 	"res://resources/enemies/slime_basic.tres",
 ]
-const PROJECTILE_RESOURCE_PATHS: Variant = [
+const PROJECTILE_RESOURCE_PATHS: Array[String] = [
 	"res://resources/projectiles/fireball.tres",
 ]
-const LOOT_RESOURCE_PATHS: Variant = [
+const LOOT_RESOURCE_PATHS: Array[String] = [
 	"res://resources/loot/slime_basic_loot.tres",
 ]
-const ENCOUNTER_RESOURCE_PATHS: Variant = [
+const ENCOUNTER_RESOURCE_PATHS: Array[String] = [
 	"res://resources/encounters/slime_loop.tres",
 ]
-const ROOM_RESOURCE_PATHS: Variant = [
+const ROOM_RESOURCE_PATHS: Array[String] = [
 	"res://resources/rooms/start_room.tres",
 ]
 
@@ -51,60 +51,60 @@ func reload_defaults() -> void:
 	_register_all(ROOM_RESOURCE_PATHS, room_defs, "room")
 
 
-func require_character(id: String) -> Variant:
+func require_character(id: String) -> CharacterData:
 	return _require_from(character_defs, id, "character")
 
 
-func require_legacy_character(legacy_name: int) -> Variant:
+func require_legacy_character(legacy_name: int) -> CharacterData:
 	if not legacy_character_lookup.has(legacy_name):
 		push_error("Unknown legacy class name: %s" % legacy_name)
 		return null
 	return legacy_character_lookup[legacy_name]
 
 
-func require_enemy(id: String) -> Variant:
+func require_enemy(id: String) -> EnemyData:
 	return _require_from(enemy_defs, id, "enemy")
 
 
-func require_projectile(id: String) -> Variant:
+func require_projectile(id: String) -> ProjectileData:
 	return _require_from(projectile_defs, id, "projectile")
 
 
-func require_loot(id: String) -> Variant:
+func require_loot(id: String) -> LootTable:
 	return _require_from(loot_defs, id, "loot")
 
 
-func require_encounter(id: String) -> Variant:
+func require_encounter(id: String) -> EncounterData:
 	return _require_from(encounter_defs, id, "encounter")
 
 
-func require_room(id: String) -> Variant:
+func require_room(id: String) -> RoomData:
 	return _require_from(room_defs, id, "room")
 
 
 func get_rooms_by_kind(room_kind: String) -> Array:
 	var rooms: Array = []
-	for room: Variant in room_defs.values():
+	for room in room_defs.values():
 		if room.room_kind == room_kind:
 			rooms.append(room)
 	return rooms
 
 
-func choose_weighted_room(room_kind: String, rng: RandomNumberGenerator) -> Variant:
-	var rooms: Variant = get_rooms_by_kind(room_kind)
+func choose_weighted_room(room_kind: String, rng: RandomNumberGenerator) -> RoomData:
+	var rooms: Array = get_rooms_by_kind(room_kind)
 	if rooms.is_empty():
 		return null
 
-	var total_weight: Variant = 0
-	for room: Variant in rooms:
+	var total_weight: int = 0
+	for room in rooms:
 		total_weight += max(room.weight, 0)
 
 	if total_weight <= 0:
 		return rooms[0]
 
-	var roll: Variant = rng.randi_range(1, total_weight)
-	var cumulative: Variant = 0
-	for room: Variant in rooms:
+	var roll: int = rng.randi_range(1, total_weight)
+	var cumulative: int = 0
+	for room in rooms:
 		cumulative += max(room.weight, 0)
 		if roll <= cumulative:
 			return room
@@ -112,8 +112,8 @@ func choose_weighted_room(room_kind: String, rng: RandomNumberGenerator) -> Vari
 
 
 func _register_all(paths: Array, target: Dictionary, label: String) -> void:
-	for path: Variant in paths:
-		var resource: Variant = load(path)
+	for path: String in paths:
+		var resource: Resource = load(path)
 		if resource == null:
 			push_error("Failed to load %s definition at %s" % [label, path])
 			continue
@@ -121,7 +121,7 @@ func _register_all(paths: Array, target: Dictionary, label: String) -> void:
 
 
 func _register_resource(resource: Resource, target: Dictionary, label: String) -> void:
-	var resource_id: Variant = resource.get("id")
+	var resource_id: String = String(resource.get("id"))
 	if resource_id == null or String(resource_id).is_empty():
 		push_error("Cannot register %s with empty id" % label)
 		return
@@ -133,7 +133,7 @@ func _register_resource(resource: Resource, target: Dictionary, label: String) -
 		legacy_character_lookup[resource.legacy_class_name] = resource
 
 
-func _require_from(source: Dictionary, id: String, label: String) -> Variant:
+func _require_from(source: Dictionary, id: String, label: String) -> Resource:
 	if source.has(id):
 		return source[id]
 	push_error("Missing %s definition: %s" % [label, id])

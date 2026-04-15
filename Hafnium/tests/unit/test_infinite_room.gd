@@ -2,7 +2,7 @@ extends GutTest
 
 const INFINITE_ROOM_SCRIPT = preload("res://scripts/levels/infinite_room.gd")
 
-var _previous_run_context: Variant
+var _previous_run_context: RunContext
 
 
 class MockFailedRunContext:
@@ -24,7 +24,7 @@ func after_each() -> void:
 
 
 func test_room_size_scales_with_room_index() -> void:
-	var room: Variant = INFINITE_ROOM_SCRIPT.new()
+	var room = INFINITE_ROOM_SCRIPT.new()
 	room.room_scale_tiles = 10
 	room.tile_size = 16
 
@@ -33,7 +33,7 @@ func test_room_size_scales_with_room_index() -> void:
 
 
 func test_spawn_positions_match_room_index_and_stay_inside_room() -> void:
-	var room: Variant = INFINITE_ROOM_SCRIPT.new()
+	var room = INFINITE_ROOM_SCRIPT.new()
 	room.room_scale_tiles = 12
 	room.tile_size = 16
 	room.spawn_margin = 48.0
@@ -44,18 +44,18 @@ func test_spawn_positions_match_room_index_and_stay_inside_room() -> void:
 	)
 
 	assert_eq(positions.size(), 9)
-	for position: Variant in positions:
+	for position: Vector2 in positions:
 		assert_gt(position.length(), 0.0, "Spawn points should not overlap the player spawn")
 		assert_lte(position.length(), max_spawn_radius + 0.001)
 
 
 func test_spawn_positions_stay_inside_small_rooms_with_large_spawn_margin() -> void:
-	var room: Variant = INFINITE_ROOM_SCRIPT.new()
+	var room = INFINITE_ROOM_SCRIPT.new()
 	room.room_scale_tiles = 1
 	room.tile_size = 16
 	room.spawn_margin = 20.0
 
-	var room_index: Variant = 1
+	var room_index: int = 1
 	var positions: Array[Vector2] = room.build_spawn_positions(room_index)
 	var half_extents: Vector2 = room.get_room_half_extents(room_index)
 
@@ -65,14 +65,14 @@ func test_spawn_positions_stay_inside_small_rooms_with_large_spawn_margin() -> v
 		"Test setup should exercise the clamped spawn-radius edge case"
 	)
 	assert_eq(positions.size(), room_index)
-	for position: Variant in positions:
+	for position: Vector2 in positions:
 		assert_lte(absf(position.x), half_extents.x + 0.001)
 		assert_lte(absf(position.y), half_extents.y + 0.001)
 
 
 func test_failed_enemy_spawns_schedule_room_advance() -> void:
-	var room: Variant = INFINITE_ROOM_SCRIPT.new()
-	var mock_run_context: Variant = MockFailedRunContext.new()
+	var room = INFINITE_ROOM_SCRIPT.new()
+	var mock_run_context: MockFailedRunContext = MockFailedRunContext.new()
 	Common.run_context = mock_run_context
 
 	room._spawn_wave(3)
@@ -85,9 +85,9 @@ func test_failed_enemy_spawns_schedule_room_advance() -> void:
 
 
 func test_enemy_defeated_only_counts_active_wave_members() -> void:
-	var room: Variant = INFINITE_ROOM_SCRIPT.new()
-	var tracked_enemy: Variant = Enemy.new()
-	var stale_enemy: Variant = Enemy.new()
+	var room = INFINITE_ROOM_SCRIPT.new()
+	var tracked_enemy: Enemy = Enemy.new()
+	var stale_enemy: Enemy = Enemy.new()
 
 	room.current_room_index = 2
 	room.remaining_enemies = 1

@@ -13,7 +13,7 @@ func _ready() -> void:
 	_apply_encounter_defaults()
 
 
-func _process(delta: Variant) -> void:
+func _process(delta: float) -> void:
 	last_spawn_time += delta
 	if last_spawn_time > spawn_rate:
 		spawn()
@@ -21,23 +21,23 @@ func _process(delta: Variant) -> void:
 
 
 func spawn() -> void:
-	var encounter: Variant = ContentRegistry.require_encounter(encounter_definition_id)
+	var encounter: EncounterData = ContentRegistry.require_encounter(encounter_definition_id)
 	if Common.run_context != null and encounter != null and not encounter.spawns.is_empty():
-		var entry: Variant = encounter.spawns[0]
-		for _i: Variant in range(max(entry.count, 1)):
+		var entry = encounter.spawns[0]
+		for _i: int in range(max(entry.count, 1)):
 			Common.run_context.spawn_enemy(
 				entry.enemy_id, position + Common.a_little_offset(spawn_radius)
 			)
 		return
 
 	var fallback_scene: PackedScene = enemy_resource
-	var spawned_enemy: Variant = fallback_scene.instantiate()
+	var spawned_enemy: Node2D = fallback_scene.instantiate()
 	spawned_enemy.position = position + Common.a_little_offset(spawn_radius)
 	get_parent().add_child(spawned_enemy)
 
 
 func _apply_encounter_defaults() -> void:
-	var encounter: Variant = ContentRegistry.require_encounter(encounter_definition_id)
+	var encounter: EncounterData = ContentRegistry.require_encounter(encounter_definition_id)
 	if encounter == null:
 		return
 	spawn_rate = encounter.spawn_rate

@@ -8,7 +8,7 @@ const START_GAME_TYPE: String = "start_game_type"
 
 var bomb_weapon: Resource = load("res://scenes/weapons/player_bomb.tscn")
 
-var run_context: Variant
+var run_context: RunContext
 var player_character: CharacterBody2D
 var player_class: ClassHandler.PlayerClass
 var player_heart_containers: Node
@@ -93,5 +93,5 @@ func a_little_offset(max_offset: float) -> Vector2:
 	return random_modulus * Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
 
 
-func set_run_context(p_run_context: Variant) -> void:
+func set_run_context(p_run_context: RunContext) -> void:
 	run_context = p_run_context

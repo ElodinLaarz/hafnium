@@ -4,7 +4,7 @@ const RUN_CONTEXT_SCRIPT = preload("res://scripts/run/run_context.gd")
 
 
 func test_run_context_builds_floor_and_emits_state() -> void:
-	var run_context: Variant = RUN_CONTEXT_SCRIPT.new()
+	var run_context: RunContext = RUN_CONTEXT_SCRIPT.new()
 	add_child_autofree(run_context)
 	await wait_physics_frames(1)
 
@@ -16,10 +16,10 @@ func test_run_context_builds_floor_and_emits_state() -> void:
 
 
 func test_random_offset_stays_within_requested_radius() -> void:
-	var run_context: Variant = RUN_CONTEXT_SCRIPT.new()
+	var run_context: RunContext = RUN_CONTEXT_SCRIPT.new()
 	add_child_autofree(run_context)
 	await wait_physics_frames(1)
 
-	for _i: Variant in range(20):
-		var offset: Variant = run_context.random_offset(5.0)
+	for _i: int in range(20):
+		var offset: Vector2 = run_context.random_offset(5.0)
 		assert_lte(offset.length(), 5.001, "Offsets should stay within the requested radius")

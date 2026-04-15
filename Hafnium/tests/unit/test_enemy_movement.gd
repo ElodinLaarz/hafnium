@@ -12,27 +12,27 @@ class MockPlayer:
 
 
 func test_get_direction_no_player() -> void:
-	var em: Variant = EnemyMovement.new()
-	var dir: Variant = em.get_direction(Vector2(10, 10), null)
+	var em: EnemyMovement = EnemyMovement.new()
+	var dir: Vector2 = em.get_direction(Vector2(10, 10), null)
 	assert_eq(dir, Vector2.ZERO, "Direction should be zero if player is null")
 
 
 func test_get_direction_to_player() -> void:
-	var em: Variant = EnemyMovement.new()
+	var em: EnemyMovement = EnemyMovement.new()
 	# Player is at (20, 10), Enemy is at (10, 10)
 	# Direction is (1, 0)
-	var player: Variant = MockPlayer.new(Vector2(20, 10))
-	var dir: Variant = em.get_direction(Vector2(10, 10), player)
+	var player: MockPlayer = MockPlayer.new(Vector2(20, 10))
+	var dir: Vector2 = em.get_direction(Vector2(10, 10), player)
 	assert_eq(dir, Vector2(1, 0), "Direction should be normalized vector pointing to player")
 	player.free()
 
 
 func test_velocity_lerp() -> void:
-	var em: Variant = EnemyMovement.new()
+	var em: EnemyMovement = EnemyMovement.new()
 	em.chase_speed = 30  # Override for predictable test
 	em.set_chase_speed()
-	var start_v: Variant = Vector2.ZERO
-	var dir: Variant = Vector2(1, 0)
-	var next_v: Variant = em.velocity_lerp(0.1, start_v, dir)
+	var start_v: Vector2 = Vector2.ZERO
+	var dir: Vector2 = Vector2(1, 0)
+	var next_v: Vector2 = em.velocity_lerp(0.1, start_v, dir)
 	# lerp(0, 30, 0.1 * 8.0) -> lerp(0, 30, 0.8) = 24
 	assert_eq(next_v, Vector2(24, 0), "Velocity should lerp toward target speed")

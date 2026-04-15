@@ -1,6 +1,6 @@
 class_name PlayerConfigurationManager
 
-const PLAYER_IDS: Variant = {
+const PLAYER_IDS: Dictionary = {
 	"barbarian": "class:barbarian",
 	"druid": "class:druid",
 	"wizard": "class:wizard",
@@ -37,11 +37,13 @@ func lookup_character(name: String) -> PlayerConfiguration:
 		return null
 
 	var definition_id: String = PLAYER_IDS[name]
-	var definition: Variant = ContentRegistry.require_character(definition_id)
+	var definition: CharacterData = ContentRegistry.require_character(definition_id)
 	if definition == null:
 		return null
 
-	var player_class: Variant = ClassHandler.PlayerClass.new(definition.legacy_class_name)
+	var player_class: ClassHandler.PlayerClass = ClassHandler.PlayerClass.new(
+		definition.legacy_class_name
+	)
 	if player_class.definition == null:
 		if not player_class.class_handler.setup_from_data(player_class, definition):
 			print("Failed to repair class definition for %s" % name)

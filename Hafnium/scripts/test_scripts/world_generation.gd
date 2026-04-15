@@ -33,11 +33,11 @@ func standardize_height_cellular(val: float) -> float:
 
 func generate_world() -> void:
 	# var noise_vals = []
-	for x: Variant in range(width):
-		for y: Variant in range(height):
-			var standard_noise_val: Variant = standardize_height_perlin(noise.get_noise_2d(x, y))
+	for x: int in range(width):
+		for y: int in range(height):
+			var standard_noise_val: float = standardize_height_perlin(noise.get_noise_2d(x, y))
 			var current_location: Vector2 = Vector2(x - width / 2, y - height / 2)
-			var atlas_choice: Variant = water_atlas
+			var atlas_choice: Vector2i = water_atlas
 			if standard_noise_val >= mountain_height:
 				atlas_choice = mountain_atlas
 			elif standard_noise_val >= sand_height:

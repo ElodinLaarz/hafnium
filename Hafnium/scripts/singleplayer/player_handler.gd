@@ -3,8 +3,8 @@ extends "res://scripts/base_character.gd"
 
 # TODO(ElodinLaarz): Add Class Choice.
 var player_class: ClassHandler.PlayerClass
-var movement: Variant = PlayerMovement.new()
-var aim: Variant = PlayerAim.new()
+var movement: PlayerMovement = PlayerMovement.new()
+var aim: PlayerAim = PlayerAim.new()
 
 var enemy_body: CharacterBody2D
 var enemy_in_attack_range: bool = false
@@ -97,14 +97,14 @@ func handle_stats(delta: float) -> void:
 		enemy_attack(enemy_body)
 
 
-func _on_hitbox_body_entered(body: Variant) -> void:
+func _on_hitbox_body_entered(body: Node) -> void:
 	if body.has_method("is_enemy"):
 		enemy_in_attack_range = true
 		enemy_body = body
 		enemy_attack(body)
 
 
-func _on_hitbox_body_exited(body: Variant) -> void:
+func _on_hitbox_body_exited(body: Node) -> void:
 	if body.has_method("is_enemy"):
 		enemy_in_attack_range = false
 

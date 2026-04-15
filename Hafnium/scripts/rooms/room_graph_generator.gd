@@ -3,7 +3,7 @@ extends RefCounted
 
 
 func generate_floor(seed: int) -> Array[Dictionary]:
-	var rng: Variant = RandomNumberGenerator.new()
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 	rng.seed = seed
 
 	var floor: Array[Dictionary] = []
@@ -22,11 +22,11 @@ func _make_room_node(index: int, room_kind: String, room_id: String) -> Dictiona
 
 
 func _choose_room_id(room_kind: String, rng: RandomNumberGenerator) -> String:
-	var room_data: Variant = ContentRegistry.choose_weighted_room(room_kind, rng)
+	var room_data: RoomData = ContentRegistry.choose_weighted_room(room_kind, rng)
 	if room_data != null:
 		return room_data.id
 
-	var fallback: Variant = ContentRegistry.choose_weighted_room("combat", rng)
+	var fallback: RoomData = ContentRegistry.choose_weighted_room("combat", rng)
 	if fallback != null:
 		return fallback.id
 
