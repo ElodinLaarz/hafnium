@@ -2,6 +2,26 @@ extends GutTest
 
 const INFINITE_ROOM_SCRIPT = preload("res://scripts/levels/infinite_room.gd")
 
+var _previous_run_context
+
+
+class MockFailedRunContext:
+	extends RefCounted
+
+	var spawn_calls: Array[Vector2] = []
+
+	func spawn_enemy(_enemy_id: String, spawn_position: Vector2):
+		spawn_calls.append(spawn_position)
+		return null
+
+
+func before_each():
+	_previous_run_context = Common.run_context
+
+
+func after_each():
+	Common.run_context = _previous_run_context
+
 
 func test_room_size_scales_with_room_index():
 	var room = INFINITE_ROOM_SCRIPT.new()
@@ -27,3 +47,17 @@ func test_spawn_positions_match_room_index_and_stay_inside_room():
 	for position in positions:
 		assert_gt(position.length(), 0.0, "Spawn points should not overlap the player spawn")
 		assert_lte(position.length(), max_spawn_radius + 0.001)
+
+
+func test_failed_enemy_spawns_do_not_advance_room():
+	var room = INFINITE_ROOM_SCRIPT.new()
+	var mock_run_context = MockFailedRunContext.new()
+	Common.run_context = mock_run_context
+
+	room._spawn_wave(3)
+
+	assert_eq(mock_run_context.spawn_calls.size(), 3)
+	assert_eq(room.remaining_enemies, 0)
+	assert_false(
+		room._advance_scheduled, "Room progression should stay put when every enemy spawn fails"
+	)

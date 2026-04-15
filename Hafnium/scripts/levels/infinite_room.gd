@@ -82,10 +82,18 @@ func _spawn_wave(room_index: int) -> void:
 	if Common.run_context == null:
 		return
 
+	var attempted_spawn_count: int = 0
+	var successful_spawn_count: int = 0
 	for spawn_position in build_spawn_positions(room_index):
+		attempted_spawn_count += 1
 		var enemy = Common.run_context.spawn_enemy(ENEMY_ID, spawn_position)
 		if enemy != null:
+			successful_spawn_count += 1
 			remaining_enemies += 1
+
+	if attempted_spawn_count > 0 and successful_spawn_count <= 0:
+		push_warning("Failed to spawn enemies for room %d" % room_index)
+		return
 
 	if remaining_enemies <= 0 and not _advance_scheduled:
 		_advance_scheduled = true
