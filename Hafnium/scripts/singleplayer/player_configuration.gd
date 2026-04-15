@@ -42,6 +42,10 @@ func lookup_character(name: String) -> PlayerConfiguration:
 		return null
 
 	var player_class := ClassHandler.PlayerClass.new(definition.legacy_class_name)
+	if player_class.definition == null:
+		if not player_class.class_handler.setup_from_data(player_class, definition):
+			print("Failed to repair class definition for %s" % name)
+			return null
 	return PlayerConfiguration.new(
 		name,
 		definition_id,

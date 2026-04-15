@@ -53,6 +53,12 @@ func main_scene_start(menu_caller: Control, game_type: Common.GameType, player_n
 		print("Unable to load player character: %s" % player_name)
 		return
 	var player_class: ClassHandler.PlayerClass = Common.player_class
+	if player_class == null or player_class.definition == null:
+		print("Player class definition missing for %s" % player_name)
+		return
+	if player_class.definition.sprite_scene == null:
+		print("Player sprite scene missing for %s" % player_name)
+		return
 	var player_sprite_scene: PackedScene = player_class.definition.sprite_scene
 	var player_sprite: AnimatedSprite2D = player_sprite_scene.instantiate()
 	player_sprite.name = PLAYER_SPRITE_NAME  # For reference by other scripts.

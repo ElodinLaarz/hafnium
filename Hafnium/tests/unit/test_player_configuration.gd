@@ -13,6 +13,13 @@ func test_lookup_character_wizard():
 	assert_not_null(config, "Should find wizard configuration")
 	assert_eq(config.name, "wizard")
 	assert_eq(config.player_class.name, ClassHandler.ClassName.WIZARD)
+	assert_not_null(
+		config.player_class.definition, "Wizard should have a resolved class definition"
+	)
+	assert_not_null(
+		config.player_class.definition.sprite_scene,
+		"Wizard definition should provide a sprite scene"
+	)
 
 
 func test_lookup_character_druid():
@@ -20,6 +27,7 @@ func test_lookup_character_druid():
 	var config = pcm.lookup_character("druid")
 	assert_not_null(config, "Should find druid configuration")
 	assert_eq(config.player_class.name, ClassHandler.ClassName.DRUID)
+	assert_not_null(config.player_class.definition, "Druid should have a resolved class definition")
 
 
 func test_lookup_character_unknown():

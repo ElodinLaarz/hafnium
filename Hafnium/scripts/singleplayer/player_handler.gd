@@ -45,6 +45,9 @@ func load_player_data(player_name: String) -> bool:
 	)
 	if player_data:
 		player_class = player_data.player_class
+		if player_class == null or player_class.definition == null:
+			print("Player class definition missing for %s" % player_name)
+			return false
 		stats = player_class.stats
 		Common.player_class = player_data.player_class
 		currency = player_data.currency
