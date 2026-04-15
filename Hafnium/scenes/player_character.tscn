@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://cnie27irw2ene"]
+[gd_scene load_steps=6 format=3 uid="uid://cnie27irw2ene"]
 
 [ext_resource type="Script" path="res://scripts/singleplayer/player_handler.gd" id="1_jprhx"]
+[ext_resource type="Script" path="res://scripts/main_camera.gd" id="2_2vhop"]
 [ext_resource type="Texture2D" uid="uid://cpuha70ui6ytg" path="res://sprites/Aim_Right.png" id="4_i7kdi"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5b62u"]
@@ -16,6 +17,7 @@ script = ExtResource("1_jprhx")
 
 [node name="Main Camera" type="Camera2D" parent="."]
 position_smoothing_enabled = true
+script = ExtResource("2_2vhop")
 
 [node name="PlayerPivot" type="Node2D" parent="Main Camera"]
 z_index = 1

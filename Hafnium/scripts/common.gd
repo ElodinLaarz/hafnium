@@ -6,6 +6,7 @@ enum GameType { SINGLE_PLAYER, LOAD_GAME, MULTIPLAYER }
 
 const START_GAME_TYPE: String = "start_game_type"
 const GameConstants = preload("res://scripts/config/game_constants.gd")
+const FeelTuningProfileScript = preload("res://scripts/config/feel_tuning_profile.gd")
 const LEGACY_REWARD_SCATTER_RADIUS: float = 5.0
 
 var bomb_weapon: Resource = load("res://scenes/weapons/player_bomb.tscn")
@@ -15,6 +16,7 @@ var player_character: CharacterBody2D
 var player_class: ClassHandler.PlayerClass
 var player_heart_containers: Node
 var load_player: Callable
+var feel_tuning: FeelTuningProfile = FeelTuningProfileScript.new()
 
 var attack_spawn_angle: float = 0
 var attack_displacement_magnitude: float = GameConstants.ATTACK_SPAWN_DISPLACEMENT
@@ -102,3 +104,9 @@ func a_little_offset(max_offset: float) -> Vector2:
 
 func set_run_context(p_run_context: RunContext) -> void:
 	run_context = p_run_context
+
+
+func get_feel_tuning() -> FeelTuningProfile:
+	if feel_tuning == null:
+		feel_tuning = FeelTuningProfileScript.new()
+	return feel_tuning

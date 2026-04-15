@@ -9,6 +9,7 @@ signal health_changed(current_health: int, max_health: int)
 signal resource_changed(resource_name: String, current_value: int, max_value: int)
 signal currency_changed(current_currency: int)
 signal enemy_defeated(enemy: Enemy)
+signal camera_shake_requested(intensity: float, duration: float)
 
 const CombatDirectorScript = preload("res://scripts/combat/combat_director.gd")
 const SpawnDirectorScript = preload("res://scripts/run/spawn_director.gd")
@@ -16,6 +17,9 @@ const LootDirectorScript = preload("res://scripts/run/loot_director.gd")
 const RoomDirectorScript = preload("res://scripts/rooms/room_director.gd")
 const LootDropDataScript = preload("res://scripts/resources/loot_drop_data.gd")
 const GameConstants = preload("res://scripts/config/game_constants.gd")
+const FloatingDamageNumberScene: PackedScene = preload(
+	"res://scenes/combat/floating_damage_number.tscn"
+)
 
 var floor_seed: int = 0
 var floor_graph: Array[Dictionary] = []
@@ -30,6 +34,7 @@ var combat_director: CombatDirector = CombatDirectorScript.new()
 var spawn_director: SpawnDirector = SpawnDirectorScript.new()
 var loot_director: LootDirector = LootDirectorScript.new()
 var room_director: RoomDirector = RoomDirectorScript.new()
+var _hit_stop_remaining: float = 0.0
 
 
 func _ready() -> void:
@@ -42,6 +47,18 @@ func _ready() -> void:
 	combat_director.configure(self)
 	spawn_director.configure(self)
 	loot_director.configure(self)
+
+
+func _process(delta: float) -> void:
+	if _hit_stop_remaining > 0:
+		var unscaled_delta: float = delta / max(Engine.time_scale, 0.001)
+		_hit_stop_remaining = max(_hit_stop_remaining - unscaled_delta, 0.0)
+		if _hit_stop_remaining <= 0:
+			_clear_hit_stop()
+
+
+func _exit_tree() -> void:
+	_clear_hit_stop()
 
 
 func begin_run(seed: int) -> void:
@@ -112,6 +129,39 @@ func resolve_projectile_hit(target: BaseCharacter, projectile: Projectile) -> bo
 	return combat_director.resolve_projectile_hit(target, projectile)
 
 
+func request_hit_feedback(is_crit: bool = false) -> void:
+	var feel_tuning: FeelTuningProfile = Common.get_feel_tuning()
+	if feel_tuning == null:
+		return
+	var feedback_multiplier: float = 1.0
+	if is_crit:
+		feedback_multiplier = feel_tuning.crit_feedback_multiplier
+	if feel_tuning.enable_hit_stop and feel_tuning.hit_stop_duration > 0:
+		apply_hit_stop(
+			feel_tuning.hit_stop_duration * feedback_multiplier,
+			1.0 - ((1.0 - feel_tuning.hit_stop_time_scale) * feedback_multiplier)
+		)
+	if feel_tuning.enable_screen_shake and feel_tuning.screen_shake_duration > 0:
+		camera_shake_requested.emit(
+			feel_tuning.screen_shake_intensity * feedback_multiplier,
+			feel_tuning.screen_shake_duration * feedback_multiplier
+		)
+
+
+func spawn_damage_number(world_position: Vector2, amount: int, is_crit: bool) -> void:
+	var entity_root: Node = get_world_entity_root()
+	if entity_root == null or FloatingDamageNumberScene == null:
+		return
+	var number_node: Node = FloatingDamageNumberScene.instantiate()
+	if number_node == null:
+		return
+	if number_node is Node2D:
+		number_node.global_position = world_position
+	entity_root.add_child(number_node)
+	if number_node.has_method("setup"):
+		number_node.setup(amount, is_crit)
+
+
 func handle_enemy_defeated(enemy: Enemy) -> void:
 	if enemy == null:
 		return
@@ -172,3 +222,17 @@ func _on_player_health_changed(new_health: int, max_health: int) -> void:
 
 func _on_player_resource_changed(resource_name: String, current_value: int, max_value: int) -> void:
 	resource_changed.emit(resource_name, current_value, max_value)
+
+
+func apply_hit_stop(duration: float, time_scale: float) -> void:
+	var clamped_duration: float = clampf(duration, 0.0, 0.2)
+	if clamped_duration <= 0:
+		return
+	var clamped_time_scale: float = clampf(time_scale, 0.05, 1.0)
+	_hit_stop_remaining = max(_hit_stop_remaining, clamped_duration)
+	Engine.time_scale = min(Engine.time_scale, clamped_time_scale)
+
+
+func _clear_hit_stop() -> void:
+	_hit_stop_remaining = 0.0
+	Engine.time_scale = 1.0

@@ -57,5 +57,11 @@ func test_velocity_lerp_walking() -> void:
 	var pm: MockPlayerMovement = MockPlayerMovement.new()
 	pm.set_max_speed_walk()  # 85
 	var next_v: Vector2 = pm.velocity_lerp(0.1, Vector2.ZERO, Vector2(1, 0))
-	# lerp(0, 85, 0.1 * 10.0) -> lerp(0, 85, 1.0) = 85
+	# Blend factor is clamped, so with delta * accel = 1.0 velocity reaches target.
 	assert_eq(next_v, Vector2(85, 0), "Velocity should reach target speed at delta * ACCEL = 1.0")
+
+
+func test_velocity_lerp_decelerates_when_no_input() -> void:
+	var pm: MockPlayerMovement = MockPlayerMovement.new()
+	var next_v: Vector2 = pm.velocity_lerp(0.1, Vector2(40, 0), Vector2.ZERO)
+	assert_lt(next_v.length(), 40.0, "Velocity should decay when no movement input is active")
