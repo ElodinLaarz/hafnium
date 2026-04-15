@@ -28,12 +28,14 @@ func fire_attack(player: PlayerCharacter, angle: float) -> bool:
 		player.player_class.definition != null
 		and not player.player_class.definition.attack_projectile_id.is_empty()
 	):
+		# ID-based lookup keeps class definitions data-driven while allowing scene swaps.
 		var projectile_data: ProjectileData = ContentRegistry.require_projectile(
 			player.player_class.definition.attack_projectile_id
 		)
 		if projectile_data != null:
 			projectile_scene = projectile_data.projectile_scene
 	if projectile_scene == null:
+		# Backward-compatible fallback for classes still carrying direct scene references.
 		projectile_scene = player.player_class.get_attack_scene()
 	if projectile_scene == null:
 		return false
@@ -44,6 +46,7 @@ func fire_attack(player: PlayerCharacter, angle: float) -> bool:
 
 	var projectile: Node = projectile_scene.instantiate()
 	if not (projectile is Projectile):
+		# Failing closed here prevents non-projectile scenes from entering combat loops.
 		projectile.free()
 		return false
 
@@ -104,5 +107,6 @@ func resolve_projectile_hit(target: BaseCharacter, projectile: Projectile) -> bo
 
 func _calculate_ttl(stats: Stats) -> float:
 	if stats.projectile_speed <= 0:
+		# Avoid division by zero while still allowing melee-style placeholder projectiles.
 		return ZERO_SPEED_PROJECTILE_TTL
 	return stats.attack_range / stats.projectile_speed

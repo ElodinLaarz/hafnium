@@ -33,6 +33,7 @@ var room_director: RoomDirector = RoomDirectorScript.new()
 
 
 func _ready() -> void:
+	# Directors are plain Nodes so tests can swap/spy them without scene dependencies.
 	_attach_director(combat_director)
 	_attach_director(spawn_director)
 	_attach_director(loot_director)
@@ -83,6 +84,7 @@ func register_player(player: PlayerCharacter) -> void:
 	player_registered.emit(player)
 
 	if primary_player == null:
+		# Input currently targets one player; first registration defines HUD/combat source.
 		primary_player = player
 		primary_player_changed.emit(player)
 
@@ -152,6 +154,7 @@ func get_world_entity_root() -> Node:
 	if world_root == null:
 		return null
 	if world_root.has_method("get_dynamic_entity_root"):
+		# Level scripts can expose a dedicated transient container for spawned entities.
 		var entity_root: Node = world_root.get_dynamic_entity_root()
 		if entity_root != null:
 			return entity_root

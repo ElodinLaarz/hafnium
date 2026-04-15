@@ -30,6 +30,7 @@ func _ready() -> void:
 		Common.run_context != null
 		and not Common.run_context.enemy_defeated.is_connected(_on_enemy_defeated)
 	):
+		# Room progression is driven by global combat events, not local enemy bookkeeping.
 		Common.run_context.enemy_defeated.connect(_on_enemy_defeated)
 	call_deferred("_start_initial_room")
 
@@ -79,6 +80,7 @@ func build_spawn_positions(spawn_count: int) -> Array[Vector2]:
 		if radius_step > 0.0:
 			radius = min(radius_step * float(clamped_ring_index + 1), max_radius)
 		var angle_offset: float = float(clamped_ring_index) * PI / RING_ANGLE_STAGGER_DIVISOR
+		# Offset each ring so enemies do not line up on straight radial lanes.
 		var angle: float = angle_offset + TAU * float(slot_index) / float(max(slots_in_ring, 1))
 		spawn_positions.append(Vector2.RIGHT.rotated(angle) * radius)
 
@@ -163,6 +165,7 @@ func _schedule_room_advance() -> void:
 	if _advance_scheduled:
 		return
 	_advance_scheduled = true
+	# Deferred transition avoids mutating room state from inside defeat signal handlers.
 	call_deferred("_advance_to_next_room")
 
 
@@ -246,6 +249,7 @@ func _emit_room_state(room_index: int) -> void:
 		return
 
 	var room_data: RoomData = ROOM_DATA_SCRIPT.new()
+	# Synthetic RoomData keeps HUD/observers updated even though rooms are procedural.
 	room_data.id = "Room %d" % room_index
 	room_data.room_kind = COMBAT_ROOM_KIND
 	room_data.encounter_id = encounter_definition_id

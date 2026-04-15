@@ -197,11 +197,13 @@ func get_character_data(cn: ClassName) -> CharacterData:
 
 func setup_from_data(pc: PlayerClass, data: CharacterData) -> bool:
 	pc.definition = data
+	# Stats come from content resources so class tuning does not require code edits.
 	data.apply_to_stats(pc.stats)
 	pc.stats.speed = data.speed
 	if not setup_heart_drawing_from_style(pc, data.heart_style):
 		return false
 	pc.attack_projectile_path = get_projectile_path_from_definition(data)
+	# Keep a direct scene handle when present to avoid repeated `load()` during combat.
 	pc._attack_scene = data.attack_projectile_scene
 	pc.attack_logic = build_attack_logic(data)
 	return true
@@ -273,6 +275,7 @@ func get_projectile_path_from_definition(data: CharacterData) -> String:
 	if data == null:
 		return ""
 	if not data.attack_projectile_id.is_empty():
+		# Prefer registry IDs so projectile implementations can be swapped centrally.
 		var projectile_data: ProjectileData = ContentRegistry.require_projectile(
 			data.attack_projectile_id
 		)
@@ -410,6 +413,7 @@ class PlayerClass:
 		):
 			_attack_scene = definition.attack_projectile_scene
 		if _attack_scene == null and not attack_projectile_path.is_empty():
+			# Lazy loading preserves compatibility for legacy classes using only paths.
 			_attack_scene = load(attack_projectile_path)
 		return _attack_scene
 

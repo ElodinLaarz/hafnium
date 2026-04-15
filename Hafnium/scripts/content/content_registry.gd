@@ -39,6 +39,7 @@ func _init() -> void:
 
 
 func reload_defaults() -> void:
+	# Rebuilding all registries in one pass keeps tests deterministic across reloads.
 	character_defs.clear()
 	legacy_character_lookup.clear()
 	enemy_defs.clear()
@@ -104,6 +105,7 @@ func choose_weighted_room(room_kind: String, rng: RandomNumberGenerator) -> Room
 		total_weight += max(room.weight, NON_POSITIVE_WEIGHT)
 
 	if total_weight <= NON_POSITIVE_WEIGHT:
+		# Fallback keeps generation running even if all weights are accidentally zeroed.
 		return rooms[DEFAULT_RESOURCE_INDEX]
 
 	var roll: int = rng.randi_range(WEIGHTED_ROLL_MIN, total_weight)
@@ -134,6 +136,7 @@ func _register_resource(resource: Resource, target: Dictionary, label: String) -
 		return
 	target[resource_id] = resource
 	if resource.get("legacy_class_name") != null and resource.legacy_class_name >= 0:
+		# Legacy enum lookups still power old call sites; keep both registries in sync.
 		legacy_character_lookup[resource.legacy_class_name] = resource
 
 

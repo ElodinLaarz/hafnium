@@ -22,6 +22,7 @@ var attack_displacement_magnitude: float = GameConstants.ATTACK_SPAWN_DISPLACEME
 
 func place_bomb() -> bool:
 	if run_context != null:
+		# RunContext owns authoritative combat/resource state in modern flow.
 		return run_context.place_primary_bomb()
 	if !player_class.use_resource(GameConstants.RESOURCE_BOMB, 1):
 		return false
@@ -33,6 +34,7 @@ func place_bomb() -> bool:
 
 func attack() -> bool:
 	if run_context != null:
+		# Delegate to the combat pipeline so drops, damage, and UI signals stay unified.
 		return run_context.perform_primary_attack(attack_spawn_angle)
 	if player_class.attack_projectile_path.is_empty():
 		print("No attack projectile defined for class!")
@@ -59,6 +61,7 @@ func projectile_resolve(creature: CharacterBody2D, proj: CharacterBody2D) -> voi
 		and creature.has_method("receive_damage")
 		and proj.has_method("build_damage")
 	):
+		# Prefer the typed damage path when both actors are on the newer combat API.
 		run_context.resolve_projectile_hit(creature, proj)
 		return
 	if !proj.has_method("is_projectile"):
@@ -67,6 +70,7 @@ func projectile_resolve(creature: CharacterBody2D, proj: CharacterBody2D) -> voi
 	if !creature.has_method("is_enemy"):
 		# Only deal damage to enemies.
 		return
+	# Physics callbacks cannot mutate the tree immediately; defer projectile cleanup.
 	proj.call_deferred("queue_free")
 	var damage: int = proj.damage
 	var creature_defeated: bool = creature.stats.take_damage(damage)
@@ -74,6 +78,7 @@ func projectile_resolve(creature: CharacterBody2D, proj: CharacterBody2D) -> voi
 	# to creature.
 	# Returns true when creature has 0 health.
 	if creature_defeated:
+		# Enemy removal and reward spawning are deferred for the same physics-safety reason.
 		creature.call_deferred("queue_free")
 		var reward_spawn_pos: Vector2 = creature.position
 		var reward_details: Array = creature.drop_reward()
