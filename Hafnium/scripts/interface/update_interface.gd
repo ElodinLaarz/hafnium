@@ -1,10 +1,11 @@
 extends Node
 
-class InterfaceValues:
-	var health: int = 10 
 
-# update redraws the interface using the values given in the 
+# update redraws the interface using the values given in the
 # arguments.
-func update(iv: InterfaceValues):
-	
-	pass
+func update(_iv: InterfaceValues):
+	push_warning("update_interface: update() not yet implemented")
+
+
+class InterfaceValues:
+	var health: int = 10

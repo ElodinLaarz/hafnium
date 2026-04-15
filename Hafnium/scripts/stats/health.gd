@@ -1,13 +1,14 @@
-extends Node
 class_name Health
+extends Node
 
-func bounds_ok(stats: Stats, heart_container: Node) -> bool:
+
+func bounds_ok(stats: Stats, num_hearts: int) -> bool:
 	if stats.max_health % stats.health_to_damage_multiplier != 0:
 		print("Max health is not a multiple of health to damage multiplier.")
 		return false
-	var num_hearts = stats.max_health / stats.health_to_damage_multiplier
-	if heart_container.get_child_count() != num_hearts:
-		print("Number of children in the heart container does not match, expecation.")
+	var expected_num_hearts = stats.max_health / stats.health_to_damage_multiplier
+	if num_hearts != expected_num_hearts:
+		print("Number of children in the heart container does not match expectation.")
 		return false
 	if stats.current_health > stats.max_health:
 		print("Current health is greater than max health.")
@@ -16,4 +17,3 @@ func bounds_ok(stats: Stats, heart_container: Node) -> bool:
 		print("Health is negative: %d, expected positive value" % stats.current_health)
 		return false
 	return true
-

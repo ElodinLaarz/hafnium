@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Auto-format and lint staged GDScript files.
+# gdformat and gdlint are part of gdtoolkit: pip install gdtoolkit
+#
+# One-time setup (from repo root):
+#   git config core.hooksPath .githooks
+
+STAGED=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.gd$' || true)
+
+if [ -z "$STAGED" ]; then
+    exit 0
+fi
+
+if ! command -v gdformat &> /dev/null; then
+    echo "[pre-commit] gdformat not found — skipping GDScript formatting."
+    echo "             Install with: pip install gdtoolkit"
+else
+    echo "[pre-commit] Formatting GDScript files..."
+    echo "$STAGED" | tr '\n' '\0' | xargs -0 gdformat
+    echo "$STAGED" | tr '\n' '\0' | xargs -0 git add
+fi
+
+if ! command -v gdlint &> /dev/null; then
+    echo "[pre-commit] gdlint not found — skipping GDScript linting."
+    echo "             Install with: pip install gdtoolkit"
+else
+    echo "[pre-commit] Linting GDScript files..."
+    if ! echo "$STAGED" | tr '\n' '\0' | xargs -0 gdlint; then
+        echo "[pre-commit] gdlint found errors. Fix them before committing."
+        exit 1
+    fi
+fi
+
+echo "[pre-commit] Done."

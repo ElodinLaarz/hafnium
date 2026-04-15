@@ -1,0 +1,42 @@
+name: "Run Tests"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    name: Run GUT Tests
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check GDScript formatting and linting
+        run: |
+          pip install gdtoolkit
+          find Hafnium/scripts Hafnium/tests -name "*.gd" -print0 | xargs -0 gdformat --check
+          find Hafnium/scripts Hafnium/tests -name "*.gd" -print0 | xargs -0 gdlint
+
+      - name: Setup Godot (Graphical Mode)
+        uses: lihop/setup-godot@v3
+        with:
+          version: 4.6-stable # Match Hafnium/project.godot config/features
+      
+      - name: Install GUT (since it is ignored by git)
+        run: |
+          mkdir -p Hafnium/addons/
+          git clone --depth 1 https://github.com/bitwes/Gut.git target_dir
+          mv target_dir/addons/gut Hafnium/addons/
+          rm -rf target_dir
+      
+      - name: Import Resources (Headless)
+        run: godot --headless --path Hafnium/ --import --quit
+
+      - name: Run GUT Tests (Graphical)
+        run: |
+          # We run without --headless here to allow for UI/GPU features
+          # lihop/setup-godot handles the virtual display (Xvfb) automatically.
+          godot --path Hafnium/ -s addons/gut/gut_cmdln.gd -gdir=res://tests/unit -gexit

@@ -16,3 +16,6 @@ mono_crash.*.json
 
 # VSCode specific ignores
 .vscode/
+
+# GUT specific ignores
+**/addons/gut/
