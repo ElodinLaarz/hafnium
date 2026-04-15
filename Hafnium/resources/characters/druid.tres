@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="CharacterData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/character_data.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/characters/sprites/druid_sprite.tscn" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "class:druid"
+display_name = "Druid"
+legacy_class_name = 2
+heart_style = "druid"
+sprite_scene = ExtResource("2")
+max_health = 6
+damage = 2
+speed = 85
+attack_speed = 1.2
+attack_range = 1
+projectile_speed = 50.0
+health_to_damage_multiplier = 2
+starting_currency = 0
+bomb_max = 2
+bomb_recovery_rate = 0.0

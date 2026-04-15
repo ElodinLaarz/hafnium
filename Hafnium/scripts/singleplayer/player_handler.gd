@@ -1,5 +1,5 @@
 class_name PlayerCharacter
-extends CharacterBody2D
+extends "res://scripts/base_character.gd"
 
 # TODO(ElodinLaarz): Add Class Choice.
 var player_class: ClassHandler.PlayerClass
@@ -8,24 +8,21 @@ var aim = PlayerAim.new()
 
 var enemy_body: CharacterBody2D
 var enemy_in_attack_range: bool = false
-var is_invincible: bool = false
-var invincibility_frame_length: float = 1.5
-var invincibility_frame_timer: float = 0.0
 
 # TODO(ElodinLaarz): Add Inventory.
 var bomb_count: int = 0
 var bomb_max: int = 3
 var currency: int = 0
 
-@onready var _animated_sprite = $PlayerSprite
-
 
 func _init():
+	invincibility_frame_length = 1.5
 	Common.player_character = self
 	Common.load_player = load_player_data
 
 
 func _ready():
+	_animated_sprite = $PlayerSprite
 	ready_aim()
 
 
@@ -48,10 +45,18 @@ func load_player_data(player_name: String) -> bool:
 	)
 	if player_data:
 		player_class = player_data.player_class
+		if player_class == null or player_class.definition == null:
+			print("Player class definition missing for %s" % player_name)
+			return false
+		stats = player_class.stats
 		Common.player_class = player_data.player_class
 		currency = player_data.currency
 		bomb_count = player_data.bomb_count
 		bomb_max = player_data.bomb_max
+		if player_class.definition != null:
+			movement.walking_speed = player_class.definition.speed
+			movement.running_speed = int(movement.walking_speed * movement.running_multiplier)
+			movement.run_to_walk_threshold = movement.walking_speed * 0.5
 		return true
 	return false
 
@@ -92,15 +97,6 @@ func handle_stats(delta: float):
 		enemy_attack(enemy_body)
 
 
-func handle_timers(delta: float):
-	if is_invincible:
-		invincibility_frame_timer += delta
-		if invincibility_frame_timer >= invincibility_frame_length:
-			is_invincible = false
-			invincibility_frame_timer = 0.0
-			_animated_sprite.play("idle")
-
-
 func _on_hitbox_body_entered(body):
 	if body.has_method("is_enemy"):
 		enemy_in_attack_range = true
@@ -113,17 +109,12 @@ func _on_hitbox_body_exited(body):
 		enemy_in_attack_range = false
 
 
-func take_damage(d: int):
-	if is_invincible:
-		# You are invincible and don't take damage :)
-		return
-	_animated_sprite.play("invincibility_frames")
+func take_damage(d: int) -> bool:
 	print("You are taking %d damage!" % d)
-	var is_dead: bool = player_class.stats.take_damage(d)
-	player_class.draw_hearts(Common.player_heart_containers)
+	var is_dead: bool = super.take_damage(d)
 	if is_dead:
 		print("You are dead :(")
-		# Player is dead.
+	return is_dead
 
 
 func enemy_attack(e: Enemy):
@@ -131,10 +122,11 @@ func enemy_attack(e: Enemy):
 		print("uh oh...")
 		return
 	take_damage(e.stats.damage)
-	is_invincible = true
 
 
 func add_currency(c: int):
 	currency += c
+	if run_context != null:
+		run_context.emit_currency_state(self)
 	print("You have %d currency!" % currency)
 	# TODO(ElodinLaarz): Update currency display.

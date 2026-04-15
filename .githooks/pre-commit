@@ -4,10 +4,19 @@
 #
 # One-time setup (from repo root):
 #   git config core.hooksPath .githooks
+#
+# Note: gdlint reports issues but does not auto-fix them. We run gdformat
+# first to apply safe formatting fixes, then gdlint as a blocking check.
 
-STAGED=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.gd$' || true)
+set -euo pipefail
 
-if [ -z "$STAGED" ]; then
+REPO_ROOT=$(git rev-parse --show-toplevel)
+PROJECT_DIR="$REPO_ROOT/Hafnium"
+GUT_RUNNER="$PROJECT_DIR/addons/gut/gut_cmdln.gd"
+
+mapfile -d '' STAGED_FILES < <(git diff --cached --name-only -z --diff-filter=ACM -- '*.gd')
+
+if [ "${#STAGED_FILES[@]}" -eq 0 ]; then
     exit 0
 fi
 
@@ -16,8 +25,8 @@ if ! command -v gdformat &> /dev/null; then
     echo "             Install with: pip install gdtoolkit"
 else
     echo "[pre-commit] Formatting GDScript files..."
-    echo "$STAGED" | tr '\n' '\0' | xargs -0 gdformat
-    echo "$STAGED" | tr '\n' '\0' | xargs -0 git add
+    gdformat "${STAGED_FILES[@]}"
+    git add -- "${STAGED_FILES[@]}"
 fi
 
 if ! command -v gdlint &> /dev/null; then
@@ -25,8 +34,19 @@ if ! command -v gdlint &> /dev/null; then
     echo "             Install with: pip install gdtoolkit"
 else
     echo "[pre-commit] Linting GDScript files..."
-    if ! echo "$STAGED" | tr '\n' '\0' | xargs -0 gdlint; then
-        echo "[pre-commit] gdlint found errors. Fix them before committing."
+    if ! gdlint "${STAGED_FILES[@]}"; then
+        echo "[pre-commit] gdlint found errors. gdformat was applied, but gdlint issues must be fixed manually."
+        exit 1
+    fi
+fi
+
+if [ ! -f "$GUT_RUNNER" ]; then
+    echo "[pre-commit] GUT not found — skipping unit tests."
+    echo "             Install locally before relying on presubmit tests."
+else
+    echo "[pre-commit] Running GUT tests..."
+    if ! bash "$PROJECT_DIR/run_tests.sh"; then
+        echo "[pre-commit] GUT tests failed."
         exit 1
     fi
 fi

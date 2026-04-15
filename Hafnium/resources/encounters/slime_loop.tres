@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EncounterData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/encounter_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/encounter_spawn_data.gd" id="2"]
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("2")
+enemy_id = "enemy:slime_basic"
+count = 1
+
+[resource]
+script = ExtResource("1")
+id = "encounter:slime_loop"
+spawn_rate = 1.0
+spawn_radius = 100.0
+spawns = [SubResource("1")]

@@ -21,6 +21,7 @@ config/features=PackedStringArray("4.6", "Forward Plus")
 [autoload]
 
 MultiplayerManager="*res://scripts/mutiplayer/multiplayer_manager.gd"
+ContentRegistry="*res://scripts/content/content_registry.gd"
 Common="*res://scripts/common.gd"
 
 [debug]

@@ -2,10 +2,15 @@ class_name PlayerHealth
 extends Node
 
 const PLAYER_HEART = preload("res://scenes/interface/lifebar/heart.tscn")
+const INTERFACE_UPDATER = preload("res://scripts/interface/update_interface.gd")
+
+var run_context
+var tracked_player
+var interface_values = INTERFACE_UPDATER.InterfaceValues.new()
 
 
 func _ready():
-	check_and_create_hearts()
+	call_deferred("_bind_run_context")
 
 
 func dequeue_children(parent: Node):
@@ -21,11 +26,11 @@ func set_num_hearts(heart_container: Node, num_hearts: int):
 			heart_container.add_child(heart)
 
 
-func check_and_create_hearts():
-	if Common.player_class == null:
+func check_and_create_hearts(player):
+	if player == null or player.player_class == null:
 		print("Error: Player class not set.")
 		return
-	var stats: Stats = Common.player_class.stats
+	var stats: Stats = player.player_class.stats
 	var max_health: int = stats.max_health
 	print("Max health: %d" % max_health)
 	if max_health % stats.health_to_damage_multiplier != 0:
@@ -44,4 +49,80 @@ func check_and_create_hearts():
 	set_num_hearts(heart_container, heart_counter)
 
 	# Draw appropriate hearts based on the current health.
-	Common.player_class.draw_hearts(heart_container)
+	player.player_class.draw_hearts(heart_container)
+
+
+func _bind_run_context() -> void:
+	run_context = Common.run_context
+	if run_context == null:
+		return
+
+	if not run_context.primary_player_changed.is_connected(_on_primary_player_changed):
+		run_context.primary_player_changed.connect(_on_primary_player_changed)
+	if not run_context.health_changed.is_connected(_on_health_changed):
+		run_context.health_changed.connect(_on_health_changed)
+	if not run_context.resource_changed.is_connected(_on_resource_changed):
+		run_context.resource_changed.connect(_on_resource_changed)
+	if not run_context.currency_changed.is_connected(_on_currency_changed):
+		run_context.currency_changed.connect(_on_currency_changed)
+	if not run_context.room_entered.is_connected(_on_room_entered):
+		run_context.room_entered.connect(_on_room_entered)
+
+	if run_context.primary_player != null:
+		_on_primary_player_changed(run_context.primary_player)
+
+
+func _on_primary_player_changed(player) -> void:
+	tracked_player = player
+	check_and_create_hearts(player)
+	_render_player_state()
+
+
+func _on_health_changed(_current_health: int, _max_health: int) -> void:
+	if tracked_player == null or tracked_player.player_class == null:
+		return
+	tracked_player.player_class.draw_hearts(Common.player_heart_containers)
+	_render_player_state()
+
+
+func _on_resource_changed(resource_name: String, current_value: int, max_value: int) -> void:
+	if resource_name == "bomb":
+		interface_values.bombs = current_value
+		interface_values.bomb_max = max_value
+		INTERFACE_UPDATER.update_interface(_get_interface_root(), interface_values)
+
+
+func _on_currency_changed(current_currency: int) -> void:
+	interface_values.currency = current_currency
+	INTERFACE_UPDATER.update_interface(_get_interface_root(), interface_values)
+
+
+func _on_room_entered(room_id: String) -> void:
+	interface_values.room_name = room_id
+	INTERFACE_UPDATER.update_interface(_get_interface_root(), interface_values)
+
+
+func _render_player_state() -> void:
+	if tracked_player == null or tracked_player.player_class == null:
+		return
+	interface_values.health = tracked_player.player_class.stats.current_health
+	interface_values.max_health = tracked_player.player_class.stats.max_health
+	interface_values.currency = tracked_player.currency
+	interface_values.bomb_max = tracked_player.bomb_max
+	var bomb_status: Stats.ResourceStatus = tracked_player.player_class.stats.resources.get("bomb")
+	interface_values.bombs = bomb_status.current_resource if bomb_status != null else 0
+	interface_values.room_name = (
+		run_context.current_room.id
+		if run_context != null and run_context.current_room != null
+		else "Unknown"
+	)
+	INTERFACE_UPDATER.update_interface(_get_interface_root(), interface_values)
+
+
+func _get_interface_root() -> Node:
+	if get_node_or_null("CounterMargins") != null:
+		return self
+	var parent := get_parent()
+	if parent != null and parent.get_node_or_null("CounterMargins") != null:
+		return parent
+	return self

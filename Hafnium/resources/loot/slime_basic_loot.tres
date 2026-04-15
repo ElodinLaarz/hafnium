@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="LootTable" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/loot_table.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/loot_drop_data.gd" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/items/ruby.tscn" id="3"]
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("2")
+item_scene = ExtResource("3")
+count = 1
+weight = 25
+
+[sub_resource type="Resource" id="2"]
+script = ExtResource("2")
+item_scene = ExtResource("3")
+count = 2
+weight = 50
+
+[resource]
+script = ExtResource("1")
+id = "loot:slime_basic"
+drops = [SubResource("1"), SubResource("2")]
+nothing_weight = 25

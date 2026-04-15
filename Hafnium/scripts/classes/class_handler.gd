@@ -20,6 +20,12 @@ enum HeartName {
 	BARBARIAN_1_4,
 }
 
+const CHARACTER_IDS_BY_ENUM := {
+	ClassName.BARBARIAN: "class:barbarian",
+	ClassName.DRUID: "class:druid",
+	ClassName.WIZARD: "class:wizard",
+}
+
 var class_sprite_lookup: Dictionary = {
 	ClassName.BARBARIAN: "res://scenes/characters/sprites/barbarian_sprite.tscn",
 	ClassName.DRUID: "res://scenes/characters/sprites/druid_sprite.tscn",
@@ -168,18 +174,28 @@ func default_hearts(_stats: Stats, heart_container: Node):
 
 
 func hdl(pc: PlayerClass, cn: ClassName) -> bool:
-	if !setup_hp(pc, cn):
-		print("trouble setting up hp for %s" % cn)
+	var data = get_character_data(cn)
+	if data == null:
+		print("No character data found for %s" % cn)
 		return false
-	if !setup_class_resources(pc, cn):
-		print("trouble setting up resources for %s" % cn)
+	return setup_from_data(pc, data)
+
+
+func get_character_data(cn: ClassName):
+	if not CHARACTER_IDS_BY_ENUM.has(cn):
+		return null
+	return ContentRegistry.require_character(CHARACTER_IDS_BY_ENUM[cn])
+
+
+func setup_from_data(pc: PlayerClass, data) -> bool:
+	pc.definition = data
+	data.apply_to_stats(pc.stats)
+	pc.stats.speed = data.speed
+	if not setup_heart_drawing_from_style(pc, data.heart_style):
 		return false
-	if !setup_heart_drawing(pc, cn):
-		print("trouble setting up heart drawing for %s" % cn)
-		return false
-	if !setup_attack(pc, cn):
-		print("trouble setting up attack for %s" % cn)
-		return false
+	pc.attack_projectile_path = get_projectile_path_from_definition(data)
+	pc._attack_scene = data.attack_projectile_scene
+	pc.attack_logic = build_attack_logic(data)
 	return true
 
 
@@ -194,6 +210,23 @@ func setup_heart_drawing(pc: PlayerClass, cn: ClassName) -> bool:
 		_:
 			print("Unexpected class: ", cn)
 			print("Default heart drawing logic will be used.")
+			pc.heart_drawing_logic = default_hearts
+			return false
+	return true
+
+
+func setup_heart_drawing_from_style(pc: PlayerClass, heart_style: String) -> bool:
+	match heart_style:
+		"barbarian":
+			pc.heart_drawing_logic = barbarian_heart_drawing_logic
+		"druid":
+			pc.heart_drawing_logic = druid_heart_drawing_logic
+		"wizard":
+			pc.heart_drawing_logic = wizard_heart_drawing_logic
+		"default":
+			pc.heart_drawing_logic = default_hearts
+		_:
+			print("Unexpected heart style: ", heart_style)
 			pc.heart_drawing_logic = default_hearts
 			return false
 	return true
@@ -224,11 +257,30 @@ func wizard_attack(stats: Stats):
 
 
 func get_attack_projectile_path(cn: ClassName) -> String:
-	match cn:
-		ClassName.WIZARD:
-			return "res://scenes/weapons/bullets/fireball.tscn"
-		_:
-			return ""
+	var data = get_character_data(cn)
+	return get_projectile_path_from_definition(data)
+
+
+func get_projectile_path_from_definition(data) -> String:
+	if data == null:
+		return ""
+	if not data.attack_projectile_id.is_empty():
+		var projectile_data = ContentRegistry.require_projectile(data.attack_projectile_id)
+		if projectile_data != null and projectile_data.projectile_scene != null:
+			return projectile_data.projectile_scene.resource_path
+	if data.attack_projectile_scene == null:
+		return ""
+	return data.attack_projectile_scene.resource_path
+
+
+func build_attack_logic(data) -> Callable:
+	if data == null or data.attack_projectile_scene == null:
+		return func(_stats): return false
+	return func(stats: Stats):
+		if stats.attack_cooldown > 0:
+			return false
+		stats.attack_cooldown = stats.attack_speed
+		return true
 
 
 func setup_attack(pc: PlayerClass, cn: ClassName) -> bool:
@@ -288,6 +340,7 @@ func setup_class_resources(pc: PlayerClass, cn: ClassName) -> bool:
 
 class PlayerClass:
 	var class_handler := ClassHandler.new()
+	var definition
 	var heart_drawing_logic: Callable
 	var attack_logic: Callable
 	var attack_projectile_path: String = ""
@@ -332,6 +385,12 @@ class PlayerClass:
 		self.heart_drawing_logic.call(self.stats, heart_container)
 
 	func get_attack_scene() -> PackedScene:
+		if (
+			_attack_scene == null
+			and definition != null
+			and definition.attack_projectile_scene != null
+		):
+			_attack_scene = definition.attack_projectile_scene
 		if _attack_scene == null and not attack_projectile_path.is_empty():
 			_attack_scene = load(attack_projectile_path)
 		return _attack_scene

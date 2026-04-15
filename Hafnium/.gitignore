@@ -1,3 +1,5 @@
 .godot/
-sprites/not_my_art/
+sprites/not_my_art/*
+!sprites/not_my_art/fireball.png
+!sprites/not_my_art/label_bg.png
 addons/gut/

@@ -15,8 +15,7 @@ var _main_scene
 func become_host():
 	print("Starting to host!")
 
-	var scene_switcher = get_tree().get_current_scene()
-	_main_scene = scene_switcher.get_node(MAIN_SCENE)
+	_main_scene = _resolve_main_scene()
 
 	var server_peer = ENetMultiplayerPeer.new()
 	var server_connection_err: Error = server_peer.create_server(SERVER_PORT)
@@ -67,6 +66,12 @@ func _del_player(id: int):
 func _remove_single_player():
 	print("Remove single player")
 	# This has to be instantiated on clients separate from the server.
-	var main_scene = get_tree().get_current_scene().get_node(MAIN_SCENE)
+	var main_scene = _resolve_main_scene()
 	var player_to_remove = main_scene.get_node(SINGLE_PLAYER_NAME)
 	player_to_remove.queue_free()
+
+
+func _resolve_main_scene():
+	if Common.run_context != null and Common.run_context.world_root != null:
+		return Common.run_context.world_root
+	return get_tree().get_current_scene().get_node(MAIN_SCENE)

@@ -28,6 +28,34 @@ func test_take_damage_clamps_at_zero():
 	assert_eq(s.current_health, 0, "Health should not go below 0")
 
 
+func test_health_setters_clamp_and_emit_only_on_change():
+	var s = Stats.new()
+	var emissions: Array = []
+	s.health_changed.connect(
+		func(new_health: int, max_health: int): emissions.append([new_health, max_health])
+	)
+
+	s.max_health = 10
+	s.max_health = 10
+	s.current_health = 5
+	s.current_health = -3
+	s.current_health = -3
+
+	assert_eq(s.max_health, 10, "Max health should be stored")
+	assert_eq(s.current_health, 0, "Current health should clamp at zero")
+	assert_eq(emissions.size(), 3, "Health should emit once per actual stored-value change")
+
+
+func test_max_health_clamps_current_health_when_lowered():
+	var s = Stats.new()
+	s.max_health = 10
+	s.current_health = 8
+	s.max_health = 4
+
+	assert_eq(s.max_health, 4, "Max health should update")
+	assert_eq(s.current_health, 4, "Current health should clamp when max health is lowered")
+
+
 func test_resource_status_update_rate():
 	# ResourceStatus is an inner class of Stats
 	var rs = Stats.ResourceStatus.new(Stats.ClassResource.BOMB, 3, 0.5)  # 0.5 recovery/sec
