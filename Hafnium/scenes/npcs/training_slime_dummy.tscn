@@ -8,4 +8,5 @@ script = ExtResource("2_8lt5y")
 
 [node name="DpsLabel" type="Label" parent="."]
 horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
 text = "DPS: 0.0"

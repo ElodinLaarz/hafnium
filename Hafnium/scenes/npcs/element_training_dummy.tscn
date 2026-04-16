@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/npcs/training_slime_dummy.tscn" id="1_base"]
+[ext_resource type="Script" path="res://scripts/test_scripts/element_training_dummy.gd" id="2_elem"]
+
+[node name="ElementTrainingDummy" instance=ExtResource("1_base")]
+script = ExtResource("2_elem")
+
+[node name="ProfileHint" type="Label" parent="."]
+offset_left = -150.0
+offset_top = -24.0
+offset_right = 150.0
+offset_bottom = 8.0
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 9
+autowrap_mode = 3

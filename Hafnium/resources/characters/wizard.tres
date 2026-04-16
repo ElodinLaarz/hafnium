@@ -6,6 +6,7 @@
 
 [resource]
 script = ExtResource("1")
+attack_element = 1
 id = "class:wizard"
 display_name = "Wizard"
 legacy_class_name = 3

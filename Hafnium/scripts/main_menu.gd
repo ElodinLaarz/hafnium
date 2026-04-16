@@ -3,7 +3,11 @@ extends Control
 const LEVEL_STANDARD_RUN: String = "standard_run"
 const LEVEL_STANDARD_RUN_SCENE_PATH: String = ""
 const LEVEL_DPS_TRAINING: String = "dps_training"
-const LEVEL_DPS_TRAINING_SCENE_PATH: String = "res://scenes/test_scenes/dps_training_room.tscn"
+const LEVEL_ELEMENT_TRAINING: String = "element_training"
+
+const _TEST_SCENES: String = "res://scenes/test_scenes/"
+const LEVEL_DPS_TRAINING_SCENE_PATH: String = _TEST_SCENES + "dps_training_room.tscn"
+const LEVEL_ELEMENT_TRAINING_SCENE_PATH: String = _TEST_SCENES + "element_training_room.tscn"
 
 @onready var _default_options: VBoxContainer = %DefaultOptions
 @onready var _level_select: VBoxContainer = %LevelSelect
@@ -66,6 +70,10 @@ func _on_level_dps_pressed() -> void:
 	_start_single_player_for_level(LEVEL_DPS_TRAINING)
 
 
+func _on_level_element_training_pressed() -> void:
+	_start_single_player_for_level(LEVEL_ELEMENT_TRAINING)
+
+
 func _on_level_back_pressed() -> void:
 	_show_default_menu()
 
@@ -111,7 +119,12 @@ func _show_options_menu() -> void:
 
 func _start_single_player_for_level(level_id: String) -> void:
 	var selected_scene_path: String = LEVEL_STANDARD_RUN_SCENE_PATH
-	if level_id == LEVEL_DPS_TRAINING:
-		selected_scene_path = LEVEL_DPS_TRAINING_SCENE_PATH
+	match level_id:
+		LEVEL_DPS_TRAINING:
+			selected_scene_path = LEVEL_DPS_TRAINING_SCENE_PATH
+		LEVEL_ELEMENT_TRAINING:
+			selected_scene_path = LEVEL_ELEMENT_TRAINING_SCENE_PATH
+		_:
+			pass
 	Common.set_next_level_scene_path(selected_scene_path)
 	_on_single_player_pressed("wizard")

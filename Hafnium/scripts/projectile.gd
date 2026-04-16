@@ -8,6 +8,7 @@ const TELEGRAPH_START_BLINKS: float = 3.0
 const TELEGRAPH_END_BLINKS: float = 12.0
 
 @export var projectile_id: String = "weapon:fireball"
+@export var element: Damage.DamageType = Damage.DamageType.BASIC
 
 var ttl: float = 1.0  # Seconds to live.
 var damage: int = 1
@@ -15,9 +16,6 @@ var damage_payload: Damage
 var source_actor: Node
 var source_team: int = 0
 var _initial_ttl: float = 1.0
-# Implement this later...
-# var damage_type: DamageType = DamageType.PHYSICAL
-# var damage_area: float = 1 # Other characters within this area will also take damage.
 
 
 func _ready() -> void:
@@ -43,7 +41,7 @@ func decrement_time(delta: float) -> void:
 func build_damage() -> Damage:
 	if damage_payload != null:
 		return damage_payload
-	return Damage.basic(damage, source_actor, source_team)
+	return Damage.typed(damage, element, source_actor, source_team)
 
 
 func _update_expiry_telegraph() -> void:
