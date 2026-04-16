@@ -51,15 +51,26 @@ func fire_attack(player: PlayerCharacter, angle: float) -> bool:
 		return false
 
 	var stats: Stats = player.player_class.stats
+	var feel_tuning: FeelTuningProfile = Common.get_feel_tuning()
+	var crit_chance: float = feel_tuning.crit_chance if feel_tuning != null else 0.0
+	var crit_damage_multiplier: float = (
+		feel_tuning.crit_damage_multiplier if feel_tuning != null else 2.0
+	)
+	var is_crit: bool = randf() < crit_chance
+	var damage_amount: int = stats.damage
+	if is_crit:
+		damage_amount = maxi(1, int(round(float(stats.damage) * crit_damage_multiplier)))
 	var aim_dir: Vector2 = Vector2(cos(angle), sin(angle))
 	projectile.rotation = PI + angle
 	projectile.position = player.position + aim_dir * run_context.attack_displacement_magnitude
 	projectile.velocity = aim_dir * stats.projectile_speed
-	projectile.damage = stats.damage
+	projectile.damage = damage_amount
 	projectile.ttl = _calculate_ttl(stats)
 	projectile.source_actor = player
 	projectile.source_team = player.get_team()
-	projectile.damage_payload = Damage.basic(stats.damage, player, player.get_team())
+	projectile.damage_payload = Damage.basic(
+		damage_amount, player, player.get_team(), {"is_crit": is_crit}
+	)
 	projectile_parent.add_child(projectile)
 	run_context.emit_resource_state(player)
 	return true
@@ -97,7 +108,14 @@ func resolve_projectile_hit(target: BaseCharacter, projectile: Projectile) -> bo
 		return false
 
 	projectile.call_deferred("queue_free")
+	var health_before: int = target.stats.current_health if target.stats != null else 0
 	var defeated: bool = target.receive_damage(damage)
+	var health_after: int = target.stats.current_health if target.stats != null else 0
+	var damage_applied: bool = defeated or health_after < health_before
+	var is_crit: bool = bool(damage.metadata.get("is_crit", false))
+	if damage_applied:
+		run_context.request_hit_feedback(is_crit)
+		run_context.spawn_damage_number(target.global_position, damage.amount, is_crit)
 	if defeated:
 		if target is Enemy:
 			run_context.handle_enemy_defeated(target)
@@ -106,7 +124,11 @@ func resolve_projectile_hit(target: BaseCharacter, projectile: Projectile) -> bo
 
 
 func _calculate_ttl(stats: Stats) -> float:
+	var feel_tuning: FeelTuningProfile = Common.get_feel_tuning()
+	var life_multiplier: float = (
+		feel_tuning.projectile_life_multiplier if feel_tuning != null else 1.0
+	)
 	if stats.projectile_speed <= 0:
 		# Avoid division by zero while still allowing melee-style placeholder projectiles.
-		return ZERO_SPEED_PROJECTILE_TTL
-	return stats.attack_range / stats.projectile_speed
+		return ZERO_SPEED_PROJECTILE_TTL * life_multiplier
+	return (stats.attack_range / stats.projectile_speed) * life_multiplier

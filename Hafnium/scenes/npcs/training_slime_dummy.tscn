@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/npcs/slime.tscn" id="1_q1ah8"]
+[ext_resource type="Script" path="res://scripts/test_scripts/training_slime_dummy.gd" id="2_8lt5y"]
+
+[node name="TrainingSlimeDummy" instance=ExtResource("1_q1ah8")]
+script = ExtResource("2_8lt5y")
+
+[node name="DpsLabel" type="Label" parent="."]
+horizontal_alignment = 1
+text = "DPS: 0.0"

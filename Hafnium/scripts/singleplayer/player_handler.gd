@@ -17,6 +17,9 @@ var enemy_in_attack_range: bool = false
 var bomb_count: int = 0
 var bomb_max: int = 3
 var currency: int = 0
+var feel_tuning: FeelTuningProfile
+var _attack_buffer_timer: float = 0.0
+var _attack_move_slow_timer: float = 0.0
 
 
 func _init() -> void:
@@ -27,11 +30,16 @@ func _init() -> void:
 
 func _ready() -> void:
 	_animated_sprite = $PlayerSprite
+	feel_tuning = Common.get_feel_tuning()
+	if feel_tuning != null and not feel_tuning.changed.is_connected(_on_feel_tuning_changed):
+		feel_tuning.changed.connect(_on_feel_tuning_changed)
+	_apply_feel_tuning()
 	ready_aim()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	_update_attack_windows(delta)
 	handle_movement(delta)
 	handle_attack(delta)
 	handle_stats(delta)
@@ -61,6 +69,7 @@ func load_player_data(player_name: String) -> bool:
 			movement.walking_speed = player_class.definition.speed
 			movement.running_speed = int(movement.walking_speed * movement.running_multiplier)
 			movement.run_to_walk_threshold = movement.walking_speed * RUN_TO_WALK_THRESHOLD_FACTOR
+		_apply_feel_tuning()
 		return true
 	return false
 
@@ -72,8 +81,13 @@ func ready_aim() -> void:
 
 
 func handle_movement(delta: float) -> void:
+	if Input.is_action_just_pressed(GameConstants.INPUT_ACTION_TOGGLE_AUTORUN):
+		movement.toggle_autorun()
+	var walk_modifier_held: bool = Input.is_action_pressed(GameConstants.INPUT_ACTION_WALK_MODIFIER)
+	var movement_scale: float = _get_attack_movement_scale()
+	movement.set_speed_scale(movement_scale)
 	movement.set_max_speed_walk()  # Default to walking, unless running.
-	if movement.check_is_running(delta, velocity.length()):
+	if movement.should_run(delta, velocity.length(), walk_modifier_held):
 		movement.set_max_speed_run()
 
 	# Could pass along the body here, if ambiguous.
@@ -84,12 +98,15 @@ func handle_movement(delta: float) -> void:
 	move_and_slide()
 
 
-func handle_attack(_delta: float) -> void:
-	aim.update_pivot(_delta)
-	# Allow it to be held down.
-	if Input.is_action_pressed(GameConstants.INPUT_ACTION_ATTACK):
-		if Common.attack():
-			print("attacking!")
+func handle_attack(delta: float) -> void:
+	aim.update_pivot(delta)
+	var attack_held: bool = Input.is_action_pressed(GameConstants.INPUT_ACTION_ATTACK)
+	if Input.is_action_just_pressed(GameConstants.INPUT_ACTION_ATTACK):
+		_attack_buffer_timer = _get_attack_buffer_window()
+	var attack_requested: bool = attack_held or _attack_buffer_timer > 0
+	if attack_requested and Common.attack():
+		_attack_buffer_timer = 0.0
+		_attack_move_slow_timer = _get_attack_move_slow_time()
 	if Input.is_action_just_pressed(GameConstants.INPUT_ACTION_SECONDARY_ATTACK):
 		if Common.place_bomb():
 			print("bomb placed!")
@@ -134,3 +151,53 @@ func add_currency(c: int) -> void:
 		run_context.emit_currency_state(self)
 	print("You have %d currency!" % currency)
 	# TODO(ElodinLaarz): Update currency display.
+
+
+func set_run_context(p_run_context: RunContext) -> void:
+	super.set_run_context(p_run_context)
+	if run_context == null:
+		return
+	var camera: Camera2D = get_node_or_null("Main Camera")
+	if (
+		camera != null
+		and camera.has_method("trigger_shake")
+		and not run_context.camera_shake_requested.is_connected(camera.trigger_shake)
+	):
+		run_context.camera_shake_requested.connect(camera.trigger_shake)
+
+
+func _update_attack_windows(delta: float) -> void:
+	if _attack_buffer_timer > 0:
+		_attack_buffer_timer = max(_attack_buffer_timer - delta, 0.0)
+	if _attack_move_slow_timer > 0:
+		_attack_move_slow_timer = max(_attack_move_slow_timer - delta, 0.0)
+
+
+func _get_attack_movement_scale() -> float:
+	if _attack_move_slow_timer <= 0:
+		return 1.0
+	if feel_tuning == null:
+		return 1.0
+	return feel_tuning.attack_move_slow_multiplier
+
+
+func _get_attack_move_slow_time() -> float:
+	if feel_tuning == null:
+		return 0.0
+	return feel_tuning.attack_move_slow_time
+
+
+func _get_attack_buffer_window() -> float:
+	if feel_tuning == null:
+		return 0.0
+	return feel_tuning.attack_buffer_window
+
+
+func _on_feel_tuning_changed() -> void:
+	_apply_feel_tuning()
+
+
+func _apply_feel_tuning() -> void:
+	if feel_tuning == null:
+		return
+	movement.apply_tuning(feel_tuning)

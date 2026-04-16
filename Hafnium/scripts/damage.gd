@@ -24,5 +24,7 @@ func _init(
 	metadata = p_metadata.duplicate(true)
 
 
-static func basic(p_amount: int, p_source: Node = null, p_source_team: int = -1) -> Damage:
-	return Damage.new(p_amount, DamageType.BASIC, p_source, p_source_team)
+static func basic(
+	p_amount: int, p_source: Node = null, p_source_team: int = -1, p_metadata: Dictionary = {}
+) -> Damage:
+	return Damage.new(p_amount, DamageType.BASIC, p_source, p_source_team, p_metadata)

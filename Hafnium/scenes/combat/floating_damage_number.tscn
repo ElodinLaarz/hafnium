@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/floating_damage_number.gd" id="1_n7f4h"]
+
+[node name="FloatingDamageNumber" type="Node2D"]
+script = ExtResource("1_n7f4h")
+
+[node name="Label" type="Label" parent="."]
+offset_left = -8.0
+offset_top = -16.0
+offset_right = 24.0
+offset_bottom = 0.0
+text = "0"

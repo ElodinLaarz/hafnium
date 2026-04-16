@@ -65,6 +65,7 @@ theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
 [node name="DefaultOptions" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/OutsideMargins"]
+unique_name_in_owner = true
 layout_mode = 2
 
 [node name="New Game" type="Button" parent="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions"]
@@ -79,11 +80,59 @@ text = "Load Game"
 layout_mode = 2
 text = "Multiplayer"
 
+[node name="Options" type="Button" parent="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions"]
+layout_mode = 2
+text = "Options"
+
 [node name="Quit" type="Button" parent="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions"]
 layout_mode = 2
 text = "Quit"
 
-[connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions/New Game" to="." method="_on_single_player_pressed"]
+[node name="LevelSelect" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/OutsideMargins"]
+visible = false
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LevelSelectLabel" type="Label" parent="CanvasLayer/VSplitContainer/OutsideMargins/LevelSelect"]
+layout_mode = 2
+text = "Select Level"
+
+[node name="StandardRun" type="Button" parent="CanvasLayer/VSplitContainer/OutsideMargins/LevelSelect"]
+layout_mode = 2
+text = "Standard Run"
+
+[node name="DpsTraining" type="Button" parent="CanvasLayer/VSplitContainer/OutsideMargins/LevelSelect"]
+layout_mode = 2
+text = "DPS Training"
+
+[node name="Back" type="Button" parent="CanvasLayer/VSplitContainer/OutsideMargins/LevelSelect"]
+layout_mode = 2
+text = "Back"
+
+[node name="OptionsMenu" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/OutsideMargins"]
+visible = false
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="OptionsLabel" type="Label" parent="CanvasLayer/VSplitContainer/OutsideMargins/OptionsMenu"]
+layout_mode = 2
+text = "Player Options"
+
+[node name="ScreenShakeToggle" type="CheckButton" parent="CanvasLayer/VSplitContainer/OutsideMargins/OptionsMenu" unique_name_in_owner=true]
+layout_mode = 2
+text = "Enable Screen Shake"
+
+[node name="Back" type="Button" parent="CanvasLayer/VSplitContainer/OutsideMargins/OptionsMenu"]
+layout_mode = 2
+text = "Back"
+
+[connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions/New Game" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions/Load Game" to="." method="_on_load_pressed"]
 [connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions/Multiplayer" to="." method="_on_multiplayer_pressed"]
+[connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions/Options" to="." method="_on_options_pressed"]
 [connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/DefaultOptions/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/LevelSelect/StandardRun" to="." method="_on_level_standard_pressed"]
+[connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/LevelSelect/DpsTraining" to="." method="_on_level_dps_pressed"]
+[connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/LevelSelect/Back" to="." method="_on_level_back_pressed"]
+[connection signal="toggled" from="CanvasLayer/VSplitContainer/OutsideMargins/OptionsMenu/ScreenShakeToggle" to="." method="_on_screen_shake_toggled"]
+[connection signal="pressed" from="CanvasLayer/VSplitContainer/OutsideMargins/OptionsMenu/Back" to="." method="_on_options_back_pressed"]

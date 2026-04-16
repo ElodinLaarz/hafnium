@@ -1,0 +1,25 @@
+---
+description: Ensure GDScript class definition order avoids gdlint class-definitions-order errors
+globs: **/*.gd
+alwaysApply: false
+---
+
+# GDScript Class Definition Order
+
+- Before finishing any new or edited `.gd` file, verify declarations follow Godot/GDScript ordering expected by gdlint.
+- Before marking work complete, run `gdlint` on every edited `.gd` file (or `gdlint` on the project) so `class-definitions-order` and other gdtoolkit-only checks are caught.
+- Keep top-level script structure consistent:
+  1) `class_name` and `extends`
+  2) `signal`
+  3) `enum`
+  4) `const`
+  5) exported vars
+  6) plain vars
+  7) onready vars
+  8) lifecycle methods (`_init`, `_ready`, `_process`, `_physics_process`, etc.)
+  9) public methods
+  10) private helpers
+  11) inner classes
+- Avoid mixing constants, vars, and methods in interleaved order.
+- For files with inner classes, place them after primary script logic unless project conventions for that file require otherwise.
+- If uncertain, reorder declarations to satisfy `gdlint` before considering the change complete.
