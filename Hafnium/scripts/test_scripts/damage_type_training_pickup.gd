@@ -78,7 +78,7 @@ func _begin_respawn() -> void:
 	if tree == null:
 		return
 	await tree.create_timer(respawn_seconds).timeout
-	if not is_inside_tree():
+	if not is_instance_valid(self) or not is_inside_tree():
 		return
 	if _visual != null:
 		_visual.visible = true

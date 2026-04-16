@@ -56,7 +56,7 @@ func _start_default_run(
 	active_run_context = RUN_CONTEXT_SCRIPT.new()
 	add_child(active_run_context)
 	Common.set_run_context(active_run_context)
-	active_run_context.begin_run(Time.get_unix_time_from_system())
+	active_run_context.begin_run(int(Time.get_unix_time_from_system()))
 
 	var level_to_load: Node2D = active_run_context.instantiate_start_room()
 	if level_to_load == null:

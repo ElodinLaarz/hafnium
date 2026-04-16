@@ -73,7 +73,7 @@ func fire_attack(player: PlayerCharacter, angle: float) -> bool:
 		Damage
 		. resolve_attack_element(
 			projectile_data,
-			player.player_class.definition if player.player_class != null else null,
+			player.player_class.definition,
 			projectile.element,
 		)
 	)

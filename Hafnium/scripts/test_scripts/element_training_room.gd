@@ -35,7 +35,7 @@ func _boot_run_context() -> void:
 	_run_context = RUN_CONTEXT_SCRIPT.new()
 	add_child(_run_context)
 	Common.set_run_context(_run_context)
-	_run_context.begin_run(Time.get_unix_time_from_system())
+	_run_context.begin_run(int(Time.get_unix_time_from_system()))
 	_run_context.attach_world_root(self)
 
 
@@ -170,9 +170,12 @@ func _refresh_hud() -> void:
 	if _run_context.use_training_damage_type_override:
 		var label: String = Damage.damage_type_label(_run_context.training_damage_type_override)
 		_element_hud.text = (
-			"Attack damage type: %s (set by the last token you walked over). "
-			+ "Your projectiles use this element until you touch another token or "
-			+ 'the "Class default" token.' % label
+			(
+				"Attack damage type: %s (set by the last token you walked over). "
+				+ "Your projectiles use this element until you touch another token or "
+				+ 'the "Class default" token.'
+			)
+			% label
 		)
 	else:
 		_element_hud.text = (
