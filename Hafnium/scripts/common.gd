@@ -18,6 +18,7 @@ var feel_tuning: FeelTuningProfile = FeelTuningProfileScript.new()
 var attack_spawn_angle: float = 0
 var attack_displacement_magnitude: float = GameConstants.ATTACK_SPAWN_DISPLACEMENT
 var next_level_scene_path: String = ""
+var character_select_after_level_pick: bool = false
 var player_screen_shake_enabled: bool = false
 
 
