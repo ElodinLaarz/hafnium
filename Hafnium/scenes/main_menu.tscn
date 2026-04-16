@@ -122,7 +122,8 @@ layout_mode = 2
 layout_mode = 2
 text = "Player Options"
 
-[node name="ScreenShakeToggle" type="CheckButton" parent="CanvasLayer/VSplitContainer/OutsideMargins/OptionsMenu" unique_name_in_owner=true]
+[node name="ScreenShakeToggle" type="CheckButton" parent="CanvasLayer/VSplitContainer/OutsideMargins/OptionsMenu"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Enable Screen Shake"
 

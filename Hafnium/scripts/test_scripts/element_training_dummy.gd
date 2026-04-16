@@ -4,7 +4,7 @@ extends "res://scripts/test_scripts/training_slime_dummy.gd"
 ## World space; labels use set_as_top_level so dummy scale does not stretch text.
 const DPS_Y_BELOW_FEET: float = 14.0
 const GAP_BETWEEN_DPS_AND_PROFILE: float = 8.0
-const PROFILE_LABEL_WIDTH: float = 300.0
+const PROFILE_LABEL_WIDTH: float = 200.0
 
 @export_group("Damage multipliers", "dmg_")
 @export var dmg_basic: float = 1.0
@@ -84,7 +84,7 @@ func _build_profile_description() -> String:
 			+ "Every damage type deals the baseline amount (100%)."
 		)
 	var lines: PackedStringArray = []
-	lines.append("How incoming damage is modified (100% = normal):")
+	lines.append("Modifiers (100% = baseline):")
 	_append_line(lines, Damage.DamageType.BASIC, dmg_basic)
 	_append_line(lines, Damage.DamageType.FIRE, dmg_fire)
 	_append_line(lines, Damage.DamageType.ICE, dmg_ice)

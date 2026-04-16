@@ -8,6 +8,9 @@ const PICKUP_SCENE: PackedScene = preload(
 	"res://scenes/test_scenes/damage_type_training_pickup.tscn"
 )
 
+## Left edge of token column; clear of dummy sprites and 200px-wide profile labels (~dummy at -115).
+const TOKEN_COLUMN_X: float = -265.0
+
 @export var player_name: String = "wizard"
 @export var player_spawn_position: Vector2 = Vector2(-200, 0)
 
@@ -70,35 +73,35 @@ func _spawn_player() -> void:
 func _spawn_dummies() -> void:
 	var configs: Array[Dictionary] = [
 		{
-			"pos": Vector2(-40, -100),
+			"pos": Vector2(-115, -105),
 			"scale": Vector2(2.5, 2.5),
 			"dmg_fire": 0.5,
 			"dmg_ice": 1.5,
 			"mod": Color(0.35, 0.75, 1.0),
 		},
 		{
-			"pos": Vector2(120, -100),
+			"pos": Vector2(175, -105),
 			"scale": Vector2(2.5, 2.5),
 			"dmg_fire": 1.5,
 			"dmg_ice": 0.5,
 			"mod": Color(1.0, 0.45, 0.25),
 		},
 		{
-			"pos": Vector2(-40, 100),
+			"pos": Vector2(-115, 108),
 			"scale": Vector2(2.5, 2.5),
 			"dmg_physical": 1.5,
 			"dmg_nature": 0.5,
 			"mod": Color(0.45, 0.85, 0.4),
 		},
 		{
-			"pos": Vector2(120, 100),
+			"pos": Vector2(175, 108),
 			"scale": Vector2(2.5, 2.5),
 			"dmg_nature": 1.5,
 			"dmg_physical": 0.5,
 			"mod": Color(0.75, 0.45, 1.0),
 		},
 		{
-			"pos": Vector2(200, 0),
+			"pos": Vector2(235, 0),
 			"scale": Vector2(2.2, 2.2),
 			"dmg_basic": 1.0,
 			"dmg_fire": 1.0,
@@ -129,12 +132,12 @@ func _spawn_dummies() -> void:
 
 func _spawn_pickups() -> void:
 	var token_specs: Array[Dictionary] = [
-		{"pos": Vector2(-120, -40), "element": Damage.DamageType.BASIC},
-		{"pos": Vector2(-120, 0), "element": Damage.DamageType.FIRE},
-		{"pos": Vector2(-120, 40), "element": Damage.DamageType.ICE},
-		{"pos": Vector2(-120, 80), "element": Damage.DamageType.NATURE},
-		{"pos": Vector2(-120, 120), "element": Damage.DamageType.PHYSICAL},
-		{"pos": Vector2(-160, 80), "clear": true},
+		{"pos": Vector2(TOKEN_COLUMN_X, -88), "element": Damage.DamageType.BASIC},
+		{"pos": Vector2(TOKEN_COLUMN_X, -40), "element": Damage.DamageType.FIRE},
+		{"pos": Vector2(TOKEN_COLUMN_X, 8), "element": Damage.DamageType.ICE},
+		{"pos": Vector2(TOKEN_COLUMN_X, 56), "element": Damage.DamageType.NATURE},
+		{"pos": Vector2(TOKEN_COLUMN_X, 104), "element": Damage.DamageType.PHYSICAL},
+		{"pos": Vector2(TOKEN_COLUMN_X, 160), "clear": true},
 	]
 	for spec: Dictionary in token_specs:
 		var pickup: DamageTypeTrainingPickup = (
@@ -173,7 +176,7 @@ func _refresh_hud() -> void:
 			(
 				"Attack damage type: %s (set by the last token you walked over). "
 				+ "Your projectiles use this element until you touch another token or "
-				+ 'the "Class default" token.'
+				+ "the Default atk token (bottom)."
 			)
 			% label
 		)

@@ -44,7 +44,7 @@ func _apply_token_appearance() -> void:
 	if _token_label == null:
 		return
 	if clears_override:
-		_token_label.text = "Class default"
+		_token_label.text = "Default atk"
 		_set_diamond_colors(CLEAR_FILL_COLOR)
 	else:
 		_token_label.text = Damage.damage_type_label(grant_element)
