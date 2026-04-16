@@ -103,14 +103,10 @@ func handle_attack(delta: float) -> void:
 	var attack_held: bool = Input.is_action_pressed(GameConstants.INPUT_ACTION_ATTACK)
 	if Input.is_action_just_pressed(GameConstants.INPUT_ACTION_ATTACK):
 		_attack_buffer_timer = _get_attack_buffer_window()
-	if attack_held and Common.attack():
+	var attack_requested: bool = attack_held or _attack_buffer_timer > 0
+	if attack_requested and Common.attack():
 		_attack_buffer_timer = 0.0
 		_attack_move_slow_timer = _get_attack_move_slow_time()
-		print("attacking!")
-	elif _attack_buffer_timer > 0 and Common.attack():
-		_attack_buffer_timer = 0.0
-		_attack_move_slow_timer = _get_attack_move_slow_time()
-		print("attacking!")
 	if Input.is_action_just_pressed(GameConstants.INPUT_ACTION_SECONDARY_ATTACK):
 		if Common.place_bomb():
 			print("bomb placed!")

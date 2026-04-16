@@ -159,11 +159,20 @@ func spawn_damage_number(world_position: Vector2, amount: int, is_crit: bool) ->
 	var number_node: Node = FloatingDamageNumberScene.instantiate()
 	if number_node == null:
 		return
+	entity_root.add_child(number_node)
 	if number_node is Node2D:
 		number_node.global_position = world_position
-	entity_root.add_child(number_node)
 	if number_node.has_method("setup"):
 		number_node.setup(amount, is_crit)
+
+
+func apply_hit_stop(duration: float, time_scale: float) -> void:
+	var clamped_duration: float = clampf(duration, 0.0, 0.2)
+	if clamped_duration <= 0:
+		return
+	var clamped_time_scale: float = clampf(time_scale, 0.05, 1.0)
+	_hit_stop_remaining = max(_hit_stop_remaining, clamped_duration)
+	Engine.time_scale = min(Engine.time_scale, clamped_time_scale)
 
 
 func handle_enemy_defeated(enemy: Enemy) -> void:
@@ -226,15 +235,6 @@ func _on_player_health_changed(new_health: int, max_health: int) -> void:
 
 func _on_player_resource_changed(resource_name: String, current_value: int, max_value: int) -> void:
 	resource_changed.emit(resource_name, current_value, max_value)
-
-
-func apply_hit_stop(duration: float, time_scale: float) -> void:
-	var clamped_duration: float = clampf(duration, 0.0, 0.2)
-	if clamped_duration <= 0:
-		return
-	var clamped_time_scale: float = clampf(time_scale, 0.05, 1.0)
-	_hit_stop_remaining = max(_hit_stop_remaining, clamped_duration)
-	Engine.time_scale = min(Engine.time_scale, clamped_time_scale)
 
 
 func _clear_hit_stop() -> void:

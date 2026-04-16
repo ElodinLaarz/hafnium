@@ -108,10 +108,14 @@ func resolve_projectile_hit(target: BaseCharacter, projectile: Projectile) -> bo
 		return false
 
 	projectile.call_deferred("queue_free")
+	var health_before: int = target.stats.current_health if target.stats != null else 0
 	var defeated: bool = target.receive_damage(damage)
+	var health_after: int = target.stats.current_health if target.stats != null else 0
+	var damage_applied: bool = defeated or health_after < health_before
 	var is_crit: bool = bool(damage.metadata.get("is_crit", false))
-	run_context.request_hit_feedback(is_crit)
-	run_context.spawn_damage_number(target.global_position, damage.amount, is_crit)
+	if damage_applied:
+		run_context.request_hit_feedback(is_crit)
+		run_context.spawn_damage_number(target.global_position, damage.amount, is_crit)
 	if defeated:
 		if target is Enemy:
 			run_context.handle_enemy_defeated(target)

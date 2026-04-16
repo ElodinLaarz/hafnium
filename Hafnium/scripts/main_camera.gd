@@ -1,3 +1,4 @@
+class_name MainCamera
 extends Camera2D
 
 var _base_offset: Vector2
