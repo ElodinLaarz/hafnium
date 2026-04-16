@@ -126,11 +126,10 @@ func resolve_projectile_hit(target: BaseCharacter, projectile: Projectile) -> bo
 	var damage_applied: bool = defeated or health_after < health_before
 	var is_crit: bool = bool(damage.metadata.get("is_crit", false))
 	var feedback_amount: int = damage.amount
+	var show_hit_feedback: bool = damage_applied
 	if target.has_method("get_last_applied_damage_for_feedback"):
 		feedback_amount = target.get_last_applied_damage_for_feedback()
-	var show_hit_feedback: bool = damage_applied
-	if not show_hit_feedback and target.has_method("get_last_applied_damage_for_feedback"):
-		show_hit_feedback = feedback_amount > 0
+		show_hit_feedback = show_hit_feedback or feedback_amount > 0
 	if show_hit_feedback:
 		run_context.request_hit_feedback(is_crit)
 		run_context.spawn_damage_number(target.global_position, feedback_amount, is_crit)

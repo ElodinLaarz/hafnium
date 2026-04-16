@@ -58,7 +58,7 @@ func receive_damage(payload: Damage) -> bool:
 		payload.metadata.duplicate(true)
 	)
 	adjusted.metadata["damage_type_multiplier"] = mult
-	return super.receive_damage(adjusted)
+	return super(adjusted)
 
 
 func _update_profile_hint() -> void:

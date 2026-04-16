@@ -46,7 +46,7 @@ func receive_damage(payload: Damage) -> bool:
 	if payload == null:
 		return false
 	_last_feedback_damage = maxi(0, payload.amount)
-	return super.receive_damage(payload)
+	return super(payload)
 
 
 func get_last_applied_damage_for_feedback() -> int:
