@@ -15,14 +15,14 @@ shrinkage observable.
   - Registers itself into `Common.player_character`.
   - Registers `load_player_data` into `Common.load_player`.
   - Reads `Common.player_heart_containers`.
-  - Uses `Common.attack()` and `Common.place_bomb()`.
+  - Uses `Common.attack()` and `Common.place_bomb()` (both require `Common.run_context` → `CombatDirector`).
 - `scripts/singleplayer/player_aim.gd`
   - Writes `Common.attack_spawn_angle`.
 - `scripts/stats/draw_health.gd`
   - Reads `Common.player_class`.
   - Writes `Common.player_heart_containers`.
 - `scripts/slime.gd`
-  - Calls `Common.projectile_resolve(...)`.
+  - Calls `Common.run_context.resolve_projectile_hit(...)` (`CombatDirector`).
 - `scripts/enemy_spawner.gd`
   - Uses `Common.a_little_offset(...)`.
 

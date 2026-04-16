@@ -24,12 +24,13 @@ func fire_attack(player: PlayerCharacter, angle: float) -> bool:
 		return false
 
 	var projectile_scene: PackedScene
+	var projectile_data: ProjectileData = null
 	if (
 		player.player_class.definition != null
 		and not player.player_class.definition.attack_projectile_id.is_empty()
 	):
 		# ID-based lookup keeps class definitions data-driven while allowing scene swaps.
-		var projectile_data: ProjectileData = ContentRegistry.require_projectile(
+		projectile_data = ContentRegistry.require_projectile(
 			player.player_class.definition.attack_projectile_id
 		)
 		if projectile_data != null:
@@ -68,8 +69,19 @@ func fire_attack(player: PlayerCharacter, angle: float) -> bool:
 	projectile.ttl = _calculate_ttl(stats)
 	projectile.source_actor = player
 	projectile.source_team = player.get_team()
-	projectile.damage_payload = Damage.basic(
-		damage_amount, player, player.get_team(), {"is_crit": is_crit}
+	var resolved_element: Damage.DamageType = (
+		Damage
+		. resolve_attack_element(
+			projectile_data,
+			player.player_class.definition,
+			projectile.element,
+		)
+	)
+	if run_context.use_training_damage_type_override:
+		resolved_element = run_context.training_damage_type_override
+	projectile.element = resolved_element
+	projectile.damage_payload = Damage.typed(
+		damage_amount, resolved_element, player, player.get_team(), {"is_crit": is_crit}
 	)
 	projectile_parent.add_child(projectile)
 	run_context.emit_resource_state(player)
@@ -113,9 +125,14 @@ func resolve_projectile_hit(target: BaseCharacter, projectile: Projectile) -> bo
 	var health_after: int = target.stats.current_health if target.stats != null else 0
 	var damage_applied: bool = defeated or health_after < health_before
 	var is_crit: bool = bool(damage.metadata.get("is_crit", false))
-	if damage_applied:
+	var feedback_amount: int = damage.amount
+	var show_hit_feedback: bool = damage_applied
+	if target.has_method("get_last_applied_damage_for_feedback"):
+		feedback_amount = target.get_last_applied_damage_for_feedback()
+		show_hit_feedback = show_hit_feedback or feedback_amount > 0
+	if show_hit_feedback:
 		run_context.request_hit_feedback(is_crit)
-		run_context.spawn_damage_number(target.global_position, damage.amount, is_crit)
+		run_context.spawn_damage_number(target.global_position, feedback_amount, is_crit)
 	if defeated:
 		if target is Enemy:
 			run_context.handle_enemy_defeated(target)

@@ -11,6 +11,9 @@ const GameConstants = preload("res://scripts/config/game_constants.gd")
 @export var attack_projectile_id: String = ""
 @export var attack_projectile_scene: PackedScene
 
+@export_group("Combat")
+@export var attack_element: Damage.DamageType = Damage.DamageType.BASIC
+
 @export_group("Stats")
 @export var max_health: int = 10
 @export var damage: int = 1

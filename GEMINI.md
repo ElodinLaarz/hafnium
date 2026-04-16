@@ -68,5 +68,5 @@ Manual playtesting is still useful for gameplay verification, but it is no longe
 - [ ] Complete the implementation of Wizard heart drawing logic in `class_handler.gd`.
 - [ ] Integrate the Go dungeon generator with the Godot engine (likely via GDExtension or shell execution).
 - [ ] Implement melee attacks for classes that require them.
-- [ ] Expand the item/reward system (referenced in `common.gd`'s `projectile_resolve`).
+- [ ] Expand the item/reward system (enemy drops flow through `RunContext` / `CombatDirector`).
 - [ ] Implement foundational GUT tests (`test_stats.gd`, `test_health.gd`).

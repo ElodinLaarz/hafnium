@@ -1,0 +1,32 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/test_scripts/element_training_room.gd" id="1_room"]
+
+[node name="ElementTrainingRoom" type="Node2D"]
+script = ExtResource("1_room")
+
+[node name="Background" type="Polygon2D" parent="."]
+color = Color(0.07, 0.09, 0.12, 1)
+polygon = PackedVector2Array(-320, -180, 320, -180, 320, 180, -320, 180)
+
+[node name="DynamicEntities" type="Node2D" parent="."]
+
+[node name="Pickups" type="Node2D" parent="."]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="ElementHud" type="Label" parent="CanvasLayer"]
+layout_mode = 1
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 8.0
+offset_top = 32.0
+offset_right = 468.0
+offset_bottom = 112.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 10
+autowrap_mode = 3
+text = "Attack damage type: —"

@@ -5,6 +5,7 @@
 
 [resource]
 script = ExtResource("1")
+attack_element = 3
 id = "class:druid"
 display_name = "Druid"
 legacy_class_name = 2

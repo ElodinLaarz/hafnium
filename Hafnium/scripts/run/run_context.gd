@@ -10,6 +10,7 @@ signal resource_changed(resource_name: String, current_value: int, max_value: in
 signal currency_changed(current_currency: int)
 signal enemy_defeated(enemy: Enemy)
 signal camera_shake_requested(intensity: float, duration: float)
+signal training_damage_type_override_changed(active: bool, element: Damage.DamageType)
 
 const CombatDirectorScript = preload("res://scripts/combat/combat_director.gd")
 const SpawnDirectorScript = preload("res://scripts/run/spawn_director.gd")
@@ -29,6 +30,10 @@ var active_players: Array[PlayerCharacter] = []
 var primary_player: PlayerCharacter
 
 var attack_displacement_magnitude: float = GameConstants.ATTACK_SPAWN_DISPLACEMENT
+
+## When true, use [member training_damage_type_override] instead of resolving from weapon/class.
+var use_training_damage_type_override: bool = false
+var training_damage_type_override: Damage.DamageType = Damage.DamageType.BASIC
 
 var combat_director: CombatDirector = CombatDirectorScript.new()
 var spawn_director: SpawnDirector = SpawnDirectorScript.new()
@@ -86,6 +91,12 @@ func attach_world_root(root: Node2D) -> void:
 	if not room_id.is_empty():
 		current_room = room_director.get_room_data(room_id)
 		room_entered.emit(room_id)
+
+
+func set_training_damage_type_override(active: bool, element: Damage.DamageType) -> void:
+	use_training_damage_type_override = active
+	training_damage_type_override = element
+	training_damage_type_override_changed.emit(active, element)
 
 
 func register_player(player: PlayerCharacter) -> void:

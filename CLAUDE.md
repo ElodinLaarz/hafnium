@@ -66,7 +66,7 @@ Tests live in `Hafnium/tests/unit/`. CI runs them automatically on every push an
 
 Two autoloads are registered in `project.godot`:
 
-- **`Common`** (`scripts/common.gd`) — Shared game state: holds references to the active `player_character`, `player_class`, and `player_heart_containers`. Also handles `attack()`, `place_bomb()`, and `projectile_resolve()`. Most cross-system communication flows through `Common`.
+- **`Common`** (`scripts/common.gd`) — Shared game state: holds references to the active `player_character`, `player_class`, and `player_heart_containers`. `attack()` and `place_bomb()` require `run_context` and delegate to `RunContext` → `CombatDirector`. Most cross-system communication flows through `Common`.
 - **`MultiplayerManager`** (`scripts/mutiplayer/multiplayer_manager.gd`) — Manages ENet sessions. Host binds to `127.0.0.1:8080`; clients connect to the same. Multiplayer is currently localhost-only.
 
 ### Entry Point & Scene Flow
@@ -76,7 +76,7 @@ Two autoloads are registered in `project.godot`:
 ### Player System
 
 - `scenes/player_character.tscn` + `scripts/singleplayer/player_handler.gd` — Core player node (`PlayerCharacter extends CharacterBody2D`). Delegates movement to `PlayerMovement`, aiming to `PlayerAim`.
-- `scripts/classes/class_handler.gd` — Defines `ClassHandler` and the inner `PlayerClass` class. `ClassHandler.hdl()` configures HP, resources, heart drawing logic, and attack logic for each class. Class-specific attack projectile is set on `Common.player_attack_projectile`.
+- `scripts/classes/class_handler.gd` — Defines `ClassHandler` and the inner `PlayerClass` class. `ClassHandler.hdl()` configures HP, resources, heart drawing logic, and attack logic for each class. Attack projectiles come from `CharacterData` (`attack_projectile_id` / `attack_projectile_scene`) on `PlayerClass.definition`.
 - `scripts/stats/stats_handler.gd` — `Stats` class holds health, damage, attack speed, projectile speed, attack cooldown, and a `resources` dictionary (bombs, mana). Shared by both players and enemies.
 - `scripts/singleplayer/player_configuration.gd` — `PlayerConfigurationManager` maps string names (`"wizard"`, `"druid"`, `"barbarian"`) to `PlayerConfiguration` objects with starting stats.
 
@@ -88,10 +88,9 @@ Two autoloads are registered in `project.godot`:
 
 ### Combat Flow
 
-1. Player input → `Common.attack()` or `Common.place_bomb()`
-2. `Common.attack()` checks `player_class.attack_projectile_path` first (guard — empty string means unimplemented), then consumes the attack via `player_class.attack()` (which checks cooldown and sets it). The path is stored as a plain string on `PlayerClass`; `ClassHandler.setup_attack()` writes it via `get_attack_projectile_path()`. The scene is loaded lazily at fire time so class setup never performs file I/O.
-3. The projectile scene is loaded and instantiated with velocity/damage/TTL derived from `Stats`, then added to the scene.
-4. Projectile collision → `Common.projectile_resolve(creature, proj)` applies damage; if fatal, `queue_free`s the enemy and spawns loot via `call_deferred`.
+1. Player input → `Common.attack()` or `Common.place_bomb()` → `RunContext.perform_primary_attack` / `place_primary_bomb` → `CombatDirector` (requires `Common.run_context` to be set during a run).
+2. `CombatDirector.fire_attack()` consumes the attack via `player_class.attack()`, resolves the projectile from `CharacterData` / `ContentRegistry`, instantiates it with velocity/damage/TTL from `Stats`, and parents it under the run’s world entity root.
+3. Projectile collision → `RunContext.resolve_projectile_hit` → `CombatDirector.resolve_projectile_hit` → `BaseCharacter.receive_damage`; on kill, deferred cleanup and `RunContext.handle_enemy_defeated` for loot.
 
 **Important:** All `queue_free` and `add_child` calls that happen inside physics callbacks must use `call_deferred` / `call_deferred("add_child", ...)` to avoid modifying the scene tree during physics processing.
 

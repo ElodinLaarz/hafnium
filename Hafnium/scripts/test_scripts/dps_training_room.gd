@@ -29,7 +29,7 @@ func _boot_run_context() -> void:
 	_run_context = RUN_CONTEXT_SCRIPT.new()
 	add_child(_run_context)
 	Common.set_run_context(_run_context)
-	_run_context.begin_run(Time.get_unix_time_from_system())
+	_run_context.begin_run(int(Time.get_unix_time_from_system()))
 	_run_context.attach_world_root(self)
 
 

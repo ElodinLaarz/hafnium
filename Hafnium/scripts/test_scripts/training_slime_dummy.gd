@@ -1,3 +1,4 @@
+class_name TrainingSlimeDummy
 extends "res://scripts/slime.gd"
 
 const INFINITE_HEALTH: int = 1000000000
@@ -5,6 +6,7 @@ const DPS_WINDOW_SECONDS: float = 3.0
 const LABEL_VERTICAL_OFFSET: Vector2 = Vector2(0, -60)
 
 var _damage_events: Array[Dictionary] = []
+var _last_feedback_damage: int = 0
 @onready var _detection_area: Area2D = $Detection
 @onready var _dps_label: Label = $DpsLabel
 
@@ -38,6 +40,17 @@ func _process(delta: float) -> void:
 func _physics_process(_delta: float) -> void:
 	# Training dummy intentionally stays fixed.
 	pass
+
+
+func receive_damage(payload: Damage) -> bool:
+	if payload == null:
+		return false
+	_last_feedback_damage = maxi(0, payload.amount)
+	return super(payload)
+
+
+func get_last_applied_damage_for_feedback() -> int:
+	return _last_feedback_damage
 
 
 func take_damage(_d: int) -> bool:

@@ -70,10 +70,12 @@ func _on_detection_body_exited(body: CharacterBody2D) -> void:
 func _on_hitbox_body_entered(body: Node2D) -> void:
 	if body.has_method("is_projectile"):
 		var hp: int = self.stats.current_health
-		if Common.run_context != null:
-			Common.run_context.resolve_projectile_hit(self, body)
-		else:
-			Common.projectile_resolve(self, body)
+		if Common.run_context == null:
+			push_error(
+				"Projectile hit on slime requires Common.run_context (CombatDirector pipeline)."
+			)
+			return
+		Common.run_context.resolve_projectile_hit(self, body)
 		if hp != self.stats.current_health:
 			is_invincible = true
 			_animated_sprite.play("damaged")

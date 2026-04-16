@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/test_scripts/damage_type_training_pickup.gd" id="1_pickup"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_r14"]
+radius = 16.0
+
+[node name="DamageTypeTrainingPickup" type="Area2D"]
+script = ExtResource("1_pickup")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_r14")
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Diamond" type="Polygon2D" parent="Visual"]
+color = Color(0.96, 0.22, 0.08, 1)
+polygon = PackedVector2Array(0, -12, 10, 0, 0, 12, -10, 0)
+
+[node name="TokenLabel" type="Label" parent="Visual"]
+offset_left = -52.0
+offset_top = -18.0
+offset_right = 52.0
+offset_bottom = 18.0
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 8
+autowrap_mode = 3
+text = "FIRE"
