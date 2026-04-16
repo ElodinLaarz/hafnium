@@ -120,7 +120,7 @@ theme_override_constants/margin_top = 27
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 1
-text = "Save Slot 1: Wizard"
+text = "Wizard"
 label_settings = SubResource("LabelSettings_phlv6")
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -152,8 +152,7 @@ theme_override_constants/margin_top = 27
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 1
-text = "Save Slot 2: Druid
-"
+text = "Druid"
 label_settings = SubResource("LabelSettings_phlv6")
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -186,7 +185,7 @@ theme_override_constants/margin_top = 27
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 1
-text = "Save Slot 3: Barbarian"
+text = "Barbarian"
 label_settings = SubResource("LabelSettings_phlv6")
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -195,6 +194,11 @@ vertical_alignment = 1
 layout_mode = 2
 metadata/_edit_use_anchors_ = true
 
+[node name="Back" type="Button" parent="VBox"]
+layout_mode = 2
+text = "Back"
+
 [connection signal="pressed" from="VBox/WizardBox/SelectWizard" to="." method="_on_wizard_pressed"]
 [connection signal="pressed" from="VBox/DruidBox/SelectDruid" to="." method="_on_druid_pressed"]
 [connection signal="pressed" from="VBox/BarbarianBox/Select Barbarian" to="." method="_on_barbarian_pressed"]
+[connection signal="pressed" from="VBox/Back" to="." method="_on_character_select_back_pressed"]

@@ -58,6 +58,12 @@ func _on_barbarian_pressed() -> void:
 	Common.start_game_type.emit(self, Common.GameType.SINGLE_PLAYER, "barbarian")
 
 
+func _on_character_select_back_pressed() -> void:
+	var switcher: Node = get_parent()
+	if switcher != null and switcher.has_method("return_from_character_select"):
+		switcher.return_from_character_select(self)
+
+
 func _on_new_game_pressed() -> void:
 	_show_level_select()
 
@@ -127,4 +133,11 @@ func _start_single_player_for_level(level_id: String) -> void:
 		_:
 			pass
 	Common.set_next_level_scene_path(selected_scene_path)
-	_on_single_player_pressed("wizard")
+	Common.character_select_after_level_pick = true
+	var switcher: Node = get_parent()
+	if switcher != null and switcher.has_method("show_character_select_for_new_game"):
+		switcher.show_character_select_for_new_game(self)
+	else:
+		push_error(
+			"Main menu parent must be SceneSwitcher with show_character_select_for_new_game."
+		)

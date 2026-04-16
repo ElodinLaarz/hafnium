@@ -5,6 +5,7 @@ const RUN_CONTEXT_SCRIPT = preload("res://scripts/run/run_context.gd")
 const UI_SCENE: PackedScene = preload("res://scenes/interface/ui.tscn")
 
 const PLAYER_SPRITE_NAME: String = "PlayerSprite"
+const MAIN_MENU_SCENE: PackedScene = preload("res://scenes/main_menu.tscn")
 
 var character_select: PackedScene = load("res://scenes/character_select.tscn")
 
@@ -27,16 +28,19 @@ func main_scene_start(
 	if player_name == "":
 		print("Player name is empty, defaulting to wizard")
 		player_name = "wizard"
+	Common.character_select_after_level_pick = false
 	var selected_level_scene_path: String = Common.consume_next_level_scene_path()
 	if (
 		not selected_level_scene_path.is_empty()
-		and _start_selected_level(menu_caller, selected_level_scene_path)
+		and _start_selected_level(menu_caller, selected_level_scene_path, player_name)
 	):
 		return
 	_start_default_run(menu_caller, game_type, player_name)
 
 
-func _start_selected_level(menu_caller: Control, level_scene_path: String) -> bool:
+func _start_selected_level(
+	menu_caller: Control, level_scene_path: String, player_name: String
+) -> bool:
 	var selected_level_scene: PackedScene = load(level_scene_path)
 	if selected_level_scene == null:
 		print("Unable to load selected level scene: %s" % level_scene_path)
@@ -45,6 +49,9 @@ func _start_selected_level(menu_caller: Control, level_scene_path: String) -> bo
 	if selected_level_root == null:
 		print("Unable to instantiate selected level scene: %s" % level_scene_path)
 		return false
+	# Test / hand-authored rooms use @export var player_name (default "wizard"); set before
+	# _ready so _spawn_player loads the class chosen in character select.
+	selected_level_root.set("player_name", player_name)
 	add_child(selected_level_root)
 	menu_caller.queue_free()
 	return true
@@ -134,3 +141,21 @@ func update_menu_options(main_menu: Control, new_options: Dictionary) -> void:
 func handle_game_start(main_menu: Control, game_type: Common.GameType, player_name: String) -> void:
 	print("Game start: %s" % game_type)
 	main_scene_start(main_menu, game_type, player_name)
+
+
+func show_character_select_for_new_game(menu_caller: Control) -> void:
+	var menu_to_load: Control = character_select.instantiate()
+	menu_caller.queue_free()
+	add_child(menu_to_load)
+
+
+func return_from_character_select(character_select_instance: Control) -> void:
+	character_select_instance.queue_free()
+	var main_menu: Control = MAIN_MENU_SCENE.instantiate()
+	add_child(main_menu)
+	if Common.character_select_after_level_pick:
+		Common.character_select_after_level_pick = false
+		Common.set_next_level_scene_path("")
+		main_menu.call_deferred("_show_level_select")
+	else:
+		main_menu.call_deferred("_show_default_menu")
