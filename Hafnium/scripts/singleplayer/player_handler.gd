@@ -14,6 +14,7 @@ var enemy_body: CharacterBody2D
 var enemy_in_attack_range: bool = false
 
 # TODO(ElodinLaarz): Add Inventory.
+var battle_hardened_counter: int = 0
 var bomb_count: int = 0
 var bomb_max: int = 3
 var currency: int = 0
@@ -131,8 +132,9 @@ func _on_hitbox_body_exited(body: Node) -> void:
 
 
 func take_damage(d: int) -> bool:
-	print("You are taking %d damage!" % d)
-	var is_dead: bool = super.take_damage(d)
+	var applied_damage: int = apply_battle_hardened(d)
+	print("You are taking %d damage!" % applied_damage)
+	var is_dead: bool = super.take_damage(applied_damage)
 	if is_dead:
 		print("You are dead :(")
 	return is_dead
@@ -164,6 +166,25 @@ func set_run_context(p_run_context: RunContext) -> void:
 		and not run_context.camera_shake_requested.is_connected(camera.trigger_shake)
 	):
 		run_context.camera_shake_requested.connect(camera.trigger_shake)
+
+
+func apply_battle_hardened(incoming_damage: int) -> int:
+	if not _is_barbarian():
+		return incoming_damage
+	if incoming_damage <= 0:
+		return incoming_damage
+	if is_invincible or stats == null or stats.current_health <= 0:
+		return incoming_damage
+	var reduced_damage: int = maxi(0, incoming_damage - battle_hardened_counter)
+	if reduced_damage <= 0:
+		battle_hardened_counter = 0
+		return 0
+	battle_hardened_counter += 1
+	return reduced_damage
+
+
+func _is_barbarian() -> bool:
+	return player_class != null and player_class.name == ClassHandler.ClassName.BARBARIAN
 
 
 func _update_attack_windows(delta: float) -> void:

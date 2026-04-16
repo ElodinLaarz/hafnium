@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ProjectileData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/projectile_data.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/weapons/bullets/barbarian_swing.tscn" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "weapon:barbarian_swing"
+display_name = "Barbarian Swing"
+projectile_scene = ExtResource("2")
+damage_type = 4

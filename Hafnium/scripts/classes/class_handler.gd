@@ -287,7 +287,10 @@ func get_projectile_path_from_definition(data: CharacterData) -> String:
 
 
 func build_attack_logic(data: CharacterData) -> Callable:
-	if data == null or data.attack_projectile_scene == null:
+	if (
+		data == null
+		or (data.attack_projectile_scene == null and data.attack_projectile_id.is_empty())
+	):
 		return func(_stats: Stats) -> bool: return false
 	return func(stats: Stats) -> bool:
 		if stats.attack_cooldown > 0:

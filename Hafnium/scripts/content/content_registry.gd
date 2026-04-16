@@ -13,6 +13,7 @@ const ENEMY_RESOURCE_PATHS: Array[String] = [
 	"res://resources/enemies/slime_basic.tres",
 ]
 const PROJECTILE_RESOURCE_PATHS: Array[String] = [
+	"res://resources/projectiles/barbarian_swing.tres",
 	"res://resources/projectiles/fireball.tres",
 ]
 const LOOT_RESOURCE_PATHS: Array[String] = [

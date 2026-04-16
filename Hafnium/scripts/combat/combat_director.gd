@@ -4,6 +4,7 @@ extends Node
 const BOMB_SCENE: PackedScene = preload("res://scenes/weapons/player_bomb.tscn")
 const GameConstants = preload("res://scripts/config/game_constants.gd")
 const ZERO_SPEED_PROJECTILE_TTL: float = 0.1
+const BARBARIAN_KNOCKBACK_FORCE: float = 180.0
 
 var run_context: RunContext
 
@@ -80,8 +81,11 @@ func fire_attack(player: PlayerCharacter, angle: float) -> bool:
 	if run_context.use_training_damage_type_override:
 		resolved_element = run_context.training_damage_type_override
 	projectile.element = resolved_element
+	var payload_metadata: Dictionary = {"is_crit": is_crit}
+	if _is_barbarian(player):
+		payload_metadata["knockback_force"] = BARBARIAN_KNOCKBACK_FORCE
 	projectile.damage_payload = Damage.typed(
-		damage_amount, resolved_element, player, player.get_team(), {"is_crit": is_crit}
+		damage_amount, resolved_element, player, player.get_team(), payload_metadata
 	)
 	projectile_parent.add_child(projectile)
 	run_context.emit_resource_state(player)
@@ -130,6 +134,8 @@ func resolve_projectile_hit(target: BaseCharacter, projectile: Projectile) -> bo
 	if target.has_method("get_last_applied_damage_for_feedback"):
 		feedback_amount = target.get_last_applied_damage_for_feedback()
 		show_hit_feedback = show_hit_feedback or feedback_amount > 0
+	if damage_applied:
+		_apply_knockback(target, projectile, damage)
 	if show_hit_feedback:
 		run_context.request_hit_feedback(is_crit)
 		run_context.spawn_damage_number(target.global_position, feedback_amount, is_crit)
@@ -149,3 +155,25 @@ func _calculate_ttl(stats: Stats) -> float:
 		# Avoid division by zero while still allowing melee-style placeholder projectiles.
 		return ZERO_SPEED_PROJECTILE_TTL * life_multiplier
 	return (stats.attack_range / stats.projectile_speed) * life_multiplier
+
+
+func _is_barbarian(player: PlayerCharacter) -> bool:
+	return (
+		player != null
+		and player.player_class != null
+		and player.player_class.name == ClassHandler.ClassName.BARBARIAN
+	)
+
+
+func _apply_knockback(target: BaseCharacter, projectile: Projectile, damage: Damage) -> void:
+	if target == null or projectile == null or damage == null:
+		return
+	var knockback_force: float = float(damage.metadata.get("knockback_force", 0.0))
+	if knockback_force <= 0.0:
+		return
+	var knockback_direction: Vector2 = projectile.velocity.normalized()
+	if knockback_direction == Vector2.ZERO:
+		knockback_direction = (target.global_position - projectile.global_position).normalized()
+	if knockback_direction == Vector2.ZERO:
+		return
+	target.velocity += knockback_direction * knockback_force
