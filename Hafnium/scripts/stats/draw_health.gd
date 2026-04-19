@@ -15,8 +15,12 @@ func _ready() -> void:
 
 
 func dequeue_children(parent: Node) -> void:
+	# remove_child before queue_free — freed nodes stay in the tree until idle, so a
+	# `while get_child_count() > 0` + queue_free loop never terminates.
 	while parent.get_child_count() > 0:
-		parent.get_child(0).queue_free()
+		var child: Node = parent.get_child(0)
+		parent.remove_child(child)
+		child.queue_free()
 
 
 func set_num_hearts(heart_container: Node, num_hearts: int) -> void:
