@@ -130,6 +130,16 @@ func _on_hitbox_body_exited(body: Node) -> void:
 		enemy_in_attack_range = false
 
 
+func die() -> void:
+	super.die()
+	var tree: SceneTree = get_tree()
+	if tree == null or tree.current_scene == null:
+		return
+	var scene_root: Node = tree.current_scene
+	if scene_root.has_method("restart_after_player_death"):
+		scene_root.call_deferred("restart_after_player_death")
+
+
 func take_damage(d: int) -> bool:
 	var applied_damage: int = d
 	if player_class != null:

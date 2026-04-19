@@ -33,17 +33,19 @@ func check_and_create_hearts(player: PlayerCharacter) -> void:
 		return
 	var stats: Stats = player.player_class.stats
 	var max_health: int = stats.max_health
-	print("Max health: %d" % max_health)
-	if max_health % stats.health_to_damage_multiplier != 0:
+	var mult: int = stats.health_to_damage_multiplier
+	if mult <= 0:
+		print("Error: health_to_damage_multiplier must be positive for heart UI.")
+		return
+	if max_health % mult != 0:
 		print(
 			(
 				"Warning: Max health %d is not a multiple of the health to damage multiplier %d."
-				% max_health
-			),
-			stats.health_to_damage_multiplier
+				% [max_health, mult]
+			)
 		)
 		print("Warning: Value will be truncated.")
-	var heart_counter: int = max_health / stats.health_to_damage_multiplier
+	var heart_counter: int = max_health / mult
 	var heart_container: Node = self.get_node("HeartContainer")
 	Common.player_heart_containers = heart_container
 	# TODO(ElodinLaarz): Need to add error handling at some point...
@@ -91,6 +93,10 @@ func _on_resource_changed(resource_name: String, current_value: int, max_value: 
 		interface_values.bombs = current_value
 		interface_values.bomb_max = max_value
 		INTERFACE_UPDATER.update_interface(_get_interface_root(), interface_values)
+	elif resource_name == GameConstants.RESOURCE_MANA:
+		interface_values.mana_current = current_value
+		interface_values.mana_max = max_value
+		INTERFACE_UPDATER.update_interface(_get_interface_root(), interface_values)
 
 
 func _on_currency_changed(current_currency: int) -> void:
@@ -106,14 +112,21 @@ func _on_room_entered(room_id: String) -> void:
 func _render_player_state() -> void:
 	if tracked_player == null or tracked_player.player_class == null:
 		return
-	interface_values.health = tracked_player.player_class.stats.current_health
-	interface_values.max_health = tracked_player.player_class.stats.max_health
+	var pc: ClassHandler.PlayerClass = tracked_player.player_class
+	interface_values.health = pc.stats.current_health
+	interface_values.max_health = pc.stats.max_health
 	interface_values.currency = tracked_player.currency
 	interface_values.bomb_max = tracked_player.bomb_max
-	var bomb_status: Stats.ResourceStatus = tracked_player.player_class.stats.resources.get(
-		GameConstants.RESOURCE_BOMB
-	)
+	var bomb_status: Stats.ResourceStatus = pc.stats.resources.get(GameConstants.RESOURCE_BOMB)
 	interface_values.bombs = bomb_status.current_resource if bomb_status != null else 0
+	interface_values.show_mana_bar = pc.name == ClassHandler.ClassName.WIZARD
+	var mana_status: Stats.ResourceStatus = pc.stats.resources.get(GameConstants.RESOURCE_MANA)
+	if mana_status != null:
+		interface_values.mana_current = mana_status.current_resource
+		interface_values.mana_max = mana_status.max_resource
+	else:
+		interface_values.mana_current = 0
+		interface_values.mana_max = 0
 	interface_values.room_name = (
 		run_context.current_room.id
 		if run_context != null and run_context.current_room != null

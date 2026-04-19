@@ -13,6 +13,10 @@ static func update_interface(interface_root: Node, iv: InterfaceValues) -> void:
 		"CounterMargins/Counters/BombCounter/CounterText"
 	)
 	var level_label: Label = interface_root.get_node_or_null("LabelMargins/LevelLabel")
+	var mana_margin: Control = interface_root.get_node_or_null("ManaBarMargins") as Control
+	var mana_bar: ProgressBar = (
+		interface_root.get_node_or_null("ManaBarMargins/ManaBar") as ProgressBar
+	)
 
 	if currency_label != null:
 		currency_label.text = str(iv.currency)
@@ -20,6 +24,12 @@ static func update_interface(interface_root: Node, iv: InterfaceValues) -> void:
 		bomb_label.text = "%d/%d" % [iv.bombs, iv.bomb_max]
 	if level_label != null:
 		level_label.text = "Room: %s" % iv.room_name
+	if mana_margin != null:
+		mana_margin.visible = iv.show_mana_bar
+	if mana_bar != null and iv.show_mana_bar:
+		var max_m: int = maxi(iv.mana_max, 1)
+		mana_bar.max_value = float(max_m)
+		mana_bar.value = float(clampi(iv.mana_current, 0, max_m))
 
 
 func update(iv: InterfaceValues) -> void:
@@ -33,3 +43,6 @@ class InterfaceValues:
 	var bomb_max: int = 0
 	var currency: int = 0
 	var room_name: String = "Unknown"
+	var mana_current: int = 0
+	var mana_max: int = 0
+	var show_mana_bar: bool = false

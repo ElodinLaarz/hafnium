@@ -26,3 +26,5 @@ bomb_max = 1
 bomb_recovery_rate = 0.0
 mana_max = 4
 mana_recovery_rate = 0.0
+blood_mana_bonus_pool = 8
+primary_spell_mana_cost = 1

@@ -22,6 +22,8 @@ enum HeartName {
 
 const GameConstants = preload("res://scripts/config/game_constants.gd")
 const HEART_ATLAS_TILE_SIZE: int = 16
+## Set on each heart TextureRect once we replace a shared scene SubResource with a unique atlas.
+const HEART_UNIQUE_ATLAS_META: StringName = &"_class_handler_heart_unique_atlas"
 
 const CHARACTER_IDS_BY_ENUM: Dictionary = {
 	ClassName.BARBARIAN: GameConstants.CLASS_ID_BARBARIAN,
@@ -66,13 +68,29 @@ func rect(row: int, col: int) -> Rect2i:
 
 
 func heart_texture(texture_rect: TextureRect, heart_name: HeartName) -> AtlasTexture:
-	var at: AtlasTexture
-	if texture_rect.texture is AtlasTexture:
-		at = texture_rect.texture
+	# Each TextureRect must own its AtlasTexture (scene SubResources can be shared; mutating
+	# region would affect every heart). First draw duplicates the scene atlas or builds one;
+	# later draws only update region on the unique resource.
+	var source: Texture2D = texture_rect.texture
+	var atlas_image: Texture2D
+	if source is AtlasTexture:
+		atlas_image = (source as AtlasTexture).atlas
 	else:
-		at = AtlasTexture.new()
-		at.atlas = texture_rect.texture
+		atlas_image = source
+	var at: AtlasTexture = texture_rect.texture as AtlasTexture
+	if texture_rect.has_meta(HEART_UNIQUE_ATLAS_META):
+		if at == null or at.atlas != atlas_image:
+			at = AtlasTexture.new()
+			at.atlas = atlas_image
+			texture_rect.texture = at
+	else:
+		if source is AtlasTexture:
+			at = (source as AtlasTexture).duplicate() as AtlasTexture
+		else:
+			at = AtlasTexture.new()
+			at.atlas = atlas_image
 		texture_rect.texture = at
+		texture_rect.set_meta(HEART_UNIQUE_ATLAS_META, true)
 	at.region = named_heart_lookup[heart_name]
 	return at
 
@@ -117,10 +135,14 @@ func druid_heart_drawing_logic(stats: Stats, heart_container: Node) -> void:
 		default_hearts(stats, heart_container)
 		return
 
-	var full_heart_count: int = stats.current_health / 2
-	var partial_heart: int = stats.current_health % 2
+	var mult: int = stats.health_to_damage_multiplier
+	if mult <= 0:
+		default_hearts(stats, heart_container)
+		return
+	var full_heart_count: int = stats.current_health / mult
+	var partial_heart: int = stats.current_health % mult
 
-	for i: int in range(stats.max_health / 2):
+	for i: int in range(stats.max_health / mult):
 		var current_heart: TextureRect = heart_container.get_child(i)
 		if i < full_heart_count:
 			current_heart.texture = heart_texture(current_heart, HeartName.DRUID_FULL)
@@ -141,32 +163,41 @@ func wizard_heart_drawing_logic(stats: Stats, heart_container: Node) -> void:
 		default_hearts(stats, heart_container)
 		return
 
-	var full_heart_count: int = stats.current_health / 2
-	var partial_heart: int = stats.current_health % 2
+	var mult: int = stats.health_to_damage_multiplier
+	if mult <= 0:
+		default_hearts(stats, heart_container)
+		return
+	var full_heart_count: int = stats.current_health / mult
+	var partial_heart: int = stats.current_health % mult
+	# When a slot shows partial HP, it is not an "empty" mana vessel; shift mana slot index down.
+	var empty_mana_origin: int = full_heart_count + (1 if partial_heart > 0 else 0)
 
 	# Placeholder for mana logic: in the future, empty hearts should
 	# show mana based on stats.resources["mana"]
 	var mana_res: Stats.ResourceStatus = stats.resources.get(GameConstants.RESOURCE_MANA)
 	var mana: int = mana_res.current_resource if mana_res is Stats.ResourceStatus else 0
 
-	for i: int in range(stats.max_health / 2):
+	for i: int in range(stats.max_health / mult):
 		var current_heart: TextureRect = heart_container.get_child(i)
 		if i < full_heart_count:
 			current_heart.texture = heart_texture(current_heart, HeartName.WIZARD_FULL)
-		elif i == full_heart_count and partial_heart == 1:
-			# Half-health heart: fill the other half with mana if available.
-			if mana >= 1:
-				current_heart.texture = heart_texture(
-					current_heart, HeartName.WIZARD_HALF_FULL_HALF_MANA
-				)
+		elif i == full_heart_count and partial_heart > 0:
+			# Half-health heart (mult==2 assets): fill the other half with mana if available.
+			if mult == 2 and partial_heart == 1:
+				if mana >= 1:
+					current_heart.texture = heart_texture(
+						current_heart, HeartName.WIZARD_HALF_FULL_HALF_MANA
+					)
+				else:
+					current_heart.texture = heart_texture(current_heart, HeartName.RED_HALF)
 			else:
 				current_heart.texture = heart_texture(current_heart, HeartName.RED_HALF)
 		else:
 			# Fully empty heart slot: fill with mana progressively.
-			var slot: int = i - full_heart_count
-			if mana >= (slot + 1) * 2:
+			var slot: int = i - empty_mana_origin
+			if mana >= (slot + 1) * mult:
 				current_heart.texture = heart_texture(current_heart, HeartName.WIZARD_FULL_MANA)
-			elif mana >= slot * 2 + 1:
+			elif mana >= slot * mult + 1:
 				current_heart.texture = heart_texture(current_heart, HeartName.WIZARD_HALF_MANA)
 			else:
 				current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
@@ -209,22 +240,6 @@ func setup_from_data(pc: PlayerClass, data: CharacterData) -> bool:
 	return true
 
 
-func setup_heart_drawing(pc: PlayerClass, cn: ClassName) -> bool:
-	match cn:
-		ClassName.BARBARIAN:
-			pc.heart_drawing_logic = barbarian_heart_drawing_logic
-		ClassName.DRUID:
-			pc.heart_drawing_logic = druid_heart_drawing_logic
-		ClassName.WIZARD:
-			pc.heart_drawing_logic = wizard_heart_drawing_logic
-		_:
-			print("Unexpected class: ", cn)
-			print("Default heart drawing logic will be used.")
-			pc.heart_drawing_logic = default_hearts
-			return false
-	return true
-
-
 func setup_heart_drawing_from_style(pc: PlayerClass, heart_style: String) -> bool:
 	match heart_style:
 		GameConstants.HEART_STYLE_BARBARIAN:
@@ -239,30 +254,6 @@ func setup_heart_drawing_from_style(pc: PlayerClass, heart_style: String) -> boo
 			print("Unexpected heart style: ", heart_style)
 			pc.heart_drawing_logic = default_hearts
 			return false
-	return true
-
-
-func setup_hp(pc: PlayerClass, cn: ClassName) -> bool:
-	match cn:
-		ClassName.BARBARIAN:
-			pc.stats.health_to_damage_multiplier = 4
-			pc.stats.max_health = 12
-		ClassName.DRUID:
-			pc.stats.max_health = 6
-		ClassName.WIZARD:
-			pc.stats.max_health = 4
-		_:
-			# Unmatched class
-			return false
-	pc.stats.current_health = pc.stats.max_health
-	return true
-
-
-func wizard_attack(stats: Stats) -> bool:
-	# Add cooldown and stuff
-	if stats.attack_cooldown > 0:
-		return false
-	stats.attack_cooldown = stats.attack_speed
 	return true
 
 
@@ -288,16 +279,57 @@ func get_projectile_path_from_definition(data: CharacterData) -> String:
 
 func build_attack_logic(data: CharacterData) -> Callable:
 	if data == null:
-		return func(_stats: Stats) -> bool: return false
+		return func(_pc: PlayerClass) -> bool: return false
 	if data.attack_projectile_scene == null and data.attack_projectile_id.is_empty():
-		return func(_stats: Stats) -> bool: return false
+		return func(_pc: PlayerClass) -> bool: return false
 	if get_projectile_path_from_definition(data).is_empty():
-		return func(_stats: Stats) -> bool: return false
-	return func(stats: Stats) -> bool:
-		if stats.attack_cooldown > 0:
+		return func(_pc: PlayerClass) -> bool: return false
+	if data.primary_spell_mana_cost > 0:
+		var mana_cost: int = data.primary_spell_mana_cost
+		return func(pc: PlayerClass) -> bool: return _primary_attack_with_mana_cost(pc, mana_cost)
+	return func(pc: PlayerClass) -> bool:
+		if pc.stats.attack_cooldown > 0:
 			return false
-		stats.attack_cooldown = stats.attack_speed
+		pc.stats.attack_cooldown = pc.stats.attack_speed
 		return true
+
+
+func _primary_attack_with_mana_cost(pc: PlayerClass, mana_cost: int) -> bool:
+	if pc.stats.attack_cooldown > 0:
+		return false
+	if mana_cost > 0:
+		if not pc.use_resource(GameConstants.RESOURCE_MANA, mana_cost):
+			return false
+	pc.stats.attack_cooldown = pc.stats.attack_speed
+	return true
+
+
+## Blood Mana (Wizard): max mana increases as current health falls; current is clamped.
+func recompute_wizard_blood_mana(pc: PlayerClass) -> void:
+	if pc == null or pc.name != ClassName.WIZARD or pc.definition == null:
+		return
+	var def: CharacterData = pc.definition
+	if def.blood_mana_bonus_pool <= 0 or def.mana_max <= 0:
+		return
+	var mana_res: Stats.ResourceStatus = pc.stats.resources.get(GameConstants.RESOURCE_MANA)
+	if mana_res == null:
+		return
+	var max_h: int = maxi(pc.stats.max_health, 1)
+	var missing: int = maxi(0, pc.stats.max_health - pc.stats.current_health)
+	var missing_ratio: float = float(missing) / float(max_h)
+	var bonus: int = int(round(missing_ratio * float(def.blood_mana_bonus_pool)))
+	var new_max: int = def.mana_max + bonus
+	if new_max < 0:
+		new_max = 0
+	var old_max: int = mana_res.max_resource
+	var old_current: int = mana_res.current_resource
+	mana_res.max_resource = new_max
+	if mana_res.current_resource > new_max:
+		mana_res.current_resource = new_max
+	if old_max != new_max or old_current != mana_res.current_resource:
+		pc.stats.resource_changed.emit(
+			GameConstants.RESOURCE_MANA, mana_res.current_resource, mana_res.max_resource
+		)
 
 
 ## Barbarian Battle Hardened and future class-specific incoming-damage rules.
@@ -316,69 +348,6 @@ func _modify_incoming_damage(pc: PlayerClass, player: PlayerCharacter, incoming_
 		return 0
 	pc.battle_hardened_counter += 1
 	return reduced_damage
-
-
-func setup_attack(pc: PlayerClass, cn: ClassName) -> bool:
-	if !setup_damage(pc, cn):
-		print("trouble setting up damage for %s" % cn)
-		return false
-
-	pc.attack_projectile_path = get_attack_projectile_path(cn)
-
-	match cn:
-		ClassName.WIZARD:
-			pc.attack_logic = wizard_attack
-		ClassName.BARBARIAN, ClassName.DRUID:
-			# TODO: Implement specific attack logic for these classes
-			pc.attack_logic = func(_stats: Stats) -> bool: return false
-		_:
-			# Unmatched class
-			return false
-	return true
-
-
-func setup_damage(pc: PlayerClass, cn: ClassName) -> bool:
-	match cn:
-		ClassName.BARBARIAN:
-			pc.stats.damage = 3
-			pc.stats.attack_range = 0
-			pc.stats.attack_speed = 1
-		ClassName.DRUID:
-			pc.stats.damage = 2
-			pc.stats.attack_range = 1
-			pc.stats.attack_speed = 1.2
-			pc.stats.projectile_speed = 50
-		ClassName.WIZARD:
-			pc.stats.damage = 1
-			pc.stats.attack_range = 90
-			pc.stats.attack_speed = 0.8
-			pc.stats.projectile_speed = 180
-		_:
-			# Unmatched class
-			return false
-	return true
-
-
-func setup_class_resources(pc: PlayerClass, cn: ClassName) -> bool:
-	match cn:
-		ClassName.BARBARIAN:
-			pc.stats.resources[GameConstants.RESOURCE_BOMB] = Stats.ResourceStatus.new(
-				Stats.ClassResource.BOMB, 3, 0
-			)
-		ClassName.DRUID:
-			pc.stats.resources[GameConstants.RESOURCE_BOMB] = Stats.ResourceStatus.new(
-				Stats.ClassResource.BOMB, 2, 0
-			)
-		ClassName.WIZARD:
-			pc.stats.resources[GameConstants.RESOURCE_BOMB] = Stats.ResourceStatus.new(
-				Stats.ClassResource.BOMB, 1, 0
-			)
-			pc.stats.resources[GameConstants.RESOURCE_MANA] = Stats.ResourceStatus.new(
-				Stats.ClassResource.MANA, 4, 0
-			)
-		_:
-			return false
-	return true
 
 
 class PlayerClass:
@@ -405,15 +374,22 @@ class PlayerClass:
 		# becomes reserve mana, which is blue.
 		if class_handler.hdl(self, cn):
 			print("successfully set up class %s" % ClassName.keys()[cn])
+			_post_init_class()
 		else:
 			print("failed to set up class %s" % ClassName.keys()[cn])
 			# Fallback to avoid null callables
-			self.attack_logic = func(_stats: Stats) -> bool: return false
+			self.attack_logic = func(_pc: PlayerClass) -> bool: return false
 			self.heart_drawing_logic = class_handler.default_hearts
+
+	func _post_init_class() -> void:
+		if self.name == ClassName.WIZARD:
+			if not self.stats.health_changed.is_connected(_on_wizard_health_blood_mana):
+				self.stats.health_changed.connect(_on_wizard_health_blood_mana)
+			class_handler.recompute_wizard_blood_mana(self)
 
 	func attack() -> bool:
 		if self.attack_logic:
-			return self.attack_logic.call(self.stats)
+			return self.attack_logic.call(self)
 		return false
 
 	func draw_hearts(heart_container: Node) -> void:
@@ -445,8 +421,12 @@ class PlayerClass:
 			var res: Stats.ResourceStatus = self.stats.resources[resource]
 			if res.current_resource >= count:
 				res.current_resource -= count
+				self.stats.resource_changed.emit(resource, res.current_resource, res.max_resource)
 				return true
 		return false
+
+	func _on_wizard_health_blood_mana(_new_health: int, _max_health: int) -> void:
+		class_handler.recompute_wizard_blood_mana(self)
 
 
 func create_class(cn: ClassName) -> PlayerClass:

@@ -36,6 +36,9 @@ jobs:
       - name: Import Resources (Headless)
         run: godot --headless --path Hafnium/ --import --quit
 
+      - name: Validate GDScript (Godot project warnings as errors)
+        run: bash Hafnium/presubmit_godot_compile.sh
+
       - name: Run GUT Tests (Graphical)
         run: |
           # We run without --headless here to allow for UI/GPU features
