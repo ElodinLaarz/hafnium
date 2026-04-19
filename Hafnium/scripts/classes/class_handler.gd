@@ -286,8 +286,6 @@ func _primary_attack_with_mana_cost(pc: PlayerClass) -> bool:
 	if pc.definition != null:
 		cost = pc.definition.primary_spell_mana_cost
 	if cost > 0:
-		if not pc.has_resource(GameConstants.RESOURCE_MANA, cost):
-			return false
 		if not pc.use_resource(GameConstants.RESOURCE_MANA, cost):
 			return false
 	pc.stats.attack_cooldown = pc.stats.attack_speed
