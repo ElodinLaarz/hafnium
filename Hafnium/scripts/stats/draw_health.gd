@@ -33,17 +33,19 @@ func check_and_create_hearts(player: PlayerCharacter) -> void:
 		return
 	var stats: Stats = player.player_class.stats
 	var max_health: int = stats.max_health
-	print("Max health: %d" % max_health)
-	if max_health % stats.health_to_damage_multiplier != 0:
+	var mult: int = stats.health_to_damage_multiplier
+	if mult <= 0:
+		print("Error: health_to_damage_multiplier must be positive for heart UI.")
+		return
+	if max_health % mult != 0:
 		print(
 			(
 				"Warning: Max health %d is not a multiple of the health to damage multiplier %d."
-				% max_health
-			),
-			stats.health_to_damage_multiplier
+				% [max_health, mult]
+			)
 		)
 		print("Warning: Value will be truncated.")
-	var heart_counter: int = max_health / stats.health_to_damage_multiplier
+	var heart_counter: int = max_health / mult
 	var heart_container: Node = self.get_node("HeartContainer")
 	Common.player_heart_containers = heart_container
 	# TODO(ElodinLaarz): Need to add error handling at some point...

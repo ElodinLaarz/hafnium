@@ -66,14 +66,18 @@ func rect(row: int, col: int) -> Rect2i:
 
 
 func heart_texture(texture_rect: TextureRect, heart_name: HeartName) -> AtlasTexture:
-	var at: AtlasTexture
-	if texture_rect.texture is AtlasTexture:
-		at = texture_rect.texture
+	# Always assign a fresh AtlasTexture so instances never share one region (fixes all hearts
+	# updating together when SubResource atlases were linked).
+	var source: Texture2D = texture_rect.texture
+	var atlas_image: Texture2D
+	if source is AtlasTexture:
+		atlas_image = source.atlas
 	else:
-		at = AtlasTexture.new()
-		at.atlas = texture_rect.texture
-		texture_rect.texture = at
+		atlas_image = source
+	var at: AtlasTexture = AtlasTexture.new()
+	at.atlas = atlas_image
 	at.region = named_heart_lookup[heart_name]
+	texture_rect.texture = at
 	return at
 
 
@@ -117,10 +121,14 @@ func druid_heart_drawing_logic(stats: Stats, heart_container: Node) -> void:
 		default_hearts(stats, heart_container)
 		return
 
-	var full_heart_count: int = stats.current_health / 2
-	var partial_heart: int = stats.current_health % 2
+	var mult: int = stats.health_to_damage_multiplier
+	if mult <= 0:
+		default_hearts(stats, heart_container)
+		return
+	var full_heart_count: int = stats.current_health / mult
+	var partial_heart: int = stats.current_health % mult
 
-	for i: int in range(stats.max_health / 2):
+	for i: int in range(stats.max_health / mult):
 		var current_heart: TextureRect = heart_container.get_child(i)
 		if i < full_heart_count:
 			current_heart.texture = heart_texture(current_heart, HeartName.DRUID_FULL)
@@ -141,32 +149,39 @@ func wizard_heart_drawing_logic(stats: Stats, heart_container: Node) -> void:
 		default_hearts(stats, heart_container)
 		return
 
-	var full_heart_count: int = stats.current_health / 2
-	var partial_heart: int = stats.current_health % 2
+	var mult: int = stats.health_to_damage_multiplier
+	if mult <= 0:
+		default_hearts(stats, heart_container)
+		return
+	var full_heart_count: int = stats.current_health / mult
+	var partial_heart: int = stats.current_health % mult
 
 	# Placeholder for mana logic: in the future, empty hearts should
 	# show mana based on stats.resources["mana"]
 	var mana_res: Stats.ResourceStatus = stats.resources.get(GameConstants.RESOURCE_MANA)
 	var mana: int = mana_res.current_resource if mana_res is Stats.ResourceStatus else 0
 
-	for i: int in range(stats.max_health / 2):
+	for i: int in range(stats.max_health / mult):
 		var current_heart: TextureRect = heart_container.get_child(i)
 		if i < full_heart_count:
 			current_heart.texture = heart_texture(current_heart, HeartName.WIZARD_FULL)
-		elif i == full_heart_count and partial_heart == 1:
-			# Half-health heart: fill the other half with mana if available.
-			if mana >= 1:
-				current_heart.texture = heart_texture(
-					current_heart, HeartName.WIZARD_HALF_FULL_HALF_MANA
-				)
+		elif i == full_heart_count and partial_heart > 0:
+			# Half-health heart (mult==2 assets): fill the other half with mana if available.
+			if mult == 2 and partial_heart == 1:
+				if mana >= 1:
+					current_heart.texture = heart_texture(
+						current_heart, HeartName.WIZARD_HALF_FULL_HALF_MANA
+					)
+				else:
+					current_heart.texture = heart_texture(current_heart, HeartName.RED_HALF)
 			else:
 				current_heart.texture = heart_texture(current_heart, HeartName.RED_HALF)
 		else:
 			# Fully empty heart slot: fill with mana progressively.
 			var slot: int = i - full_heart_count
-			if mana >= (slot + 1) * 2:
+			if mana >= (slot + 1) * mult:
 				current_heart.texture = heart_texture(current_heart, HeartName.WIZARD_FULL_MANA)
-			elif mana >= slot * 2 + 1:
+			elif mana >= slot * mult + 1:
 				current_heart.texture = heart_texture(current_heart, HeartName.WIZARD_HALF_MANA)
 			else:
 				current_heart.texture = heart_texture(current_heart, HeartName.EMPTY)
