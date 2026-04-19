@@ -144,8 +144,13 @@ func take_damage(d: int) -> bool:
 	var applied_damage: int = d
 	if player_class != null:
 		applied_damage = player_class.modify_incoming_damage(self, d)
-	print("You are taking %d damage!" % applied_damage)
+
+	var health_before: int = stats.current_health if stats != null else 0
 	var is_dead: bool = super.take_damage(applied_damage)
+
+	if stats != null and stats.current_health < health_before:
+		print("You are taking %d damage!" % applied_damage)
+
 	if is_dead:
 		print("You are dead :(")
 	return is_dead

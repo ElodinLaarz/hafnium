@@ -84,4 +84,25 @@ func take_damage(d: int) -> bool:
 
 
 func die() -> void:
+	_reset_visuals_on_death()
 	actor_died.emit(self, Damage.basic(0, self, team))
+
+
+func _reset_visuals_on_death() -> void:
+	is_invincible = false
+	invincibility_frame_timer = 0.0
+	if _animated_sprite == null:
+		return
+	_animated_sprite.stop()
+	var sf: SpriteFrames = _animated_sprite.sprite_frames
+	if sf == null:
+		return
+	if sf.has_animation("idle"):
+		_animated_sprite.animation = &"idle"
+	else:
+		var anim_names: PackedStringArray = sf.get_animation_names()
+		if anim_names.is_empty():
+			return
+		_animated_sprite.animation = anim_names[0]
+	_animated_sprite.frame = 0
+	_animated_sprite.frame_progress = 0.0

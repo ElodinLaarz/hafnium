@@ -12,7 +12,7 @@ var sand_atlas: Vector2i = Vector2i(3, 0)
 var mountain_height: float = 0.7
 var mountain_atlas: Vector2i = Vector2i(2, 0)
 
-@onready var tile_map = $TileMap
+@onready var tile_map: TileMap = $TileMap
 
 
 func _ready() -> void:

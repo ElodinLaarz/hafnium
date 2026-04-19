@@ -28,7 +28,7 @@ func _process(delta: float) -> void:
 func spawn() -> void:
 	var encounter: EncounterData = ContentRegistry.require_encounter(encounter_definition_id)
 	if Common.run_context != null and encounter != null and not encounter.spawns.is_empty():
-		var entry = encounter.spawns[PRIMARY_ENCOUNTER_ENTRY_INDEX]
+		var entry: EncounterSpawnData = encounter.spawns[PRIMARY_ENCOUNTER_ENTRY_INDEX]
 		for _i: int in range(max(entry.count, MIN_ENEMY_COUNT)):
 			Common.run_context.spawn_enemy(
 				entry.enemy_id, position + Common.a_little_offset(spawn_radius)
