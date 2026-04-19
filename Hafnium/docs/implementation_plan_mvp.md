@@ -26,8 +26,8 @@ Everything in phases **A–F** below closes the gap between this baseline and th
 
 ```text
 A (class + elements + weapons) → B (hub graph) ─┐
-                    A → C (enemies + synergies) ─┼→ E (rewards, shop, run-end) → F (3P + polish)
-                              C → D (boss) ─────┘
+					A → C (enemies + synergies) ─┼→ E (rewards, shop, run-end) → F (3P + polish)
+							  C → D (boss) ─────┘
 ```
 
 Interpretation:
