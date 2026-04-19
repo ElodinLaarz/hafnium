@@ -105,8 +105,6 @@ func fire_secondary_attack(player: PlayerCharacter, angle: float) -> bool:
 		or player.player_class.definition == null
 	):
 		return false
-	if not player.player_class.secondary_attack():
-		return false
 
 	var def: CharacterData = player.player_class.definition
 	var projectile_scene: PackedScene = null
@@ -127,6 +125,10 @@ func fire_secondary_attack(player: PlayerCharacter, angle: float) -> bool:
 		projectile_node.free()
 		return false
 	var projectile: Projectile = projectile_node as Projectile
+
+	if not player.player_class.secondary_attack():
+		projectile.free()
+		return false
 
 	var stats: Stats = player.player_class.stats
 	var feel_tuning: FeelTuningProfile = Common.get_feel_tuning()
