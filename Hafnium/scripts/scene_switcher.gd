@@ -12,6 +12,12 @@ var character_select: PackedScene = load("res://scenes/character_select.tscn")
 var curret_game_type: Common.GameType = Common.GameType.SINGLE_PLAYER
 var active_run_context: RunContext
 
+## Snapshot for restarting the current level/run after player death (main scene only).
+var _restart_player_name: String = "wizard"
+var _restart_game_type: Common.GameType = Common.GameType.SINGLE_PLAYER
+var _restart_selected_level_scene_path: String = ""
+var _active_level_root: Node = null
+
 
 func _ready() -> void:
 	Common.start_game_type.connect(handle_game_start)
@@ -32,15 +38,20 @@ func main_scene_start(
 	var selected_level_scene_path: String = Common.consume_next_level_scene_path()
 	if (
 		not selected_level_scene_path.is_empty()
-		and _start_selected_level(menu_caller, selected_level_scene_path, player_name)
+		and _start_selected_level(menu_caller, selected_level_scene_path, player_name, game_type)
 	):
 		return
 	_start_default_run(menu_caller, game_type, player_name)
 
 
 func _start_selected_level(
-	menu_caller: Control, level_scene_path: String, player_name: String
+	menu_caller: Control, level_scene_path: String, player_name: String, game_type: Common.GameType
 ) -> bool:
+	_restart_selected_level_scene_path = level_scene_path
+	_restart_player_name = player_name
+	_restart_game_type = game_type
+	curret_game_type = game_type
+
 	var selected_level_scene: PackedScene = load(level_scene_path)
 	if selected_level_scene == null:
 		print("Unable to load selected level scene: %s" % level_scene_path)
@@ -53,6 +64,7 @@ func _start_selected_level(
 	# _ready so _spawn_player loads the class chosen in character select.
 	selected_level_root.set("player_name", player_name)
 	add_child(selected_level_root)
+	_active_level_root = selected_level_root
 	menu_caller.queue_free()
 	return true
 
@@ -60,6 +72,19 @@ func _start_selected_level(
 func _start_default_run(
 	menu_caller: Control, game_type: Common.GameType, player_name: String
 ) -> void:
+	_restart_player_name = player_name
+	_restart_game_type = game_type
+	_restart_selected_level_scene_path = ""
+	curret_game_type = game_type
+
+	if not _bootstrap_default_run():
+		return
+
+	if menu_caller != null:
+		menu_caller.queue_free()
+
+
+func _bootstrap_default_run() -> bool:
 	active_run_context = RUN_CONTEXT_SCRIPT.new()
 	add_child(active_run_context)
 	Common.set_run_context(active_run_context)
@@ -67,18 +92,25 @@ func _start_default_run(
 
 	var level_to_load: Node2D = active_run_context.instantiate_start_room()
 	if level_to_load == null:
-		print("Unable to create starting room")
-		return
+		push_error("Unable to create starting room")
+		active_run_context.queue_free()
+		active_run_context = null
+		Common.set_run_context(null)
+		return false
 
 	active_run_context.attach_world_root(level_to_load)
 
 	var ui: CanvasLayer = _ensure_level_ui(level_to_load)
 	if ui == null:
-		print("Unable to locate or create UI for level")
-		return
+		push_error("Unable to locate or create UI for level")
+		level_to_load.queue_free()
+		active_run_context.queue_free()
+		active_run_context = null
+		Common.set_run_context(null)
+		return false
 
 	var multiplayer_overlay: Control = ui.get_node_or_null(MULTIPLAYER_OVERLAY)
-	match game_type:
+	match _restart_game_type:
 		Common.GameType.SINGLE_PLAYER:
 			if multiplayer_overlay != null:
 				multiplayer_overlay.visible = false
@@ -86,10 +118,42 @@ func _start_default_run(
 			if multiplayer_overlay != null:
 				multiplayer_overlay.visible = true
 
-	if not _spawn_player_for_level(level_to_load, ui, player_name):
-		return
+	if not _spawn_player_for_level(level_to_load, ui, _restart_player_name):
+		level_to_load.queue_free()
+		active_run_context.queue_free()
+		active_run_context = null
+		Common.set_run_context(null)
+		return false
 	add_child(level_to_load)
-	menu_caller.queue_free()
+	_active_level_root = level_to_load
+	return true
+
+
+func restart_after_player_death() -> void:
+	Common.set_run_context(null)
+	if _active_level_root != null:
+		_active_level_root.queue_free()
+		_active_level_root = null
+	if active_run_context != null:
+		active_run_context.queue_free()
+		active_run_context = null
+	call_deferred("_continue_restart_after_player_death")
+
+
+func _continue_restart_after_player_death() -> void:
+	var sel_path: String = _restart_selected_level_scene_path
+	if not sel_path.is_empty():
+		var packed: PackedScene = load(sel_path)
+		if packed == null:
+			push_error("Restart failed: could not load level scene %s" % sel_path)
+			return
+		var root: Node = packed.instantiate()
+		root.set("player_name", _restart_player_name)
+		add_child(root)
+		_active_level_root = root
+		return
+	if not _bootstrap_default_run():
+		push_error("Restart failed: could not rebuild default run")
 
 
 func _ensure_level_ui(level_to_load: Node2D) -> CanvasLayer:
