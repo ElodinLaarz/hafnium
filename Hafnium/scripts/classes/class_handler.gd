@@ -258,14 +258,6 @@ func setup_hp(pc: PlayerClass, cn: ClassName) -> bool:
 	return true
 
 
-func wizard_attack(stats: Stats) -> bool:
-	# Add cooldown and stuff
-	if stats.attack_cooldown > 0:
-		return false
-	stats.attack_cooldown = stats.attack_speed
-	return true
-
-
 func get_attack_projectile_path(cn: ClassName) -> String:
 	var data: CharacterData = get_character_data(cn)
 	return get_projectile_path_from_definition(data)
@@ -291,12 +283,57 @@ func build_attack_logic(data: CharacterData) -> Callable:
 		data == null
 		or (data.attack_projectile_scene == null and data.attack_projectile_id.is_empty())
 	):
-		return func(_stats: Stats) -> bool: return false
-	return func(stats: Stats) -> bool:
-		if stats.attack_cooldown > 0:
+		return func(_pc: PlayerClass) -> bool: return false
+	if data.primary_spell_mana_cost > 0:
+		return func(pc: PlayerClass) -> bool: return _primary_attack_with_mana_cost(pc)
+	return func(pc: PlayerClass) -> bool:
+		if pc.stats.attack_cooldown > 0:
 			return false
-		stats.attack_cooldown = stats.attack_speed
+		pc.stats.attack_cooldown = pc.stats.attack_speed
 		return true
+
+
+func _primary_attack_with_mana_cost(pc: PlayerClass) -> bool:
+	if pc.stats.attack_cooldown > 0:
+		return false
+	var cost: int = 0
+	if pc.definition != null:
+		cost = pc.definition.primary_spell_mana_cost
+	if cost > 0:
+		if not pc.has_resource(GameConstants.RESOURCE_MANA, cost):
+			return false
+		if not pc.use_resource(GameConstants.RESOURCE_MANA, cost):
+			return false
+	pc.stats.attack_cooldown = pc.stats.attack_speed
+	return true
+
+
+## Blood Mana (Wizard): max mana increases as current health falls; current is clamped.
+func recompute_wizard_blood_mana(pc: PlayerClass) -> void:
+	if pc == null or pc.name != ClassName.WIZARD or pc.definition == null:
+		return
+	var def: CharacterData = pc.definition
+	if def.blood_mana_bonus_pool <= 0 or def.mana_max <= 0:
+		return
+	var mana_res: Stats.ResourceStatus = pc.stats.resources.get(GameConstants.RESOURCE_MANA)
+	if mana_res == null:
+		return
+	var max_h: int = maxi(pc.stats.max_health, 1)
+	var missing: int = maxi(0, pc.stats.max_health - pc.stats.current_health)
+	var missing_ratio: float = float(missing) / float(max_h)
+	var bonus: int = int(round(missing_ratio * float(def.blood_mana_bonus_pool)))
+	var new_max: int = def.mana_max + bonus
+	if new_max < 0:
+		new_max = 0
+	var old_max: int = mana_res.max_resource
+	var old_current: int = mana_res.current_resource
+	mana_res.max_resource = new_max
+	if mana_res.current_resource > new_max:
+		mana_res.current_resource = new_max
+	if old_max != new_max or old_current != mana_res.current_resource:
+		pc.stats.resource_changed.emit(
+			GameConstants.RESOURCE_MANA, mana_res.current_resource, mana_res.max_resource
+		)
 
 
 func setup_attack(pc: PlayerClass, cn: ClassName) -> bool:
@@ -308,10 +345,10 @@ func setup_attack(pc: PlayerClass, cn: ClassName) -> bool:
 
 	match cn:
 		ClassName.WIZARD:
-			pc.attack_logic = wizard_attack
+			pc.attack_logic = func(_pc: PlayerClass) -> bool: return false
 		ClassName.BARBARIAN, ClassName.DRUID:
 			# TODO: Implement specific attack logic for these classes
-			pc.attack_logic = func(_stats: Stats) -> bool: return false
+			pc.attack_logic = func(_pc: PlayerClass) -> bool: return false
 		_:
 			# Unmatched class
 			return false
@@ -385,11 +422,21 @@ class PlayerClass:
 		# becomes reserve mana, which is blue.
 		if class_handler.hdl(self, cn):
 			print("successfully set up class %s" % ClassName.keys()[cn])
+			_post_init_class()
 		else:
 			print("failed to set up class %s" % ClassName.keys()[cn])
 			# Fallback to avoid null callables
-			self.attack_logic = func(_stats: Stats) -> bool: return false
+			self.attack_logic = func(_pc: PlayerClass) -> bool: return false
 			self.heart_drawing_logic = class_handler.default_hearts
+
+	func _post_init_class() -> void:
+		if self.name == ClassName.WIZARD:
+			if not self.stats.health_changed.is_connected(_on_wizard_health_blood_mana):
+				self.stats.health_changed.connect(_on_wizard_health_blood_mana)
+			class_handler.recompute_wizard_blood_mana(self)
+
+	func _on_wizard_health_blood_mana(_new_health: int, _max_health: int) -> void:
+		class_handler.recompute_wizard_blood_mana(self)
 
 	func has_resource(resource: String, count: int) -> bool:
 		if self.stats.resources.has(resource):
@@ -402,6 +449,7 @@ class PlayerClass:
 			var res: Stats.ResourceStatus = self.stats.resources[resource]
 			if res.current_resource >= count:
 				res.current_resource -= count
+				self.stats.resource_changed.emit(resource, res.current_resource, res.max_resource)
 				return true
 		return false
 
@@ -422,7 +470,7 @@ class PlayerClass:
 
 	func attack() -> bool:
 		if self.attack_logic:
-			return self.attack_logic.call(self.stats)
+			return self.attack_logic.call(self)
 		return false
 
 

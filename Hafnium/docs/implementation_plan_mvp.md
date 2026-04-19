@@ -26,8 +26,8 @@ Everything in phases **A–F** below closes the gap between this baseline and th
 
 ```text
 A (class + elements + weapons) → B (hub graph) ─┐
-                    A → C (enemies + synergies) ─┼→ E (rewards, shop, run-end) → F (3P + polish)
-                              C → D (boss) ─────┘
+					A → C (enemies + synergies) ─┼→ E (rewards, shop, run-end) → F (3P + polish)
+							  C → D (boss) ─────┘
 ```
 
 Interpretation:
@@ -216,3 +216,4 @@ Use effort tags to slice PRs: prefer **one gate-relevant vertical** or **one sub
 | 2026-04-15 | Fix: `ElementTrainingDummy` extends `training_slime_dummy.gd` by path (avoids parse order issues with `class_name` base). |
 | 2026-04-15 | Main menu: New Game → level pick → **character class** screen (reuses `character_select.tscn`); `Common.character_select_after_level_pick`; `SceneSwitcher.show_character_select_for_new_game` / `return_from_character_select` (Back returns to level list or main menu). Character select: Back button; slot labels shortened to class names. **Fix:** selected-level runs (`_start_selected_level`) set `player_name` on the level root before `_ready` so DPS / Element training spawn the chosen class, not default wizard. |
 | 2026-04-15 | Phase A (task 3 baseline): Added placeholder Barbarian primary melee swing (`weapon:barbarian_swing`) with short-range knockback metadata in `CombatDirector`; Barbarian `CharacterData` now references the attack projectile. Implemented Battle Hardened as an incoming-hit counter on Barbarian (`5,4,3,2,1,0,5` pattern for repeated 5-damage hits). Added unit coverage in `tests/unit/test_barbarian_baseline.gd` and updated class attack expectation in `tests/unit/test_class_handler.gd`. |
+| 2026-04-19 | Phase A (task 4): Blood Mana — Wizard max mana scales with missing HP (`CharacterData.blood_mana_bonus_pool`, `primary_spell_mana_cost`). `build_attack_logic` mana-gated primary when cost > 0; `PlayerClass.attack_logic` now receives `PlayerClass`; `PlayerClass.use_resource` emits `Stats.resource_changed`; `ClassHandler.recompute_wizard_blood_mana()` + health hook on Wizard. Mana progress bar (`ManaBarMargins` / `ManaBar` in `interface.tscn`) for Wizard; `update_interface.gd` + `draw_health.gd` (`PlayerHealth`) wire `RESOURCE_MANA`. `resources/characters/wizard.tres` sets `blood_mana_bonus_pool=8`, `primary_spell_mana_cost=1`. Tests: `tests/unit/test_blood_mana.gd`, `test_class_handler` wizard attack assertion. |

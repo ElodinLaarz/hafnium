@@ -40,6 +40,7 @@ func test_wizard_attack_logic() -> void:
 	# Initial attack
 	var success: bool = pc.attack()
 	assert_true(success, "First attack should succeed")
+	assert_eq(pc.stats.resources["mana"].current_resource, 3, "Primary spell should cost 1 mana")
 	assert_eq(pc.stats.attack_cooldown, pc.stats.attack_speed, "Cooldown should be set")
 
 	# Immediate second attack
