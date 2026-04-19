@@ -276,7 +276,7 @@ func get_projectile_path_from_definition(data: CharacterData) -> String:
 		return ""
 	if not data.attack_projectile_id.is_empty():
 		# Prefer registry IDs so projectile implementations can be swapped centrally.
-		var projectile_data: ProjectileData = ContentRegistry.require_projectile(
+		var projectile_data: ProjectileData = ContentRegistry.get_projectile(
 			data.attack_projectile_id
 		)
 		if projectile_data != null and projectile_data.projectile_scene != null:

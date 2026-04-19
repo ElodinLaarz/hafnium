@@ -6,7 +6,7 @@ var _previous_run_context: RunContext
 
 
 class MockFailedRunContext:
-	extends RefCounted
+	extends RunContext
 
 	var spawn_calls: Array[Vector2] = []
 

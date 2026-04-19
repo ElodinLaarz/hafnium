@@ -22,7 +22,7 @@ func test_drop_reward_seeded_low() -> void:
 
 
 class MockRNG:
-	extends RandomNumberGenerator
+	extends RefCounted
 
 	var next_val: int = 0
 

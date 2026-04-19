@@ -76,6 +76,10 @@ func require_projectile(id: String) -> ProjectileData:
 	return _require_from(projectile_defs, id, "projectile")
 
 
+func get_projectile(id: String) -> ProjectileData:
+	return projectile_defs.get(id, null)
+
+
 func require_loot(id: String) -> LootTable:
 	return _require_from(loot_defs, id, "loot")
 
