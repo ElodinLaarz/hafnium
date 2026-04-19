@@ -26,8 +26,10 @@ static func apply(player: PlayerCharacter) -> void:
 	var will: int = prog.get_attribute(PlayerProgression.Attribute.WILLPOWER)
 
 	var bonus_hp: int = con * HP_PER_CONSTITUTION
+	var mult: int = player.stats.health_to_damage_multiplier
+	var raw_max: int = player._baseline_max_health + bonus_hp
+	var new_max: int = _snap_max_health_to_heart_grid(raw_max, mult)
 	var old_max: int = player.stats.max_health
-	var new_max: int = player._baseline_max_health + bonus_hp
 	player.stats.max_health = new_max
 	if new_max > old_max:
 		player.stats.current_health += new_max - old_max
@@ -63,6 +65,15 @@ static func apply(player: PlayerCharacter) -> void:
 			player.player_class.stats.resource_changed.emit(
 				GameConstants.RESOURCE_MANA, mana_res.current_resource, mana_res.max_resource
 			)
+
+
+static func _snap_max_health_to_heart_grid(value: int, mult: int) -> int:
+	if mult <= 0:
+		return value
+	var rem: int = value % mult
+	if rem == 0:
+		return value
+	return value + (mult - rem)
 
 
 static func _primary_attribute_bonus(

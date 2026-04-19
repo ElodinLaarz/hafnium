@@ -40,6 +40,17 @@ func attack() -> bool:
 	return run_context.perform_primary_attack(attack_spawn_angle)
 
 
+func cast_secondary_spell() -> bool:
+	if run_context == null:
+		push_error(
+			"Common.cast_secondary_spell() requires an active RunContext; uses CombatDirector."
+		)
+		return false
+	return run_context.combat_director.fire_secondary_attack(
+		run_context.primary_player, attack_spawn_angle
+	)
+
+
 func a_little_offset(max_offset: float) -> Vector2:
 	if run_context != null:
 		return run_context.random_offset(max_offset)

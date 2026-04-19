@@ -122,7 +122,9 @@ func handle_attack(delta: float) -> void:
 		_attack_buffer_timer = 0.0
 		_attack_move_slow_timer = _get_attack_move_slow_time()
 	if Input.is_action_just_pressed(GameConstants.INPUT_ACTION_SECONDARY_ATTACK):
-		if Common.place_bomb():
+		if player_class != null and player_class.has_secondary_spell():
+			Common.cast_secondary_spell()
+		elif Common.place_bomb():
 			print("bomb placed!")
 
 

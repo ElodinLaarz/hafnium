@@ -39,13 +39,11 @@ func test_wizard_attack_logic() -> void:
 	var ch: ClassHandler = CLASS_HANDLER_SCRIPT.new()
 	var pc: ClassHandler.PlayerClass = ch.create_class(ClassHandler.ClassName.WIZARD)
 
-	# Initial attack
 	var success: bool = pc.attack()
 	assert_true(success, "First attack should succeed")
-	assert_eq(pc.stats.resources["mana"].current_resource, 3, "Primary spell should cost 1 mana")
+	assert_eq(pc.stats.resources["mana"].current_resource, 4, "Primary attack should not cost mana")
 	assert_eq(pc.stats.attack_cooldown, pc.stats.attack_speed, "Cooldown should be set")
 
-	# Immediate second attack
 	var second_success: bool = pc.attack()
 	assert_false(second_success, "Attack should fail during cooldown")
 
@@ -95,20 +93,20 @@ func test_build_attack_logic_rejects_unresolved_projectile_id() -> void:
 	)
 
 
-func test_build_attack_logic_uses_mana_cost_from_character_data_snapshot() -> void:
+func test_build_secondary_attack_logic_uses_mana_cost_from_character_data_snapshot() -> void:
 	var ch: ClassHandler = CLASS_HANDLER_SCRIPT.new()
 	var data: CharacterData = CharacterData.new()
-	data.attack_projectile_id = "weapon:fireball"
-	data.primary_spell_mana_cost = 2
-	var attack: Callable = ch.build_attack_logic(data)
+	data.secondary_attack_projectile_id = "weapon:fireball"
+	data.secondary_spell_mana_cost = 2
+	var secondary: Callable = ch.build_secondary_attack_logic(data)
 	var pc: ClassHandler.PlayerClass = ch.create_class(ClassHandler.ClassName.WIZARD)
-	pc.attack_logic = attack
+	pc.secondary_attack_logic = secondary
 	pc.stats.resources["mana"].current_resource = 4
-	assert_true(pc.attack(), "Mana-gated attack should succeed")
+	assert_true(pc.secondary_attack(), "Mana-gated secondary spell should succeed")
 	assert_eq(
 		pc.stats.resources["mana"].current_resource,
 		2,
-		"Callable should spend mana from build-time CharacterData, not pc.definition",
+		"Secondary callable should spend mana from build-time CharacterData",
 	)
 
 

@@ -96,6 +96,87 @@ func fire_attack(player: PlayerCharacter, angle: float) -> bool:
 	return true
 
 
+func fire_secondary_attack(player: PlayerCharacter, angle: float) -> bool:
+	if (
+		run_context == null
+		or run_context.world_root == null
+		or player == null
+		or player.player_class == null
+		or player.player_class.definition == null
+	):
+		return false
+	if not player.player_class.secondary_attack():
+		return false
+
+	var def: CharacterData = player.player_class.definition
+	var projectile_scene: PackedScene = null
+	var projectile_data: ProjectileData = null
+	if not def.secondary_attack_projectile_id.is_empty():
+		projectile_data = ContentRegistry.require_projectile(def.secondary_attack_projectile_id)
+		if projectile_data != null:
+			projectile_scene = projectile_data.projectile_scene
+	if projectile_scene == null:
+		projectile_scene = player.player_class.get_secondary_attack_scene()
+
+	var projectile_parent: Node = run_context.get_world_entity_root()
+	if projectile_scene == null or projectile_parent == null:
+		return false
+
+	var projectile_node: Node = projectile_scene.instantiate()
+	if not (projectile_node is Projectile):
+		projectile_node.free()
+		return false
+	var projectile: Projectile = projectile_node as Projectile
+
+	var stats: Stats = player.player_class.stats
+	var feel_tuning: FeelTuningProfile = Common.get_feel_tuning()
+	var luck_points: int = 0
+	if player.progression != null:
+		luck_points = player.progression.get_attribute(PlayerProgression.Attribute.LUCK)
+	var luck_crit_bonus: float = float(luck_points) * 0.015
+	var crit_chance: float = feel_tuning.crit_chance if feel_tuning != null else 0.0
+	crit_chance = clampf(crit_chance + luck_crit_bonus, 0.0, 0.85)
+	var crit_damage_multiplier: float = (
+		feel_tuning.crit_damage_multiplier if feel_tuning != null else 2.0
+	)
+	var is_crit: bool = randf() < crit_chance
+	var damage_mult: float = def.secondary_damage_multiplier
+	if damage_mult <= 0.0:
+		damage_mult = 1.0
+	var base_damage: int = maxi(1, int(round(float(stats.damage) * damage_mult)))
+	var damage_amount: int = base_damage
+	if is_crit:
+		damage_amount = maxi(1, int(round(float(base_damage) * crit_damage_multiplier)))
+	var aim_dir: Vector2 = Vector2(cos(angle), sin(angle))
+	projectile.rotation = PI + angle
+	projectile.position = player.position + aim_dir * run_context.attack_displacement_magnitude
+	projectile.velocity = aim_dir * stats.projectile_speed
+	projectile.damage = damage_amount
+	projectile.ttl = _calculate_ttl(stats)
+	projectile.source_actor = player
+	projectile.source_team = player.get_team()
+	var resolved_element: Damage.DamageType = (
+		Damage
+		. resolve_attack_element(
+			projectile_data,
+			player.player_class.definition,
+			projectile.element,
+		)
+	)
+	if run_context.use_training_damage_type_override:
+		resolved_element = run_context.training_damage_type_override
+	projectile.element = resolved_element
+	var payload_metadata: Dictionary = {"is_crit": is_crit}
+	if projectile_data != null and projectile_data.knockback_force > 0.0:
+		payload_metadata["knockback_force"] = projectile_data.knockback_force
+	projectile.damage_payload = Damage.typed(
+		damage_amount, resolved_element, player, player.get_team(), payload_metadata
+	)
+	projectile_parent.add_child(projectile)
+	run_context.emit_resource_state(player)
+	return true
+
+
 func place_bomb(player: PlayerCharacter) -> bool:
 	if (
 		run_context == null

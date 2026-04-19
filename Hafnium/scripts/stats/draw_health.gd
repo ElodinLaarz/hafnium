@@ -84,7 +84,7 @@ func _on_primary_player_changed(player: PlayerCharacter) -> void:
 func _on_health_changed(_current_health: int, _max_health: int) -> void:
 	if tracked_player == null or tracked_player.player_class == null:
 		return
-	tracked_player.player_class.draw_hearts(Common.player_heart_containers)
+	check_and_create_hearts(tracked_player)
 	_render_player_state()
 
 
