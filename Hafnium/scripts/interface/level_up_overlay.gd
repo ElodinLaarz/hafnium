@@ -22,9 +22,10 @@ func _ready() -> void:
 func _on_level_up_choice_required(player: PlayerCharacter, choices: Array[int]) -> void:
 	visible = true
 	for child: Node in _choices_box.get_children():
+		_choices_box.remove_child(child)
 		child.queue_free()
 	for attr_int: int in choices:
-		var attribute: PlayerProgression.Attribute = attr_int as PlayerProgression.Attribute
+		var attribute: PlayerProgression.Attribute = PlayerProgression.attribute_from_int(attr_int)
 		var button: StatChoiceButton = StatChoiceButton.new()
 		button.text = "+%s" % PlayerProgression.attribute_display_name(attribute)
 		button.tooltip_text = LevelUpTooltipBuilder.build(player, attribute)

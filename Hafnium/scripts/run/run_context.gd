@@ -233,7 +233,9 @@ func _emit_next_level_up_choice() -> void:
 		_level_up_choice_queue.pop_front()
 		_emit_next_level_up_choice()
 		return
-	var choices: Array[int] = PlayerProgression.pick_random_attributes(3)
+	var choices: Array[int] = PlayerProgression.pick_random_attributes(
+		GameConstants.LEVEL_UP_CHOICE_COUNT
+	)
 	level_up_choice_required.emit(player, choices)
 
 

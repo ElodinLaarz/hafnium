@@ -77,7 +77,7 @@ static func _magic(player: PlayerCharacter, cn: ClassHandler.ClassName) -> Strin
 
 static func _luck() -> String:
 	var lines: Array[String] = []
-	lines.append("+1.5%% additive critical strike chance per point (before global cap).")
+	lines.append("+1.5% additive critical strike chance per point (before global cap).")
 	lines.append("Item drop rarity scales with Luck (when loot rules support it).")
 	return _join_lines(lines)
 
@@ -93,11 +93,4 @@ static func _player_uses_mana(player: PlayerCharacter) -> bool:
 
 
 static func _join_lines(lines: Array[String]) -> String:
-	var out_text: String = ""
-	var first_line: bool = true
-	for line: String in lines:
-		if not first_line:
-			out_text += "\n"
-		first_line = false
-		out_text += line
-	return out_text
+	return "\n".join(lines)

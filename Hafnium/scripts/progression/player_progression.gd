@@ -49,12 +49,12 @@ func increment_attribute(attribute: Attribute) -> void:
 	attributes[attribute] = next
 
 
-func xp_required_to_advance_from(current_level: int) -> int:
+static func xp_required_to_advance_from(current_level: int) -> int:
 	return 40 + maxi(current_level - 1, 0) * 25
 
 
 func xp_for_next_level() -> int:
-	return xp_required_to_advance_from(level)
+	return PlayerProgression.xp_required_to_advance_from(level)
 
 
 func add_xp(amount: int) -> int:
@@ -74,6 +74,13 @@ func add_xp(amount: int) -> int:
 
 static func attribute_display_name(attribute: Attribute) -> String:
 	return str(ATTRIBUTE_NAMES.get(attribute, "Unknown"))
+
+
+static func attribute_from_int(value: int) -> Attribute:
+	var keys: Array[int] = _all_attribute_keys()
+	if not keys.has(value):
+		return Attribute.CONSTITUTION
+	return value as Attribute
 
 
 static func pick_random_attributes(count: int) -> Array[int]:

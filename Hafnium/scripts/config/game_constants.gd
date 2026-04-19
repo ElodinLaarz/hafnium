@@ -15,6 +15,10 @@ const RESOURCE_BOMB: String = "bomb"
 const RESOURCE_MANA: String = "mana"
 
 const ATTACK_SPAWN_DISPLACEMENT: float = 15.0
+## Upper bound for crit chance after Luck and tuning (primary + secondary attacks).
+const CRIT_CHANCE_CAP: float = 0.85
+## How many stat options the level-up overlay presents.
+const LEVEL_UP_CHOICE_COUNT: int = 3
 const PLAYER_TEAM: int = 1
 const HOST_PLAYER_ID: int = 1
 

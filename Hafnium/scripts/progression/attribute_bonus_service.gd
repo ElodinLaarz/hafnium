@@ -62,7 +62,7 @@ static func apply(player: PlayerCharacter) -> void:
 			mana_res.max_resource = target_max
 			if mana_res.current_resource > mana_res.max_resource:
 				mana_res.current_resource = mana_res.max_resource
-			player.player_class.stats.resource_changed.emit(
+			player.stats.resource_changed.emit(
 				GameConstants.RESOURCE_MANA, mana_res.current_resource, mana_res.max_resource
 			)
 

@@ -39,6 +39,7 @@ const GameConstants = preload("res://scripts/config/game_constants.gd")
 @export var secondary_attack_projectile_scene: PackedScene
 ## If > 0 and secondary projectile resolves, right-click casts spell instead of bomb.
 @export var secondary_spell_mana_cost: int = 0
+## Relative to primary attack damage; use 0 for utility spells that should deal no damage.
 @export var secondary_damage_multiplier: float = 2.5
 
 
