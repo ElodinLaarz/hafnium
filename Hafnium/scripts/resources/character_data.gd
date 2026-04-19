@@ -29,6 +29,10 @@ const GameConstants = preload("res://scripts/config/game_constants.gd")
 @export var bomb_recovery_rate: float = 0.0
 @export var mana_max: int = 0
 @export var mana_recovery_rate: float = 0.0
+## Wizard — extra mana capacity when injured (linear from full HP to empty).
+@export var blood_mana_bonus_pool: int = 0
+## Mana spent per primary spell cast when > 0 (Wizard); 0 means no mana gate on primary.
+@export var primary_spell_mana_cost: int = 0
 
 
 func apply_to_stats(stats: Stats) -> void:

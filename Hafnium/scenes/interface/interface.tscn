@@ -22,6 +22,25 @@ offset_bottom = 360.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="ManaBarMargins" type="MarginContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 0
+offset_left = 8.0
+offset_top = 36.0
+offset_right = 112.0
+offset_bottom = 52.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="ManaBar" type="ProgressBar" parent="ManaBarMargins"]
+layout_mode = 2
+custom_minimum_size = Vector2(96, 10)
+theme = ExtResource("4_71f6u")
+show_percentage = false
+max_value = 4.0
+value = 4.0
+
 [node name="CounterMargins" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 1
