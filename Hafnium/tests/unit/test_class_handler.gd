@@ -73,11 +73,22 @@ func test_use_resource_fails_when_insufficient() -> void:
 	assert_false(used, "use_resource should fail when count exceeds available")
 
 
-func test_barbarian_druid_attack_unimplemented() -> void:
+func test_barbarian_attack_logic() -> void:
 	var ch: ClassHandler = CLASS_HANDLER_SCRIPT.new()
-	for cn: int in [ClassHandler.ClassName.BARBARIAN, ClassHandler.ClassName.DRUID]:
-		var pc: ClassHandler.PlayerClass = ch.create_class(cn)
-		assert_false(
-			pc.attack(),
-			"%s attack should return false until implemented" % ClassHandler.ClassName.keys()[cn]
-		)
+	var pc: ClassHandler.PlayerClass = ch.create_class(ClassHandler.ClassName.BARBARIAN)
+	assert_true(pc.attack(), "Barbarian attack should succeed with placeholder melee setup")
+	assert_eq(pc.stats.attack_cooldown, pc.stats.attack_speed, "Cooldown should be set")
+
+
+func test_build_attack_logic_rejects_unresolved_projectile_id() -> void:
+	var ch: ClassHandler = CLASS_HANDLER_SCRIPT.new()
+	var data: CharacterData = CharacterData.new()
+	data.attack_projectile_id = "weapon:nonexistent"
+	var attack: Callable = ch.build_attack_logic(data)
+	var dummy_stats: Stats = Stats.new()
+	dummy_stats.attack_cooldown = 0.0
+	dummy_stats.attack_speed = 1.0
+	assert_false(
+		attack.call(dummy_stats),
+		"Attack should fail when projectile id does not resolve in ContentRegistry",
+	)

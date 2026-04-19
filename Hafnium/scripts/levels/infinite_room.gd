@@ -1,3 +1,4 @@
+class_name InfiniteRoom
 extends Node2D
 
 const ROOM_DATA_SCRIPT = preload("res://scripts/resources/room_data.gd")

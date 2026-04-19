@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/projectile.gd" id="1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+size = Vector2(18, 12)
+
+[node name="BarbarianSwing" type="CharacterBody2D"]
+z_index = 2
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("1")
+ttl = 0.12
+projectile_id = "weapon:barbarian_swing"
+
+[node name="SwingShape" type="Polygon2D" parent="."]
+color = Color(0.941176, 0.701961, 0.254902, 0.7)
+polygon = PackedVector2Array(-2, -7, 10, 0, -2, 7)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(9, 0)
+shape = SubResource("RectangleShape2D_1")

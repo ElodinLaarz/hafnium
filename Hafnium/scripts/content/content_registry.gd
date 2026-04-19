@@ -13,6 +13,7 @@ const ENEMY_RESOURCE_PATHS: Array[String] = [
 	"res://resources/enemies/slime_basic.tres",
 ]
 const PROJECTILE_RESOURCE_PATHS: Array[String] = [
+	"res://resources/projectiles/barbarian_swing.tres",
 	"res://resources/projectiles/fireball.tres",
 ]
 const LOOT_RESOURCE_PATHS: Array[String] = [
@@ -73,6 +74,10 @@ func require_enemy(id: String) -> EnemyData:
 
 func require_projectile(id: String) -> ProjectileData:
 	return _require_from(projectile_defs, id, "projectile")
+
+
+func get_projectile(id: String) -> ProjectileData:
+	return projectile_defs.get(id, null)
 
 
 func require_loot(id: String) -> LootTable:

@@ -131,8 +131,11 @@ func _on_hitbox_body_exited(body: Node) -> void:
 
 
 func take_damage(d: int) -> bool:
-	print("You are taking %d damage!" % d)
-	var is_dead: bool = super.take_damage(d)
+	var applied_damage: int = d
+	if player_class != null:
+		applied_damage = player_class.modify_incoming_damage(self, d)
+	print("You are taking %d damage!" % applied_damage)
+	var is_dead: bool = super.take_damage(applied_damage)
 	if is_dead:
 		print("You are dead :(")
 	return is_dead

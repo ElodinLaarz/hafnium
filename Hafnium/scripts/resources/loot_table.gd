@@ -6,7 +6,7 @@ extends Resource
 @export var nothing_weight: int = 0
 
 
-func roll_drop(rng: RandomNumberGenerator) -> LootDropData:
+func roll_drop(rng: Object) -> LootDropData:
 	if drops.is_empty():
 		return null
 

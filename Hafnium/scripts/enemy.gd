@@ -5,7 +5,7 @@ const LEGACY_REWARD_ROLL_MIN: int = 0
 const LEGACY_REWARD_ROLL_MAX: int = 100
 
 var movement: EnemyMovement = EnemyMovement.new()
-var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+var rng: Object = RandomNumberGenerator.new()
 var chasing_player: bool = false
 var player: CharacterBody2D
 var definition: EnemyData
