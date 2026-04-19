@@ -2,7 +2,7 @@ extends GutTest
 
 const CLASS_HANDLER_SCRIPT = preload("res://scripts/classes/class_handler.gd")
 const GameConstants = preload("res://scripts/config/game_constants.gd")
-const HEARTS_ATLAS = preload("res://sprites/aseprite_files/random/Hearts.png")
+const HEARTS_ATLAS: Texture2D = preload("res://sprites/aseprite_files/random/Hearts.png")
 
 # test_class_handler.gd
 # Tests for Hafnium/scripts/classes/class_handler.gd (class_name ClassHandler)
@@ -127,7 +127,7 @@ func test_wizard_partial_health_empty_mana_slots_start_at_first_fully_empty_hear
 	var shared_atlas: AtlasTexture = AtlasTexture.new()
 	shared_atlas.atlas = HEARTS_ATLAS
 	shared_atlas.region = Rect2i(0, 0, 16, 16)
-	for _i in 2:
+	for _heart_idx: int in range(2):
 		var heart: TextureRect = TextureRect.new()
 		heart.texture = shared_atlas
 		container.add_child(heart)

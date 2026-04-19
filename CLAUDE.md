@@ -30,7 +30,27 @@ git config core.hooksPath .githooks
 pip install gdtoolkit
 ```
 
-The pre-commit hook (`./githooks/pre-commit`) will auto-format any staged `.gd` files with `gdformat`, re-stage them, run `gdlint`, and then run the GUT unit test suite before each commit. `gdlint` is a blocking check only, so lint issues still need to be fixed manually. If `gdtoolkit` isn't installed the formatting and lint steps are skipped with an install message. If GUT is not installed locally, the hook prints a warning and skips the test step.
+The pre-commit hook (`./githooks/pre-commit`) will auto-format any staged `.gd` files with `gdformat`, re-stage them, run `gdlint`, run optional Python type-hint checks, then **`Hafnium/presubmit_godot_compile.sh`** when `godot` is on `PATH` (or `GODOT_BIN` is set), then run the GUT unit test suite when GUT is present. Use `SKIP_GODOT_PRESUBMIT=1 git commit …` only if you must bypass the Godot step (not recommended).
+
+## GDScript validation (matches project warnings as errors)
+
+`Hafnium/project.godot` configures `[debug] gdscript/warnings/` — notably `untyped_declaration=2` and `inferred_declaration=2` (level **2** = treated as **errors**). That is what the editor and debug adapter enforce; `gdlint` alone does not fully duplicate it.
+
+Before pushing or between edit cycles when changing GDScript, run:
+
+```bash
+bash Hafnium/presubmit_godot_compile.sh
+```
+
+Windows (PowerShell):
+
+```powershell
+.\Hafnium\presubmit_godot_compile.ps1
+```
+
+Requires Godot 4.x on `PATH`, or set `GODOT_BIN` to the executable. CI runs this after resource import via `.github/workflows/tests.yml`.
+
+Single-file `--check-only` may mis-resolve autoloads in isolation; prefer the presubmit scripts for parity with running the project.
 
 ## Running Tests
 

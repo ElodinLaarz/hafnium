@@ -1,0 +1,22 @@
+---
+description: Validate GDScript edits against project.godot warning-as-error settings using Godot presubmit scripts
+globs: Hafnium/**/*.gd
+alwaysApply: false
+---
+
+# Godot presubmit (warnings as errors)
+
+`Hafnium/project.godot` sets `[debug] gdscript/warnings/` so some warnings (e.g. `untyped_declaration`, `inferred_declaration` at level **2**) are **errors**, matching the editor and debug adapter—**not** identical to `gdlint` alone.
+
+After substantive edits to `Hafnium/**/*.gd`, before finishing the task run **one** of:
+
+| Environment | Command (from repo root) |
+|-------------|--------------------------|
+| Bash / Git Bash | `bash Hafnium/presubmit_godot_compile.sh` |
+| PowerShell | `powershell -ExecutionPolicy Bypass -File Hafnium/presubmit_godot_compile.ps1` |
+
+Requires Godot on `PATH` or `GODOT_BIN` pointing at the Godot executable.
+
+Also run `gdlint` on touched files when `gdtoolkit` is installed (`pip install gdtoolkit`), as in the repo pre-commit hook.
+
+Do not introduce implicit types (`:=` without an explicit annotation where the project would error), or untyped declarations where level-2 warnings apply.

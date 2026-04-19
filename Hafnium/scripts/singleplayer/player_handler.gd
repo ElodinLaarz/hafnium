@@ -132,7 +132,7 @@ func _on_hitbox_body_exited(body: Node) -> void:
 
 func die() -> void:
 	super.die()
-	var tree := get_tree()
+	var tree: SceneTree = get_tree()
 	if tree == null or tree.current_scene == null:
 		return
 	var scene_root: Node = tree.current_scene
