@@ -287,16 +287,35 @@ func get_projectile_path_from_definition(data: CharacterData) -> String:
 
 
 func build_attack_logic(data: CharacterData) -> Callable:
-	if (
-		data == null
-		or (data.attack_projectile_scene == null and data.attack_projectile_id.is_empty())
-	):
+	if data == null:
+		return func(_stats: Stats) -> bool: return false
+	if data.attack_projectile_scene == null and data.attack_projectile_id.is_empty():
+		return func(_stats: Stats) -> bool: return false
+	if get_projectile_path_from_definition(data).is_empty():
 		return func(_stats: Stats) -> bool: return false
 	return func(stats: Stats) -> bool:
 		if stats.attack_cooldown > 0:
 			return false
 		stats.attack_cooldown = stats.attack_speed
 		return true
+
+
+## Barbarian Battle Hardened and future class-specific incoming-damage rules.
+func _modify_incoming_damage(pc: PlayerClass, player: PlayerCharacter, incoming_damage: int) -> int:
+	if pc == null or player == null:
+		return incoming_damage
+	if pc.name != ClassName.BARBARIAN:
+		return incoming_damage
+	if incoming_damage <= 0:
+		return incoming_damage
+	if player.is_invincible or player.stats == null or player.stats.current_health <= 0:
+		return incoming_damage
+	var reduced_damage: int = maxi(0, incoming_damage - pc.battle_hardened_counter)
+	if reduced_damage <= 0:
+		pc.battle_hardened_counter = 0
+		return 0
+	pc.battle_hardened_counter += 1
+	return reduced_damage
 
 
 func setup_attack(pc: PlayerClass, cn: ClassName) -> bool:
@@ -363,11 +382,12 @@ func setup_class_resources(pc: PlayerClass, cn: ClassName) -> bool:
 
 
 class PlayerClass:
+	var attack_logic: Callable
+	var attack_projectile_path: String = ""
+	var battle_hardened_counter: int = 0
 	var class_handler: ClassHandler = ClassHandler.new()
 	var definition: CharacterData
 	var heart_drawing_logic: Callable
-	var attack_logic: Callable
-	var attack_projectile_path: String = ""
 	var name: ClassName
 	var stats: Stats
 	var _attack_scene: PackedScene
@@ -391,18 +411,9 @@ class PlayerClass:
 			self.attack_logic = func(_stats: Stats) -> bool: return false
 			self.heart_drawing_logic = class_handler.default_hearts
 
-	func has_resource(resource: String, count: int) -> bool:
-		if self.stats.resources.has(resource):
-			var res: Stats.ResourceStatus = self.stats.resources[resource]
-			return res.current_resource >= count
-		return false
-
-	func use_resource(resource: String, count: int) -> bool:
-		if self.stats.resources.has(resource):
-			var res: Stats.ResourceStatus = self.stats.resources[resource]
-			if res.current_resource >= count:
-				res.current_resource -= count
-				return true
+	func attack() -> bool:
+		if self.attack_logic:
+			return self.attack_logic.call(self.stats)
 		return false
 
 	func draw_hearts(heart_container: Node) -> void:
@@ -420,9 +431,21 @@ class PlayerClass:
 			_attack_scene = load(attack_projectile_path)
 		return _attack_scene
 
-	func attack() -> bool:
-		if self.attack_logic:
-			return self.attack_logic.call(self.stats)
+	func has_resource(resource: String, count: int) -> bool:
+		if self.stats.resources.has(resource):
+			var res: Stats.ResourceStatus = self.stats.resources[resource]
+			return res.current_resource >= count
+		return false
+
+	func modify_incoming_damage(player: PlayerCharacter, incoming_damage: int) -> int:
+		return class_handler._modify_incoming_damage(self, player, incoming_damage)
+
+	func use_resource(resource: String, count: int) -> bool:
+		if self.stats.resources.has(resource):
+			var res: Stats.ResourceStatus = self.stats.resources[resource]
+			if res.current_resource >= count:
+				res.current_resource -= count
+				return true
 		return false
 
 

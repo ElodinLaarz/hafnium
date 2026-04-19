@@ -17,7 +17,7 @@ func test_battle_hardened_counter_progression_and_reset() -> void:
 
 	var applied_hits: Array[int] = []
 	for _i: int in range(7):
-		applied_hits.append(player.apply_battle_hardened(5))
+		applied_hits.append(barbarian_class.modify_incoming_damage(player, 5))
 
 	assert_eq(
 		applied_hits,
@@ -33,9 +33,15 @@ func test_battle_hardened_does_not_modify_non_barbarian_damage() -> void:
 	player.player_class = wizard_class
 	player.stats = wizard_class.stats
 
-	assert_eq(player.apply_battle_hardened(5), 5, "Non-Barbarian classes should not reduce damage")
 	assert_eq(
-		player.battle_hardened_counter, 0, "Counter should not change for non-Barbarian classes"
+		wizard_class.modify_incoming_damage(player, 5),
+		5,
+		"Non-Barbarian classes should not reduce damage"
+	)
+	assert_eq(
+		wizard_class.battle_hardened_counter,
+		0,
+		"Counter should not change for non-Barbarian classes",
 	)
 
 

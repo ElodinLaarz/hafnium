@@ -9,3 +9,4 @@ id = "weapon:barbarian_swing"
 display_name = "Barbarian Swing"
 projectile_scene = ExtResource("2")
 damage_type = 4
+knockback_force = 180.0

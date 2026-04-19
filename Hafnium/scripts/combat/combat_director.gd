@@ -4,7 +4,6 @@ extends Node
 const BOMB_SCENE: PackedScene = preload("res://scenes/weapons/player_bomb.tscn")
 const GameConstants = preload("res://scripts/config/game_constants.gd")
 const ZERO_SPEED_PROJECTILE_TTL: float = 0.1
-const BARBARIAN_KNOCKBACK_FORCE: float = 180.0
 
 var run_context: RunContext
 
@@ -82,8 +81,8 @@ func fire_attack(player: PlayerCharacter, angle: float) -> bool:
 		resolved_element = run_context.training_damage_type_override
 	projectile.element = resolved_element
 	var payload_metadata: Dictionary = {"is_crit": is_crit}
-	if _is_barbarian(player):
-		payload_metadata["knockback_force"] = BARBARIAN_KNOCKBACK_FORCE
+	if projectile_data != null and projectile_data.knockback_force > 0.0:
+		payload_metadata["knockback_force"] = projectile_data.knockback_force
 	projectile.damage_payload = Damage.typed(
 		damage_amount, resolved_element, player, player.get_team(), payload_metadata
 	)
@@ -155,14 +154,6 @@ func _calculate_ttl(stats: Stats) -> float:
 		# Avoid division by zero while still allowing melee-style placeholder projectiles.
 		return ZERO_SPEED_PROJECTILE_TTL * life_multiplier
 	return (stats.attack_range / stats.projectile_speed) * life_multiplier
-
-
-func _is_barbarian(player: PlayerCharacter) -> bool:
-	return (
-		player != null
-		and player.player_class != null
-		and player.player_class.name == ClassHandler.ClassName.BARBARIAN
-	)
 
 
 func _apply_knockback(target: BaseCharacter, projectile: Projectile, damage: Damage) -> void:
