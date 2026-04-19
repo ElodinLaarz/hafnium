@@ -305,20 +305,24 @@ func _primary_attack_with_mana_cost(pc: PlayerClass, mana_cost: int) -> bool:
 
 
 ## Blood Mana (Wizard): max mana increases as current health falls; current is clamped.
-func recompute_wizard_blood_mana(pc: PlayerClass) -> void:
+func recompute_wizard_blood_mana(pc: PlayerClass, extra_base_mana_max: int = 0) -> void:
 	if pc == null or pc.name != ClassName.WIZARD or pc.definition == null:
 		return
 	var def: CharacterData = pc.definition
-	if def.blood_mana_bonus_pool <= 0 or def.mana_max <= 0:
-		return
 	var mana_res: Stats.ResourceStatus = pc.stats.resources.get(GameConstants.RESOURCE_MANA)
 	if mana_res == null:
 		return
-	var max_h: int = maxi(pc.stats.max_health, 1)
-	var missing: int = maxi(0, pc.stats.max_health - pc.stats.current_health)
-	var missing_ratio: float = float(missing) / float(max_h)
-	var bonus: int = int(round(missing_ratio * float(def.blood_mana_bonus_pool)))
-	var new_max: int = def.mana_max + bonus
+	if def.mana_max <= 0 and extra_base_mana_max <= 0:
+		return
+
+	var blood_bonus: int = 0
+	if def.blood_mana_bonus_pool > 0:
+		var max_h: int = maxi(pc.stats.max_health, 1)
+		var missing: int = maxi(0, pc.stats.max_health - pc.stats.current_health)
+		var missing_ratio: float = float(missing) / float(max_h)
+		blood_bonus = int(round(missing_ratio * float(def.blood_mana_bonus_pool)))
+
+	var new_max: int = def.mana_max + extra_base_mana_max + blood_bonus
 	if new_max < 0:
 		new_max = 0
 	var old_max: int = mana_res.max_resource

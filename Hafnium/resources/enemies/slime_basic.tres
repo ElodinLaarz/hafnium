@@ -14,4 +14,5 @@ damage = 1
 speed = 90
 attack_speed = 2.0
 attack_range = 1
+experience_reward = 45
 loot_table = ExtResource("3")

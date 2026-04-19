@@ -53,7 +53,12 @@ func fire_attack(player: PlayerCharacter, angle: float) -> bool:
 
 	var stats: Stats = player.player_class.stats
 	var feel_tuning: FeelTuningProfile = Common.get_feel_tuning()
+	var luck_points: int = 0
+	if player.progression != null:
+		luck_points = player.progression.get_attribute(PlayerProgression.Attribute.LUCK)
+	var luck_crit_bonus: float = float(luck_points) * 0.015
 	var crit_chance: float = feel_tuning.crit_chance if feel_tuning != null else 0.0
+	crit_chance = clampf(crit_chance + luck_crit_bonus, 0.0, 0.85)
 	var crit_damage_multiplier: float = (
 		feel_tuning.crit_damage_multiplier if feel_tuning != null else 2.0
 	)

@@ -2,6 +2,7 @@ class_name PlayerCharacter
 extends "res://scripts/base_character.gd"
 
 const GameConstants = preload("res://scripts/config/game_constants.gd")
+const AttributeBonusService = preload("res://scripts/progression/attribute_bonus_service.gd")
 const PLAYER_INVINCIBILITY_DURATION: float = 1.5
 const RUN_TO_WALK_THRESHOLD_FACTOR: float = 0.5
 
@@ -18,6 +19,12 @@ var bomb_count: int = 0
 var bomb_max: int = 3
 var currency: int = 0
 var feel_tuning: FeelTuningProfile
+var progression: PlayerProgression = PlayerProgression.new()
+var _baseline_max_health: int = 0
+var _baseline_damage: int = 0
+var _baseline_speed: int = 0
+var _baseline_attack_speed: float = 1.0
+var _baseline_mana_max: int = 0
 var _attack_buffer_timer: float = 0.0
 var _attack_move_slow_timer: float = 0.0
 
@@ -70,6 +77,13 @@ func load_player_data(player_name: String) -> bool:
 			movement.running_speed = int(movement.walking_speed * movement.running_multiplier)
 			movement.run_to_walk_threshold = movement.walking_speed * RUN_TO_WALK_THRESHOLD_FACTOR
 		_apply_feel_tuning()
+		if player_class.definition != null:
+			_baseline_max_health = player_class.definition.max_health
+			_baseline_damage = player_class.definition.damage
+			_baseline_speed = movement.walking_speed
+			_baseline_attack_speed = player_class.definition.attack_speed
+			_baseline_mana_max = player_class.definition.mana_max
+		AttributeBonusService.apply(self)
 		return true
 	return false
 
@@ -163,6 +177,16 @@ func enemy_attack(e: Enemy) -> void:
 	take_damage(e.stats.damage)
 
 
+func grant_experience(amount: int) -> void:
+	if amount <= 0:
+		return
+	var levels_gained: int = progression.add_xp(amount)
+	if levels_gained <= 0 or run_context == null:
+		return
+	for _i: int in range(levels_gained):
+		run_context.enqueue_level_up_choice(self)
+
+
 func add_currency(c: int) -> void:
 	currency += c
 	if run_context != null:
@@ -219,3 +243,7 @@ func _apply_feel_tuning() -> void:
 	if feel_tuning == null:
 		return
 	movement.apply_tuning(feel_tuning)
+	if player_class != null and player_class.definition != null:
+		_baseline_speed = movement.walking_speed
+	if _baseline_max_health > 0:
+		AttributeBonusService.apply(self)
