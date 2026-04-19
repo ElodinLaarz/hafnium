@@ -1,6 +1,8 @@
 class_name LevelUpOverlay
 extends CanvasLayer
 
+const LevelUpTooltipBuilder = preload("res://scripts/interface/level_up_tooltip_builder.gd")
+
 var _run_context: RunContext
 var _choices_box: VBoxContainer
 
@@ -23,8 +25,9 @@ func _on_level_up_choice_required(player: PlayerCharacter, choices: Array[int]) 
 		child.queue_free()
 	for attr_int: int in choices:
 		var attribute: PlayerProgression.Attribute = attr_int as PlayerProgression.Attribute
-		var button: Button = Button.new()
+		var button: StatChoiceButton = StatChoiceButton.new()
 		button.text = "+%s" % PlayerProgression.attribute_display_name(attribute)
+		button.tooltip_text = LevelUpTooltipBuilder.build(player, attribute)
 		button.pressed.connect(_on_stat_button_pressed.bind(player, attribute))
 		_choices_box.add_child(button)
 
@@ -35,3 +38,17 @@ func _on_stat_button_pressed(
 	visible = false
 	if _run_context != null:
 		_run_context.resolve_level_up_choice(player, attribute)
+
+
+class StatChoiceButton:
+	extends Button
+
+	func _make_custom_tooltip(for_text: String) -> Control:
+		var rtl: RichTextLabel = RichTextLabel.new()
+		rtl.bbcode_enabled = true
+		rtl.fit_content = true
+		rtl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		rtl.scroll_active = false
+		rtl.custom_minimum_size = Vector2(280, 0)
+		rtl.text = for_text
+		return rtl
