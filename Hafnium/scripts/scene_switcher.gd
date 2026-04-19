@@ -131,13 +131,19 @@ func _bootstrap_default_run() -> bool:
 
 func restart_after_player_death() -> void:
 	Common.set_run_context(null)
-	if _active_level_root != null:
-		_active_level_root.queue_free()
-		_active_level_root = null
-	if active_run_context != null:
-		active_run_context.queue_free()
-		active_run_context = null
-	call_deferred("_continue_restart_after_player_death")
+	var old_level_root: Node = _active_level_root
+	var old_run_context: Node = active_run_context
+	_active_level_root = null
+	active_run_context = null
+	if old_level_root != null:
+		old_level_root.queue_free()
+	if old_run_context != null:
+		old_run_context.queue_free()
+	if is_instance_valid(old_level_root) and old_level_root.is_inside_tree():
+		await old_level_root.tree_exited
+	if is_instance_valid(old_run_context) and old_run_context.is_inside_tree():
+		await old_run_context.tree_exited
+	_continue_restart_after_player_death()
 
 
 func _continue_restart_after_player_death() -> void:

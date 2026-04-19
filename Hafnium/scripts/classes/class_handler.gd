@@ -66,18 +66,20 @@ func rect(row: int, col: int) -> Rect2i:
 
 
 func heart_texture(texture_rect: TextureRect, heart_name: HeartName) -> AtlasTexture:
-	# Always assign a fresh AtlasTexture so instances never share one region (fixes all hearts
-	# updating together when SubResource atlases were linked).
+	# One AtlasTexture per TextureRect; only update region when the heart sprite changes so HUD
+	# updates do not allocate every frame.
 	var source: Texture2D = texture_rect.texture
 	var atlas_image: Texture2D
 	if source is AtlasTexture:
-		atlas_image = source.atlas
+		atlas_image = (source as AtlasTexture).atlas
 	else:
 		atlas_image = source
-	var at: AtlasTexture = AtlasTexture.new()
-	at.atlas = atlas_image
+	var at: AtlasTexture = texture_rect.texture as AtlasTexture
+	if at == null or at.atlas != atlas_image:
+		at = AtlasTexture.new()
+		at.atlas = atlas_image
+		texture_rect.texture = at
 	at.region = named_heart_lookup[heart_name]
-	texture_rect.texture = at
 	return at
 
 
@@ -224,22 +226,6 @@ func setup_from_data(pc: PlayerClass, data: CharacterData) -> bool:
 	return true
 
 
-func setup_heart_drawing(pc: PlayerClass, cn: ClassName) -> bool:
-	match cn:
-		ClassName.BARBARIAN:
-			pc.heart_drawing_logic = barbarian_heart_drawing_logic
-		ClassName.DRUID:
-			pc.heart_drawing_logic = druid_heart_drawing_logic
-		ClassName.WIZARD:
-			pc.heart_drawing_logic = wizard_heart_drawing_logic
-		_:
-			print("Unexpected class: ", cn)
-			print("Default heart drawing logic will be used.")
-			pc.heart_drawing_logic = default_hearts
-			return false
-	return true
-
-
 func setup_heart_drawing_from_style(pc: PlayerClass, heart_style: String) -> bool:
 	match heart_style:
 		GameConstants.HEART_STYLE_BARBARIAN:
@@ -254,22 +240,6 @@ func setup_heart_drawing_from_style(pc: PlayerClass, heart_style: String) -> boo
 			print("Unexpected heart style: ", heart_style)
 			pc.heart_drawing_logic = default_hearts
 			return false
-	return true
-
-
-func setup_hp(pc: PlayerClass, cn: ClassName) -> bool:
-	match cn:
-		ClassName.BARBARIAN:
-			pc.stats.health_to_damage_multiplier = 4
-			pc.stats.max_health = 12
-		ClassName.DRUID:
-			pc.stats.max_health = 6
-		ClassName.WIZARD:
-			pc.stats.max_health = 4
-		_:
-			# Unmatched class
-			return false
-	pc.stats.current_health = pc.stats.max_health
 	return true
 
 
@@ -368,69 +338,6 @@ func _modify_incoming_damage(pc: PlayerClass, player: PlayerCharacter, incoming_
 		return 0
 	pc.battle_hardened_counter += 1
 	return reduced_damage
-
-
-func setup_attack(pc: PlayerClass, cn: ClassName) -> bool:
-	if !setup_damage(pc, cn):
-		print("trouble setting up damage for %s" % cn)
-		return false
-
-	pc.attack_projectile_path = get_attack_projectile_path(cn)
-
-	match cn:
-		ClassName.WIZARD:
-			pc.attack_logic = func(_pc: PlayerClass) -> bool: return false
-		ClassName.BARBARIAN, ClassName.DRUID:
-			# TODO: Implement specific attack logic for these classes
-			pc.attack_logic = func(_pc: PlayerClass) -> bool: return false
-		_:
-			# Unmatched class
-			return false
-	return true
-
-
-func setup_damage(pc: PlayerClass, cn: ClassName) -> bool:
-	match cn:
-		ClassName.BARBARIAN:
-			pc.stats.damage = 3
-			pc.stats.attack_range = 0
-			pc.stats.attack_speed = 1
-		ClassName.DRUID:
-			pc.stats.damage = 2
-			pc.stats.attack_range = 1
-			pc.stats.attack_speed = 1.2
-			pc.stats.projectile_speed = 50
-		ClassName.WIZARD:
-			pc.stats.damage = 1
-			pc.stats.attack_range = 90
-			pc.stats.attack_speed = 0.8
-			pc.stats.projectile_speed = 180
-		_:
-			# Unmatched class
-			return false
-	return true
-
-
-func setup_class_resources(pc: PlayerClass, cn: ClassName) -> bool:
-	match cn:
-		ClassName.BARBARIAN:
-			pc.stats.resources[GameConstants.RESOURCE_BOMB] = Stats.ResourceStatus.new(
-				Stats.ClassResource.BOMB, 3, 0
-			)
-		ClassName.DRUID:
-			pc.stats.resources[GameConstants.RESOURCE_BOMB] = Stats.ResourceStatus.new(
-				Stats.ClassResource.BOMB, 2, 0
-			)
-		ClassName.WIZARD:
-			pc.stats.resources[GameConstants.RESOURCE_BOMB] = Stats.ResourceStatus.new(
-				Stats.ClassResource.BOMB, 1, 0
-			)
-			pc.stats.resources[GameConstants.RESOURCE_MANA] = Stats.ResourceStatus.new(
-				Stats.ClassResource.MANA, 4, 0
-			)
-		_:
-			return false
-	return true
 
 
 class PlayerClass:

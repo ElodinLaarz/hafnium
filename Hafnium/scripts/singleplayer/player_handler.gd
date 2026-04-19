@@ -132,8 +132,11 @@ func _on_hitbox_body_exited(body: Node) -> void:
 
 func die() -> void:
 	super.die()
-	var scene_root: Node = get_tree().current_scene
-	if scene_root != null and scene_root.has_method("restart_after_player_death"):
+	var tree := get_tree()
+	if tree == null or tree.current_scene == null:
+		return
+	var scene_root: Node = tree.current_scene
+	if scene_root.has_method("restart_after_player_death"):
 		scene_root.call_deferred("restart_after_player_death")
 
 
