@@ -1,6 +1,8 @@
 extends GutTest
 
 const CLASS_HANDLER_SCRIPT = preload("res://scripts/classes/class_handler.gd")
+const GameConstants = preload("res://scripts/config/game_constants.gd")
+const HEARTS_ATLAS = preload("res://sprites/aseprite_files/random/Hearts.png")
 
 # test_class_handler.gd
 # Tests for Hafnium/scripts/classes/class_handler.gd (class_name ClassHandler)
@@ -91,3 +93,63 @@ func test_build_attack_logic_rejects_unresolved_projectile_id() -> void:
 		attack.call(pc),
 		"Attack should fail when projectile id does not resolve in ContentRegistry",
 	)
+
+
+func test_build_attack_logic_uses_mana_cost_from_character_data_snapshot() -> void:
+	var ch: ClassHandler = CLASS_HANDLER_SCRIPT.new()
+	var data: CharacterData = CharacterData.new()
+	data.attack_projectile_id = "weapon:fireball"
+	data.primary_spell_mana_cost = 2
+	var attack: Callable = ch.build_attack_logic(data)
+	var pc: ClassHandler.PlayerClass = ch.create_class(ClassHandler.ClassName.WIZARD)
+	pc.attack_logic = attack
+	pc.stats.resources["mana"].current_resource = 4
+	assert_true(pc.attack(), "Mana-gated attack should succeed")
+	assert_eq(
+		pc.stats.resources["mana"].current_resource,
+		2,
+		"Callable should spend mana from build-time CharacterData, not pc.definition",
+	)
+
+
+func test_wizard_partial_health_empty_mana_slots_start_at_first_fully_empty_heart() -> void:
+	var ch: ClassHandler = CLASS_HANDLER_SCRIPT.new()
+	var stats: Stats = Stats.new()
+	stats.max_health = 4
+	stats.current_health = 1
+	stats.health_to_damage_multiplier = 2
+	stats.resources[GameConstants.RESOURCE_MANA] = Stats.ResourceStatus.new(
+		Stats.ClassResource.MANA, 4, 0.0
+	)
+	stats.resources[GameConstants.RESOURCE_MANA].current_resource = 2
+
+	var container: Node = Node.new()
+	var shared_atlas: AtlasTexture = AtlasTexture.new()
+	shared_atlas.atlas = HEARTS_ATLAS
+	shared_atlas.region = Rect2i(0, 0, 16, 16)
+	for _i in 2:
+		var heart: TextureRect = TextureRect.new()
+		heart.texture = shared_atlas
+		container.add_child(heart)
+
+	ch.wizard_heart_drawing_logic(stats, container)
+
+	var expected: Rect2i = ch.named_heart_lookup[ClassHandler.HeartName.WIZARD_FULL_MANA]
+	var second: TextureRect = container.get_child(1) as TextureRect
+	assert_true(second.texture is AtlasTexture)
+	assert_eq((second.texture as AtlasTexture).region, Rect2(expected))
+
+
+func test_heart_texture_unique_atlas_per_rect_when_scene_subresource_shared() -> void:
+	var ch: ClassHandler = CLASS_HANDLER_SCRIPT.new()
+	var shared: AtlasTexture = AtlasTexture.new()
+	shared.atlas = HEARTS_ATLAS
+	shared.region = Rect2i(0, 0, 16, 16)
+	var a: TextureRect = TextureRect.new()
+	var b: TextureRect = TextureRect.new()
+	a.texture = shared
+	b.texture = shared
+	ch.heart_texture(a, ClassHandler.HeartName.EMPTY)
+	ch.heart_texture(b, ClassHandler.HeartName.WIZARD_FULL)
+	assert_ne(a.texture, b.texture)
+	assert_ne((a.texture as AtlasTexture).region, (b.texture as AtlasTexture).region)

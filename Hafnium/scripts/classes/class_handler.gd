@@ -22,6 +22,8 @@ enum HeartName {
 
 const GameConstants = preload("res://scripts/config/game_constants.gd")
 const HEART_ATLAS_TILE_SIZE: int = 16
+## Set on each heart TextureRect once we replace a shared scene SubResource with a unique atlas.
+const HEART_UNIQUE_ATLAS_META: StringName = &"_class_handler_heart_unique_atlas"
 
 const CHARACTER_IDS_BY_ENUM: Dictionary = {
 	ClassName.BARBARIAN: GameConstants.CLASS_ID_BARBARIAN,
@@ -66,8 +68,9 @@ func rect(row: int, col: int) -> Rect2i:
 
 
 func heart_texture(texture_rect: TextureRect, heart_name: HeartName) -> AtlasTexture:
-	# One AtlasTexture per TextureRect; only update region when the heart sprite changes so HUD
-	# updates do not allocate every frame.
+	# Each TextureRect must own its AtlasTexture (scene SubResources can be shared; mutating
+	# region would affect every heart). First draw duplicates the scene atlas or builds one;
+	# later draws only update region on the unique resource.
 	var source: Texture2D = texture_rect.texture
 	var atlas_image: Texture2D
 	if source is AtlasTexture:
@@ -75,10 +78,19 @@ func heart_texture(texture_rect: TextureRect, heart_name: HeartName) -> AtlasTex
 	else:
 		atlas_image = source
 	var at: AtlasTexture = texture_rect.texture as AtlasTexture
-	if at == null or at.atlas != atlas_image:
-		at = AtlasTexture.new()
-		at.atlas = atlas_image
+	if texture_rect.has_meta(HEART_UNIQUE_ATLAS_META):
+		if at == null or at.atlas != atlas_image:
+			at = AtlasTexture.new()
+			at.atlas = atlas_image
+			texture_rect.texture = at
+	else:
+		if source is AtlasTexture:
+			at = (source as AtlasTexture).duplicate() as AtlasTexture
+		else:
+			at = AtlasTexture.new()
+			at.atlas = atlas_image
 		texture_rect.texture = at
+		texture_rect.set_meta(HEART_UNIQUE_ATLAS_META, true)
 	at.region = named_heart_lookup[heart_name]
 	return at
 
@@ -157,6 +169,8 @@ func wizard_heart_drawing_logic(stats: Stats, heart_container: Node) -> void:
 		return
 	var full_heart_count: int = stats.current_health / mult
 	var partial_heart: int = stats.current_health % mult
+	# When a slot shows partial HP, it is not an "empty" mana vessel; shift mana slot index down.
+	var empty_mana_origin: int = full_heart_count + (1 if partial_heart > 0 else 0)
 
 	# Placeholder for mana logic: in the future, empty hearts should
 	# show mana based on stats.resources["mana"]
@@ -180,7 +194,7 @@ func wizard_heart_drawing_logic(stats: Stats, heart_container: Node) -> void:
 				current_heart.texture = heart_texture(current_heart, HeartName.RED_HALF)
 		else:
 			# Fully empty heart slot: fill with mana progressively.
-			var slot: int = i - full_heart_count
+			var slot: int = i - empty_mana_origin
 			if mana >= (slot + 1) * mult:
 				current_heart.texture = heart_texture(current_heart, HeartName.WIZARD_FULL_MANA)
 			elif mana >= slot * mult + 1:
@@ -271,7 +285,8 @@ func build_attack_logic(data: CharacterData) -> Callable:
 	if get_projectile_path_from_definition(data).is_empty():
 		return func(_pc: PlayerClass) -> bool: return false
 	if data.primary_spell_mana_cost > 0:
-		return func(pc: PlayerClass) -> bool: return _primary_attack_with_mana_cost(pc)
+		var mana_cost: int = data.primary_spell_mana_cost
+		return func(pc: PlayerClass) -> bool: return _primary_attack_with_mana_cost(pc, mana_cost)
 	return func(pc: PlayerClass) -> bool:
 		if pc.stats.attack_cooldown > 0:
 			return false
@@ -279,14 +294,11 @@ func build_attack_logic(data: CharacterData) -> Callable:
 		return true
 
 
-func _primary_attack_with_mana_cost(pc: PlayerClass) -> bool:
+func _primary_attack_with_mana_cost(pc: PlayerClass, mana_cost: int) -> bool:
 	if pc.stats.attack_cooldown > 0:
 		return false
-	var cost: int = 0
-	if pc.definition != null:
-		cost = pc.definition.primary_spell_mana_cost
-	if cost > 0:
-		if not pc.use_resource(GameConstants.RESOURCE_MANA, cost):
+	if mana_cost > 0:
+		if not pc.use_resource(GameConstants.RESOURCE_MANA, mana_cost):
 			return false
 	pc.stats.attack_cooldown = pc.stats.attack_speed
 	return true
