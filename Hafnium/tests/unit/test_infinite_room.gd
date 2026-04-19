@@ -24,7 +24,7 @@ func after_each() -> void:
 
 
 func test_room_size_scales_with_room_index() -> void:
-	var room = INFINITE_ROOM_SCRIPT.new()
+	var room: InfiniteRoom = INFINITE_ROOM_SCRIPT.new()
 	room.room_scale_tiles = 10
 	room.tile_size = 16
 
@@ -33,7 +33,7 @@ func test_room_size_scales_with_room_index() -> void:
 
 
 func test_spawn_positions_match_room_index_and_stay_inside_room() -> void:
-	var room = INFINITE_ROOM_SCRIPT.new()
+	var room: InfiniteRoom = INFINITE_ROOM_SCRIPT.new()
 	room.room_scale_tiles = 12
 	room.tile_size = 16
 	room.spawn_margin = 48.0
@@ -50,7 +50,7 @@ func test_spawn_positions_match_room_index_and_stay_inside_room() -> void:
 
 
 func test_spawn_positions_stay_inside_small_rooms_with_large_spawn_margin() -> void:
-	var room = INFINITE_ROOM_SCRIPT.new()
+	var room: InfiniteRoom = INFINITE_ROOM_SCRIPT.new()
 	room.room_scale_tiles = 1
 	room.tile_size = 16
 	room.spawn_margin = 20.0
@@ -71,7 +71,7 @@ func test_spawn_positions_stay_inside_small_rooms_with_large_spawn_margin() -> v
 
 
 func test_failed_enemy_spawns_schedule_room_advance() -> void:
-	var room = INFINITE_ROOM_SCRIPT.new()
+	var room: InfiniteRoom = INFINITE_ROOM_SCRIPT.new()
 	var mock_run_context: MockFailedRunContext = MockFailedRunContext.new()
 	Common.run_context = mock_run_context
 
@@ -85,7 +85,7 @@ func test_failed_enemy_spawns_schedule_room_advance() -> void:
 
 
 func test_enemy_defeated_only_counts_active_wave_members() -> void:
-	var room = INFINITE_ROOM_SCRIPT.new()
+	var room: InfiniteRoom = INFINITE_ROOM_SCRIPT.new()
 	var tracked_enemy: Enemy = Enemy.new()
 	var stale_enemy: Enemy = Enemy.new()
 
