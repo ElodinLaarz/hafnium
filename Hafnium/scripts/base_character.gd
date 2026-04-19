@@ -68,7 +68,11 @@ func take_damage(d: int) -> bool:
 		)
 		return false
 
-	if _animated_sprite:
+	if (
+		_animated_sprite != null
+		and _animated_sprite.sprite_frames != null
+		and _animated_sprite.sprite_frames.has_animation("invincibility_frames")
+	):
 		_animated_sprite.play("invincibility_frames")
 
 	var is_dead: bool = stats.take_damage(d)
