@@ -9,6 +9,7 @@ signal health_changed(current_health: int, max_health: int)
 signal resource_changed(resource_name: String, current_value: int, max_value: int)
 signal currency_changed(current_currency: int)
 signal enemy_defeated(enemy: Enemy)
+signal level_up_choice_required(player: PlayerCharacter, choices: Array[int])
 signal camera_shake_requested(intensity: float, duration: float)
 signal training_damage_type_override_changed(active: bool, element: Damage.DamageType)
 
@@ -17,7 +18,9 @@ const SpawnDirectorScript = preload("res://scripts/run/spawn_director.gd")
 const LootDirectorScript = preload("res://scripts/run/loot_director.gd")
 const RoomDirectorScript = preload("res://scripts/rooms/room_director.gd")
 const LootDropDataScript = preload("res://scripts/resources/loot_drop_data.gd")
+const AttributeBonusService = preload("res://scripts/progression/attribute_bonus_service.gd")
 const GameConstants = preload("res://scripts/config/game_constants.gd")
+const LevelUpOverlayScene: PackedScene = preload("res://scenes/interface/level_up_overlay.tscn")
 const FloatingDamageNumberScene: PackedScene = preload(
 	"res://scenes/combat/floating_damage_number.tscn"
 )
@@ -40,6 +43,7 @@ var spawn_director: SpawnDirector = SpawnDirectorScript.new()
 var loot_director: LootDirector = LootDirectorScript.new()
 var room_director: RoomDirector = RoomDirectorScript.new()
 var _hit_stop_remaining: float = 0.0
+var _level_up_choice_queue: Array[PlayerCharacter] = []
 
 
 func _ready() -> void:
@@ -52,6 +56,13 @@ func _ready() -> void:
 	combat_director.configure(self)
 	spawn_director.configure(self)
 	loot_director.configure(self)
+
+	# LevelUpOverlayScene is preloaded, so any failure is a parse/load error rather
+	# than a runtime nil — no null-guard is meaningful here.
+	var level_overlay: Node = LevelUpOverlayScene.instantiate()
+	add_child(level_overlay)
+	if level_overlay.has_method(&"configure"):
+		level_overlay.configure(self)
 
 
 func _process(delta: float) -> void:
@@ -186,10 +197,81 @@ func apply_hit_stop(duration: float, time_scale: float) -> void:
 	Engine.time_scale = min(Engine.time_scale, clamped_time_scale)
 
 
+func enqueue_level_up_choice(player: PlayerCharacter) -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	_level_up_choice_queue.append(player)
+	if _level_up_choice_queue.size() == 1:
+		_set_level_up_choice_paused(true)
+		_emit_next_level_up_choice()
+
+
+func resolve_level_up_choice(
+	player: PlayerCharacter, attribute: PlayerProgression.Attribute
+) -> void:
+	_prune_invalid_level_up_choice_queue_head()
+	if player == null or not is_instance_valid(player) or player.progression == null:
+		if _level_up_choice_queue.is_empty():
+			_set_level_up_choice_paused(false)
+		else:
+			_emit_next_level_up_choice()
+		return
+	if _level_up_choice_queue.is_empty() or _level_up_choice_queue[0] != player:
+		return
+	player.progression.increment_attribute(attribute)
+	AttributeBonusService.apply(player)
+	_level_up_choice_queue.pop_front()
+	_prune_invalid_level_up_choice_queue_head()
+	if _level_up_choice_queue.is_empty():
+		_set_level_up_choice_paused(false)
+	else:
+		_emit_next_level_up_choice()
+
+
+func _emit_next_level_up_choice() -> void:
+	while not _level_up_choice_queue.is_empty():
+		var player: PlayerCharacter = _level_up_choice_queue[0]
+		if player == null or not is_instance_valid(player):
+			_level_up_choice_queue.pop_front()
+			continue
+		var choices: Array[int] = PlayerProgression.pick_random_attributes(
+			GameConstants.LEVEL_UP_CHOICE_COUNT
+		)
+		level_up_choice_required.emit(player, choices)
+		return
+	# Queue was drained of invalid entries without emitting; unpause so gameplay
+	# does not stay frozen waiting on a choice that can never be made.
+	_set_level_up_choice_paused(false)
+
+
+func _prune_invalid_level_up_choice_queue_head() -> void:
+	while not _level_up_choice_queue.is_empty():
+		var queued_player: PlayerCharacter = _level_up_choice_queue[0]
+		if queued_player != null and is_instance_valid(queued_player):
+			return
+		_level_up_choice_queue.pop_front()
+
+
+func _set_level_up_choice_paused(paused: bool) -> void:
+	var tree: SceneTree = get_tree()
+	if tree != null:
+		tree.paused = paused
+
+
 func handle_enemy_defeated(enemy: Enemy) -> void:
 	if enemy == null:
 		return
 	enemy_defeated.emit(enemy)
+	var xp_amount: int = 0
+	if enemy.definition != null:
+		xp_amount = enemy.definition.experience_reward
+	# Iterate in reverse so removing freed players does not skip entries.
+	for i: int in range(active_players.size() - 1, -1, -1):
+		var p: PlayerCharacter = active_players[i]
+		if p == null or not is_instance_valid(p):
+			active_players.remove_at(i)
+			continue
+		p.grant_experience(xp_amount)
 	var reward_details: Array = enemy.drop_reward()
 	if reward_details.size() >= 2 and reward_details[0] != null:
 		var drop: LootDropData = LootDropDataScript.new()

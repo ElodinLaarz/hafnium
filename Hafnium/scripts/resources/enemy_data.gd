@@ -9,6 +9,7 @@ extends Resource
 @export var speed: int = 50
 @export var attack_speed: float = 1.0
 @export var attack_range: int = 1
+@export var experience_reward: int = 10
 @export var loot_table: Resource
 
 

@@ -1,5 +1,6 @@
 extends GutTest
 
+const PLAYER_HANDLER_SCRIPT = preload("res://scripts/singleplayer/player_handler.gd")
 const RUN_CONTEXT_SCRIPT = preload("res://scripts/run/run_context.gd")
 
 
@@ -65,3 +66,77 @@ func test_spawn_damage_number_sets_global_position_after_parenting() -> void:
 	var marker: Node2D = spawned as Node2D
 	assert_almost_eq(marker.global_position.x, target_global.x, 0.05)
 	assert_almost_eq(marker.global_position.y, target_global.y, 0.05)
+
+
+func test_level_up_first_enqueue_pauses_tree_and_emits_choice() -> void:
+	var run_context: RunContext = RUN_CONTEXT_SCRIPT.new()
+	add_child_autofree(run_context)
+	await wait_physics_frames(1)
+
+	var emitted: Array = []
+	run_context.level_up_choice_required.connect(
+		func(_p: PlayerCharacter, choices: Array[int]) -> void: emitted.append(choices)
+	)
+
+	var tree: SceneTree = run_context.get_tree()
+	tree.paused = false
+	var player: PlayerCharacter = PLAYER_HANDLER_SCRIPT.new()
+	assert_true(player.progression != null)
+
+	run_context.enqueue_level_up_choice(player)
+	assert_true(tree.paused, "First level-up choice should pause the scene tree")
+	assert_eq(emitted.size(), 1, "Overlay flow should emit attribute choices once")
+	assert_eq(
+		emitted[0].size(),
+		3,
+		"Level-up choices should match GameConstants.LEVEL_UP_CHOICE_COUNT",
+	)
+
+
+func test_level_up_resolve_unpauses_when_queue_empty() -> void:
+	var run_context: RunContext = RUN_CONTEXT_SCRIPT.new()
+	add_child_autofree(run_context)
+	await wait_physics_frames(1)
+
+	var tree: SceneTree = run_context.get_tree()
+	tree.paused = false
+	var player: PlayerCharacter = PLAYER_HANDLER_SCRIPT.new()
+
+	run_context.enqueue_level_up_choice(player)
+	assert_true(tree.paused)
+
+	run_context.resolve_level_up_choice(player, PlayerProgression.Attribute.CONSTITUTION)
+	assert_false(tree.paused, "Resolving the only queued choice should unpause the tree")
+
+
+func test_level_up_queue_stays_paused_until_last_resolve() -> void:
+	var run_context: RunContext = RUN_CONTEXT_SCRIPT.new()
+	add_child_autofree(run_context)
+	await wait_physics_frames(1)
+
+	var tree: SceneTree = run_context.get_tree()
+	tree.paused = false
+	var p1: PlayerCharacter = PLAYER_HANDLER_SCRIPT.new()
+	var p2: PlayerCharacter = PLAYER_HANDLER_SCRIPT.new()
+
+	run_context.enqueue_level_up_choice(p1)
+	run_context.enqueue_level_up_choice(p2)
+	assert_true(tree.paused)
+
+	run_context.resolve_level_up_choice(p1, PlayerProgression.Attribute.DEXTERITY)
+	assert_true(
+		tree.paused,
+		"Second player still has a pending choice; tree should remain paused",
+	)
+
+	run_context.resolve_level_up_choice(p2, PlayerProgression.Attribute.MAGIC)
+	assert_false(tree.paused)
+
+
+func test_pick_random_attributes_seeded_rng_is_deterministic() -> void:
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.seed = 999
+	var first: Array[int] = PlayerProgression.pick_random_attributes(3, rng)
+	rng.seed = 999
+	var replay: Array[int] = PlayerProgression.pick_random_attributes(3, rng)
+	assert_eq(first, replay)

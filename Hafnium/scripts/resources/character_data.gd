@@ -31,8 +31,17 @@ const GameConstants = preload("res://scripts/config/game_constants.gd")
 @export var mana_recovery_rate: float = 0.0
 ## Wizard — extra mana capacity when injured (linear from full HP to empty).
 @export var blood_mana_bonus_pool: int = 0
-## Mana spent per primary spell cast when > 0 (Wizard); 0 means no mana gate on primary.
+## Legacy — primary attacks do not consume mana; use secondary spell mana instead.
 @export var primary_spell_mana_cost: int = 0
+
+@export_group("Secondary attack (right-click)")
+@export var secondary_attack_projectile_id: String = ""
+@export var secondary_attack_projectile_scene: PackedScene
+## If > 0 and the secondary projectile resolves, right-click attempts the spell (mana/cooldown);
+## if it cannot cast, input falls back to placing a bomb.
+@export var secondary_spell_mana_cost: int = 0
+## Relative to primary attack damage; use 0 for utility spells that should deal no damage.
+@export var secondary_damage_multiplier: float = 2.5
 
 
 func apply_to_stats(stats: Stats) -> void:

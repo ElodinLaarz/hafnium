@@ -15,8 +15,12 @@ func _ready() -> void:
 
 
 func dequeue_children(parent: Node) -> void:
+	# remove_child before queue_free — freed nodes stay in the tree until idle, so a
+	# `while get_child_count() > 0` + queue_free loop never terminates.
 	while parent.get_child_count() > 0:
-		parent.get_child(0).queue_free()
+		var child: Node = parent.get_child(0)
+		parent.remove_child(child)
+		child.queue_free()
 
 
 func set_num_hearts(heart_container: Node, num_hearts: int) -> void:
@@ -84,7 +88,7 @@ func _on_primary_player_changed(player: PlayerCharacter) -> void:
 func _on_health_changed(_current_health: int, _max_health: int) -> void:
 	if tracked_player == null or tracked_player.player_class == null:
 		return
-	tracked_player.player_class.draw_hearts(Common.player_heart_containers)
+	check_and_create_hearts(tracked_player)
 	_render_player_state()
 
 

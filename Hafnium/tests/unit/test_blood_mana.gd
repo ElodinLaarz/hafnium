@@ -33,20 +33,28 @@ func test_wizard_blood_mana_clamps_current_when_healing_reduces_cap() -> void:
 	assert_eq(m.current_resource, 4)
 
 
-func test_wizard_attack_consumes_mana() -> void:
+func test_wizard_secondary_spell_consumes_mana() -> void:
 	var ch: ClassHandler = CLASS_HANDLER_SCRIPT.new()
 	var pc: ClassHandler.PlayerClass = ch.create_class(ClassHandler.ClassName.WIZARD)
-	assert_true(pc.attack())
-	assert_eq(pc.stats.resources["mana"].current_resource, 3)
+	assert_true(pc.secondary_attack())
+	assert_eq(pc.stats.resources["mana"].current_resource, 2)
 	assert_gt(pc.stats.attack_cooldown, 0.0)
 
 
-func test_wizard_attack_fails_without_consuming_cooldown_when_oom() -> void:
+func test_wizard_secondary_spell_fails_when_out_of_mana_without_cooldown_dirty() -> void:
 	var ch: ClassHandler = CLASS_HANDLER_SCRIPT.new()
 	var pc: ClassHandler.PlayerClass = ch.create_class(ClassHandler.ClassName.WIZARD)
 	pc.stats.resources["mana"].current_resource = 0
-	assert_false(pc.attack())
+	assert_false(pc.secondary_attack())
 	assert_eq(pc.stats.attack_cooldown, 0.0)
+
+
+func test_wizard_primary_attack_free_when_out_of_mana() -> void:
+	var ch: ClassHandler = CLASS_HANDLER_SCRIPT.new()
+	var pc: ClassHandler.PlayerClass = ch.create_class(ClassHandler.ClassName.WIZARD)
+	pc.stats.resources["mana"].current_resource = 0
+	assert_true(pc.attack())
+	assert_eq(pc.stats.resources["mana"].current_resource, 0)
 
 
 func test_barbarian_not_affected_by_recompute_wizard_blood_mana() -> void:

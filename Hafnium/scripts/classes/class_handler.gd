@@ -234,9 +234,12 @@ func setup_from_data(pc: PlayerClass, data: CharacterData) -> bool:
 	if not setup_heart_drawing_from_style(pc, data.heart_style):
 		return false
 	pc.attack_projectile_path = get_projectile_path_from_definition(data)
+	pc.secondary_attack_projectile_path = get_secondary_projectile_path_from_definition(data)
 	# Keep a direct scene handle when present to avoid repeated `load()` during combat.
 	pc._attack_scene = data.attack_projectile_scene
+	pc._secondary_attack_scene = data.secondary_attack_projectile_scene
 	pc.attack_logic = build_attack_logic(data)
+	pc.secondary_attack_logic = build_secondary_attack_logic(data)
 	return true
 
 
@@ -277,6 +280,20 @@ func get_projectile_path_from_definition(data: CharacterData) -> String:
 	return data.attack_projectile_scene.resource_path
 
 
+func get_secondary_projectile_path_from_definition(data: CharacterData) -> String:
+	if data == null:
+		return ""
+	if not data.secondary_attack_projectile_id.is_empty():
+		var projectile_data: ProjectileData = ContentRegistry.get_projectile(
+			data.secondary_attack_projectile_id
+		)
+		if projectile_data != null and projectile_data.projectile_scene != null:
+			return projectile_data.projectile_scene.resource_path
+	if data.secondary_attack_projectile_scene == null:
+		return ""
+	return data.secondary_attack_projectile_scene.resource_path
+
+
 func build_attack_logic(data: CharacterData) -> Callable:
 	if data == null:
 		return func(_pc: PlayerClass) -> bool: return false
@@ -284,9 +301,6 @@ func build_attack_logic(data: CharacterData) -> Callable:
 		return func(_pc: PlayerClass) -> bool: return false
 	if get_projectile_path_from_definition(data).is_empty():
 		return func(_pc: PlayerClass) -> bool: return false
-	if data.primary_spell_mana_cost > 0:
-		var mana_cost: int = data.primary_spell_mana_cost
-		return func(pc: PlayerClass) -> bool: return _primary_attack_with_mana_cost(pc, mana_cost)
 	return func(pc: PlayerClass) -> bool:
 		if pc.stats.attack_cooldown > 0:
 			return false
@@ -294,31 +308,45 @@ func build_attack_logic(data: CharacterData) -> Callable:
 		return true
 
 
-func _primary_attack_with_mana_cost(pc: PlayerClass, mana_cost: int) -> bool:
+func build_secondary_attack_logic(data: CharacterData) -> Callable:
+	if data == null:
+		return func(_pc: PlayerClass) -> bool: return false
+	if data.secondary_spell_mana_cost <= 0:
+		return func(_pc: PlayerClass) -> bool: return false
+	if get_secondary_projectile_path_from_definition(data).is_empty():
+		return func(_pc: PlayerClass) -> bool: return false
+	var mana_cost: int = data.secondary_spell_mana_cost
+	return func(pc: PlayerClass) -> bool: return _secondary_spell_with_mana_cost(pc, mana_cost)
+
+
+func _secondary_spell_with_mana_cost(pc: PlayerClass, mana_cost: int) -> bool:
 	if pc.stats.attack_cooldown > 0:
 		return false
-	if mana_cost > 0:
-		if not pc.use_resource(GameConstants.RESOURCE_MANA, mana_cost):
-			return false
+	if not pc.use_resource(GameConstants.RESOURCE_MANA, mana_cost):
+		return false
 	pc.stats.attack_cooldown = pc.stats.attack_speed
 	return true
 
 
 ## Blood Mana (Wizard): max mana increases as current health falls; current is clamped.
-func recompute_wizard_blood_mana(pc: PlayerClass) -> void:
+func recompute_wizard_blood_mana(pc: PlayerClass, extra_base_mana_max: int = 0) -> void:
 	if pc == null or pc.name != ClassName.WIZARD or pc.definition == null:
 		return
 	var def: CharacterData = pc.definition
-	if def.blood_mana_bonus_pool <= 0 or def.mana_max <= 0:
-		return
 	var mana_res: Stats.ResourceStatus = pc.stats.resources.get(GameConstants.RESOURCE_MANA)
 	if mana_res == null:
 		return
-	var max_h: int = maxi(pc.stats.max_health, 1)
-	var missing: int = maxi(0, pc.stats.max_health - pc.stats.current_health)
-	var missing_ratio: float = float(missing) / float(max_h)
-	var bonus: int = int(round(missing_ratio * float(def.blood_mana_bonus_pool)))
-	var new_max: int = def.mana_max + bonus
+	if def.mana_max <= 0 and extra_base_mana_max <= 0:
+		return
+
+	var blood_bonus: int = 0
+	if def.blood_mana_bonus_pool > 0:
+		var max_h: int = maxi(pc.stats.max_health, 1)
+		var missing: int = maxi(0, pc.stats.max_health - pc.stats.current_health)
+		var missing_ratio: float = float(missing) / float(max_h)
+		blood_bonus = int(round(missing_ratio * float(def.blood_mana_bonus_pool)))
+
+	var new_max: int = def.mana_max + extra_base_mana_max + blood_bonus
 	if new_max < 0:
 		new_max = 0
 	var old_max: int = mana_res.max_resource
@@ -352,7 +380,11 @@ func _modify_incoming_damage(pc: PlayerClass, player: PlayerCharacter, incoming_
 
 class PlayerClass:
 	var attack_logic: Callable
+	var secondary_attack_logic: Callable
 	var attack_projectile_path: String = ""
+	var secondary_attack_projectile_path: String = ""
+	## Wizard only: Magic attribute bonus to base max mana (passed into blood-mana recompute).
+	var wizard_extra_base_mana_max: int = 0
 	var battle_hardened_counter: int = 0
 	var class_handler: ClassHandler = ClassHandler.new()
 	var definition: CharacterData
@@ -360,6 +392,7 @@ class PlayerClass:
 	var name: ClassName
 	var stats: Stats
 	var _attack_scene: PackedScene
+	var _secondary_attack_scene: PackedScene
 
 	func _init(cn: ClassName) -> void:
 		self.name = cn
@@ -379,6 +412,7 @@ class PlayerClass:
 			print("failed to set up class %s" % ClassName.keys()[cn])
 			# Fallback to avoid null callables
 			self.attack_logic = func(_pc: PlayerClass) -> bool: return false
+			self.secondary_attack_logic = func(_pc: PlayerClass) -> bool: return false
 			self.heart_drawing_logic = class_handler.default_hearts
 
 	func _post_init_class() -> void:
@@ -391,6 +425,20 @@ class PlayerClass:
 		if self.attack_logic:
 			return self.attack_logic.call(self)
 		return false
+
+	func secondary_attack() -> bool:
+		if self.secondary_attack_logic:
+			return self.secondary_attack_logic.call(self)
+		return false
+
+	func has_secondary_spell() -> bool:
+		if definition == null:
+			return false
+		if definition.secondary_spell_mana_cost <= 0:
+			return false
+		return not (
+			class_handler.get_secondary_projectile_path_from_definition(definition).is_empty()
+		)
 
 	func draw_hearts(heart_container: Node) -> void:
 		self.heart_drawing_logic.call(self.stats, heart_container)
@@ -406,6 +454,17 @@ class PlayerClass:
 			# Lazy loading preserves compatibility for legacy classes using only paths.
 			_attack_scene = load(attack_projectile_path)
 		return _attack_scene
+
+	func get_secondary_attack_scene() -> PackedScene:
+		if (
+			_secondary_attack_scene == null
+			and definition != null
+			and definition.secondary_attack_projectile_scene != null
+		):
+			_secondary_attack_scene = definition.secondary_attack_projectile_scene
+		if _secondary_attack_scene == null and not secondary_attack_projectile_path.is_empty():
+			_secondary_attack_scene = load(secondary_attack_projectile_path)
+		return _secondary_attack_scene
 
 	func has_resource(resource: String, count: int) -> bool:
 		if self.stats.resources.has(resource):
@@ -426,7 +485,7 @@ class PlayerClass:
 		return false
 
 	func _on_wizard_health_blood_mana(_new_health: int, _max_health: int) -> void:
-		class_handler.recompute_wizard_blood_mana(self)
+		class_handler.recompute_wizard_blood_mana(self, wizard_extra_base_mana_max)
 
 
 func create_class(cn: ClassName) -> PlayerClass:

@@ -2,8 +2,8 @@ class_name PlayerCharacter
 extends "res://scripts/base_character.gd"
 
 const GameConstants = preload("res://scripts/config/game_constants.gd")
+const AttributeBonusService = preload("res://scripts/progression/attribute_bonus_service.gd")
 const PLAYER_INVINCIBILITY_DURATION: float = 1.5
-const RUN_TO_WALK_THRESHOLD_FACTOR: float = 0.5
 
 # TODO(ElodinLaarz): Add Class Choice.
 var player_class: ClassHandler.PlayerClass
@@ -18,6 +18,12 @@ var bomb_count: int = 0
 var bomb_max: int = 3
 var currency: int = 0
 var feel_tuning: FeelTuningProfile
+var progression: PlayerProgression = PlayerProgression.new()
+var _baseline_max_health: int = 0
+var _baseline_damage: int = 0
+var _baseline_speed: int = 0
+var _baseline_attack_speed: float = 1.0
+var _baseline_mana_max: int = 0
 var _attack_buffer_timer: float = 0.0
 var _attack_move_slow_timer: float = 0.0
 
@@ -67,9 +73,15 @@ func load_player_data(player_name: String) -> bool:
 		bomb_max = player_data.bomb_max
 		if player_class.definition != null:
 			movement.walking_speed = player_class.definition.speed
-			movement.running_speed = int(movement.walking_speed * movement.running_multiplier)
-			movement.run_to_walk_threshold = movement.walking_speed * RUN_TO_WALK_THRESHOLD_FACTOR
+			movement.update_derived_stats()
 		_apply_feel_tuning()
+		if player_class.definition != null:
+			_baseline_max_health = player_class.definition.max_health
+			_baseline_damage = player_class.definition.damage
+			_baseline_speed = movement.walking_speed
+			_baseline_attack_speed = player_class.definition.attack_speed
+			_baseline_mana_max = player_class.definition.mana_max
+		AttributeBonusService.apply(self)
 		return true
 	return false
 
@@ -108,7 +120,10 @@ func handle_attack(delta: float) -> void:
 		_attack_buffer_timer = 0.0
 		_attack_move_slow_timer = _get_attack_move_slow_time()
 	if Input.is_action_just_pressed(GameConstants.INPUT_ACTION_SECONDARY_ATTACK):
-		if Common.place_bomb():
+		var secondary_spell_cast: bool = false
+		if player_class != null and player_class.has_secondary_spell():
+			secondary_spell_cast = Common.cast_secondary_spell()
+		if not secondary_spell_cast and Common.place_bomb():
 			print("bomb placed!")
 
 
@@ -161,6 +176,16 @@ func enemy_attack(e: Enemy) -> void:
 		print("uh oh...")
 		return
 	take_damage(e.stats.damage)
+
+
+func grant_experience(amount: int) -> void:
+	if amount <= 0:
+		return
+	var levels_gained: int = progression.add_xp(amount)
+	if levels_gained <= 0 or run_context == null:
+		return
+	for _i: int in range(levels_gained):
+		run_context.enqueue_level_up_choice(self)
 
 
 func add_currency(c: int) -> void:
@@ -219,3 +244,7 @@ func _apply_feel_tuning() -> void:
 	if feel_tuning == null:
 		return
 	movement.apply_tuning(feel_tuning)
+	# apply_tuning replaces walking_speed with the profile base (not stacked attributes).
+	if _baseline_max_health > 0:
+		_baseline_speed = movement.walking_speed
+		AttributeBonusService.apply(self)
