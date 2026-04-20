@@ -52,17 +52,9 @@ func fire_attack(player: PlayerCharacter, angle: float) -> bool:
 		return false
 
 	var stats: Stats = player.player_class.stats
-	var feel_tuning: FeelTuningProfile = Common.get_feel_tuning()
-	var luck_points: int = 0
-	if player.progression != null:
-		luck_points = player.progression.get_attribute(PlayerProgression.Attribute.LUCK)
-	var luck_crit_bonus: float = float(luck_points) * 0.015
-	var crit_chance: float = feel_tuning.crit_chance if feel_tuning != null else 0.0
-	crit_chance = clampf(crit_chance + luck_crit_bonus, 0.0, GameConstants.CRIT_CHANCE_CAP)
-	var crit_damage_multiplier: float = (
-		feel_tuning.crit_damage_multiplier if feel_tuning != null else 2.0
-	)
-	var is_crit: bool = randf() < crit_chance
+	var crit: Dictionary = _roll_attack_crit(player)
+	var is_crit: bool = crit["is_crit"]
+	var crit_damage_multiplier: float = crit["crit_damage_multiplier"]
 	var damage_amount: int = stats.damage
 	if is_crit:
 		damage_amount = maxi(1, int(round(float(stats.damage) * crit_damage_multiplier)))
@@ -131,17 +123,9 @@ func fire_secondary_attack(player: PlayerCharacter, angle: float) -> bool:
 		return false
 
 	var stats: Stats = player.player_class.stats
-	var feel_tuning: FeelTuningProfile = Common.get_feel_tuning()
-	var luck_points: int = 0
-	if player.progression != null:
-		luck_points = player.progression.get_attribute(PlayerProgression.Attribute.LUCK)
-	var luck_crit_bonus: float = float(luck_points) * 0.015
-	var crit_chance: float = feel_tuning.crit_chance if feel_tuning != null else 0.0
-	crit_chance = clampf(crit_chance + luck_crit_bonus, 0.0, GameConstants.CRIT_CHANCE_CAP)
-	var crit_damage_multiplier: float = (
-		feel_tuning.crit_damage_multiplier if feel_tuning != null else 2.0
-	)
-	var is_crit: bool = randf() < crit_chance
+	var crit: Dictionary = _roll_attack_crit(player)
+	var is_crit: bool = crit["is_crit"]
+	var crit_damage_multiplier: float = crit["crit_damage_multiplier"]
 	var damage_mult: float = maxf(def.secondary_damage_multiplier, 0.0)
 	var base_damage: int = maxi(0, int(round(float(stats.damage) * damage_mult)))
 	var damage_amount: int = base_damage
@@ -229,6 +213,21 @@ func resolve_projectile_hit(target: BaseCharacter, projectile: Projectile) -> bo
 			run_context.handle_enemy_defeated(target)
 		target.call_deferred("queue_free")
 	return defeated
+
+
+func _roll_attack_crit(player: PlayerCharacter) -> Dictionary:
+	var feel_tuning: FeelTuningProfile = Common.get_feel_tuning()
+	var luck_points: int = 0
+	if player != null and player.progression != null:
+		luck_points = player.progression.get_attribute(PlayerProgression.Attribute.LUCK)
+	var luck_crit_bonus: float = float(luck_points) * 0.015
+	var crit_chance: float = feel_tuning.crit_chance if feel_tuning != null else 0.0
+	crit_chance = clampf(crit_chance + luck_crit_bonus, 0.0, GameConstants.CRIT_CHANCE_CAP)
+	var crit_damage_multiplier: float = (
+		feel_tuning.crit_damage_multiplier if feel_tuning != null else 2.0
+	)
+	var is_crit: bool = randf() < crit_chance
+	return {"is_crit": is_crit, "crit_damage_multiplier": crit_damage_multiplier}
 
 
 func _calculate_ttl(stats: Stats) -> float:

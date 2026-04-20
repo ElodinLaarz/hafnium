@@ -246,7 +246,7 @@ func _apply_feel_tuning() -> void:
 	if feel_tuning == null:
 		return
 	movement.apply_tuning(feel_tuning)
-	if player_class != null and player_class.definition != null:
-		_baseline_speed = movement.walking_speed
+	# apply_tuning replaces walking_speed with the profile base (not stacked attributes).
 	if _baseline_max_health > 0:
+		_baseline_speed = movement.walking_speed
 		AttributeBonusService.apply(self)

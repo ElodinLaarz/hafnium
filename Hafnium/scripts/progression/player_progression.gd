@@ -83,7 +83,14 @@ static func attribute_from_int(value: int) -> Attribute:
 	return value as Attribute
 
 
-static func pick_random_attributes(count: int) -> Array[int]:
+static func pick_random_attributes(count: int, rng: RandomNumberGenerator = null) -> Array[int]:
 	var pool: Array[int] = _all_attribute_keys()
-	pool.shuffle()
+	if rng == null:
+		pool.shuffle()
+	else:
+		for i: int in range(pool.size() - 1, 0, -1):
+			var j: int = rng.randi_range(0, i)
+			var tmp: int = pool[i]
+			pool[i] = pool[j]
+			pool[j] = tmp
 	return pool.slice(0, mini(count, pool.size()))

@@ -51,8 +51,9 @@ static func apply(player: PlayerCharacter) -> void:
 	player.stats.attack_speed = adjusted
 
 	if player.player_class.name == ClassHandler.ClassName.WIZARD:
+		player.player_class.wizard_extra_base_mana_max = mag * MANA_PER_MAGIC
 		player.player_class.class_handler.recompute_wizard_blood_mana(
-			player.player_class, mag * MANA_PER_MAGIC
+			player.player_class, player.player_class.wizard_extra_base_mana_max
 		)
 	else:
 		var mana_res: Stats.ResourceStatus = player.stats.resources.get(GameConstants.RESOURCE_MANA)

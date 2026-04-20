@@ -383,6 +383,8 @@ class PlayerClass:
 	var secondary_attack_logic: Callable
 	var attack_projectile_path: String = ""
 	var secondary_attack_projectile_path: String = ""
+	## Wizard only: Magic attribute bonus to base max mana (passed into blood-mana recompute).
+	var wizard_extra_base_mana_max: int = 0
 	var battle_hardened_counter: int = 0
 	var class_handler: ClassHandler = ClassHandler.new()
 	var definition: CharacterData
@@ -483,7 +485,7 @@ class PlayerClass:
 		return false
 
 	func _on_wizard_health_blood_mana(_new_health: int, _max_health: int) -> void:
-		class_handler.recompute_wizard_blood_mana(self)
+		class_handler.recompute_wizard_blood_mana(self, wizard_extra_base_mana_max)
 
 
 func create_class(cn: ClassName) -> PlayerClass:

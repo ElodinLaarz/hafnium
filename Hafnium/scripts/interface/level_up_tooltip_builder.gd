@@ -2,6 +2,7 @@ class_name LevelUpTooltipBuilder
 extends Object
 
 const GameConstants = preload("res://scripts/config/game_constants.gd")
+const AttributeBonusService = preload("res://scripts/progression/attribute_bonus_service.gd")
 
 const COLOR_BARBARIAN: String = "#dd4444"
 const COLOR_DRUID: String = "#33bb55"
@@ -83,7 +84,13 @@ static func _luck() -> String:
 
 
 static func _willpower() -> String:
-	return "Reduces primary attack cooldown by 0.03s per point (minimum cooldown 0.12s)."
+	return (
+		"Reduces primary attack cooldown by %.2fs per point (minimum cooldown %.2fs)."
+		% [
+			AttributeBonusService.WILLPOWER_ATTACK_COOLDOWN_PER_POINT,
+			AttributeBonusService.MIN_ATTACK_COOLDOWN,
+		]
+	)
 
 
 static func _player_uses_mana(player: PlayerCharacter) -> bool:
