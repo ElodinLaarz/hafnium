@@ -57,11 +57,12 @@ func _ready() -> void:
 	spawn_director.configure(self)
 	loot_director.configure(self)
 
-	if LevelUpOverlayScene != null:
-		var level_overlay: Node = LevelUpOverlayScene.instantiate()
-		add_child(level_overlay)
-		if level_overlay.has_method(&"configure"):
-			level_overlay.configure(self)
+	# LevelUpOverlayScene is preloaded, so any failure is a parse/load error rather
+	# than a runtime nil — no null-guard is meaningful here.
+	var level_overlay: Node = LevelUpOverlayScene.instantiate()
+	add_child(level_overlay)
+	if level_overlay.has_method(&"configure"):
+		level_overlay.configure(self)
 
 
 func _process(delta: float) -> void:
@@ -197,46 +198,64 @@ func apply_hit_stop(duration: float, time_scale: float) -> void:
 
 
 func enqueue_level_up_choice(player: PlayerCharacter) -> void:
-	if player == null:
+	if player == null or not is_instance_valid(player):
 		return
 	_level_up_choice_queue.append(player)
 	if _level_up_choice_queue.size() == 1:
-		var tree: SceneTree = get_tree()
-		if tree != null:
-			tree.paused = true
+		_set_level_up_choice_paused(true)
 		_emit_next_level_up_choice()
 
 
 func resolve_level_up_choice(
 	player: PlayerCharacter, attribute: PlayerProgression.Attribute
 ) -> void:
-	if player == null or player.progression == null:
+	_prune_invalid_level_up_choice_queue_head()
+	if player == null or not is_instance_valid(player) or player.progression == null:
+		if _level_up_choice_queue.is_empty():
+			_set_level_up_choice_paused(false)
+		else:
+			_emit_next_level_up_choice()
 		return
 	if _level_up_choice_queue.is_empty() or _level_up_choice_queue[0] != player:
 		return
 	player.progression.increment_attribute(attribute)
 	AttributeBonusService.apply(player)
 	_level_up_choice_queue.pop_front()
+	_prune_invalid_level_up_choice_queue_head()
 	if _level_up_choice_queue.is_empty():
-		var tree: SceneTree = get_tree()
-		if tree != null:
-			tree.paused = false
+		_set_level_up_choice_paused(false)
 	else:
 		_emit_next_level_up_choice()
 
 
 func _emit_next_level_up_choice() -> void:
-	if _level_up_choice_queue.is_empty():
+	while not _level_up_choice_queue.is_empty():
+		var player: PlayerCharacter = _level_up_choice_queue[0]
+		if player == null or not is_instance_valid(player):
+			_level_up_choice_queue.pop_front()
+			continue
+		var choices: Array[int] = PlayerProgression.pick_random_attributes(
+			GameConstants.LEVEL_UP_CHOICE_COUNT
+		)
+		level_up_choice_required.emit(player, choices)
 		return
-	var player: PlayerCharacter = _level_up_choice_queue[0]
-	if player == null:
+	# Queue was drained of invalid entries without emitting; unpause so gameplay
+	# does not stay frozen waiting on a choice that can never be made.
+	_set_level_up_choice_paused(false)
+
+
+func _prune_invalid_level_up_choice_queue_head() -> void:
+	while not _level_up_choice_queue.is_empty():
+		var queued_player: PlayerCharacter = _level_up_choice_queue[0]
+		if queued_player != null and is_instance_valid(queued_player):
+			return
 		_level_up_choice_queue.pop_front()
-		_emit_next_level_up_choice()
-		return
-	var choices: Array[int] = PlayerProgression.pick_random_attributes(
-		GameConstants.LEVEL_UP_CHOICE_COUNT
-	)
-	level_up_choice_required.emit(player, choices)
+
+
+func _set_level_up_choice_paused(paused: bool) -> void:
+	var tree: SceneTree = get_tree()
+	if tree != null:
+		tree.paused = paused
 
 
 func handle_enemy_defeated(enemy: Enemy) -> void:
@@ -246,7 +265,12 @@ func handle_enemy_defeated(enemy: Enemy) -> void:
 	var xp_amount: int = 0
 	if enemy.definition != null:
 		xp_amount = enemy.definition.experience_reward
-	for p: PlayerCharacter in active_players:
+	# Iterate in reverse so removing freed players does not skip entries.
+	for i: int in range(active_players.size() - 1, -1, -1):
+		var p: PlayerCharacter = active_players[i]
+		if p == null or not is_instance_valid(p):
+			active_players.remove_at(i)
+			continue
 		p.grant_experience(xp_amount)
 	var reward_details: Array = enemy.drop_reward()
 	if reward_details.size() >= 2 and reward_details[0] != null:

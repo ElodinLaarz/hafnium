@@ -4,10 +4,6 @@ extends Object
 const GameConstants = preload("res://scripts/config/game_constants.gd")
 const AttributeBonusService = preload("res://scripts/progression/attribute_bonus_service.gd")
 
-const COLOR_BARBARIAN: String = "#dd4444"
-const COLOR_DRUID: String = "#33bb55"
-const COLOR_WIZARD: String = "#4499ee"
-
 
 static func build(player: PlayerCharacter, attribute: PlayerProgression.Attribute) -> String:
 	if player == null or player.player_class == null:
@@ -35,7 +31,7 @@ static func _constitution(cn: ClassHandler.ClassName) -> String:
 		lines.append(
 			(
 				"[b][color=%s]+1 attack damage per point — Barbarian primary stat.[/color][/b]"
-				% COLOR_BARBARIAN
+				% GameConstants.CLASS_COLOR_BARBARIAN
 			)
 		)
 	return _join_lines(lines)
@@ -48,7 +44,7 @@ static func _dexterity(cn: ClassHandler.ClassName) -> String:
 		lines.append(
 			(
 				"[b][color=%s]+1 attack damage per point — Druid primary stat.[/color][/b]"
-				% COLOR_DRUID
+				% GameConstants.CLASS_COLOR_DRUID
 			)
 		)
 	return _join_lines(lines)
@@ -70,7 +66,7 @@ static func _magic(player: PlayerCharacter, cn: ClassHandler.ClassName) -> Strin
 		lines.append(
 			(
 				"[b][color=%s]+1 attack damage per point — Wizard primary stat.[/color][/b]"
-				% COLOR_WIZARD
+				% GameConstants.CLASS_COLOR_WIZARD
 			)
 		)
 	return _join_lines(lines)

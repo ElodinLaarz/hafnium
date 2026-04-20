@@ -4,7 +4,6 @@ extends "res://scripts/base_character.gd"
 const GameConstants = preload("res://scripts/config/game_constants.gd")
 const AttributeBonusService = preload("res://scripts/progression/attribute_bonus_service.gd")
 const PLAYER_INVINCIBILITY_DURATION: float = 1.5
-const RUN_TO_WALK_THRESHOLD_FACTOR: float = 0.5
 
 # TODO(ElodinLaarz): Add Class Choice.
 var player_class: ClassHandler.PlayerClass
@@ -74,8 +73,7 @@ func load_player_data(player_name: String) -> bool:
 		bomb_max = player_data.bomb_max
 		if player_class.definition != null:
 			movement.walking_speed = player_class.definition.speed
-			movement.running_speed = int(movement.walking_speed * movement.running_multiplier)
-			movement.run_to_walk_threshold = movement.walking_speed * RUN_TO_WALK_THRESHOLD_FACTOR
+			movement.update_derived_stats()
 		_apply_feel_tuning()
 		if player_class.definition != null:
 			_baseline_max_health = player_class.definition.max_health

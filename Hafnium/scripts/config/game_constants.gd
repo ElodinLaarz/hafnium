@@ -33,4 +33,10 @@ const HEART_STYLE_DRUID: String = "druid"
 const HEART_STYLE_WIZARD: String = "wizard"
 const HEART_STYLE_DEFAULT: String = "default"
 
+## Per-class accent colors used by HUD / tooltips. Kept here as the single source
+## of truth until we introduce a formal theme resource.
+const CLASS_COLOR_BARBARIAN: String = "#dd4444"
+const CLASS_COLOR_DRUID: String = "#33bb55"
+const CLASS_COLOR_WIZARD: String = "#4499ee"
+
 const ENEMY_ID_SLIME_BASIC: String = "enemy:slime_basic"

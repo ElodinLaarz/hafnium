@@ -9,6 +9,8 @@ const DAMAGE_PER_PRIMARY_ATTRIBUTE: int = 1
 const MANA_PER_MAGIC: int = 1
 const MIN_ATTACK_COOLDOWN: float = 0.12
 const WILLPOWER_ATTACK_COOLDOWN_PER_POINT: float = 0.03
+## Additive crit chance granted per Luck point; consumed by CombatDirector.
+const LUCK_CRIT_CHANCE_PER_POINT: float = 0.015
 
 
 static func apply(player: PlayerCharacter) -> void:
@@ -39,10 +41,7 @@ static func apply(player: PlayerCharacter) -> void:
 
 	var base_speed: int = player._baseline_speed + dex * MOVE_SPEED_PER_DEXTERITY
 	player.movement.walking_speed = base_speed
-	player.movement.running_speed = int(base_speed * player.movement.running_multiplier)
-	player.movement.run_to_walk_threshold = (
-		player.movement.walking_speed * PlayerCharacter.RUN_TO_WALK_THRESHOLD_FACTOR
-	)
+	player.movement.update_derived_stats()
 
 	var base_cooldown: float = player._baseline_attack_speed
 	var adjusted: float = maxf(

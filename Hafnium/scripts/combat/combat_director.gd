@@ -3,6 +3,7 @@ extends Node
 
 const BOMB_SCENE: PackedScene = preload("res://scenes/weapons/player_bomb.tscn")
 const GameConstants = preload("res://scripts/config/game_constants.gd")
+const AttributeBonusService = preload("res://scripts/progression/attribute_bonus_service.gd")
 const ZERO_SPEED_PROJECTILE_TTL: float = 0.1
 
 var run_context: RunContext
@@ -113,8 +114,9 @@ func fire_secondary_attack(player: PlayerCharacter, angle: float) -> bool:
 		return false
 
 	var projectile_node: Node = projectile_scene.instantiate()
-	if not (projectile_node is Projectile):
-		projectile_node.free()
+	if projectile_node == null or not (projectile_node is Projectile):
+		if projectile_node != null:
+			projectile_node.free()
 		return false
 	var projectile: Projectile = projectile_node as Projectile
 
@@ -220,7 +222,9 @@ func _roll_attack_crit(player: PlayerCharacter) -> Dictionary:
 	var luck_points: int = 0
 	if player != null and player.progression != null:
 		luck_points = player.progression.get_attribute(PlayerProgression.Attribute.LUCK)
-	var luck_crit_bonus: float = float(luck_points) * 0.015
+	var luck_crit_bonus: float = (
+		float(luck_points) * AttributeBonusService.LUCK_CRIT_CHANCE_PER_POINT
+	)
 	var crit_chance: float = feel_tuning.crit_chance if feel_tuning != null else 0.0
 	crit_chance = clampf(crit_chance + luck_crit_bonus, 0.0, GameConstants.CRIT_CHANCE_CAP)
 	var crit_damage_multiplier: float = (

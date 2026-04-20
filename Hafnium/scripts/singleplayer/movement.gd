@@ -67,11 +67,18 @@ func apply_tuning(tuning: FeelTuningProfile) -> void:
 		return
 	walking_speed = int(round(tuning.walk_speed))
 	running_multiplier = tuning.run_multiplier
-	running_speed = int(round(walking_speed * running_multiplier))
 	accel = tuning.accel
 	decel = tuning.decel
 	turn_accel_multiplier = tuning.turn_accel_multiplier
 	max_double_click_delta = tuning.run_double_tap_window
+	update_derived_stats()
+
+
+## Recomputes running_speed and run_to_walk_threshold from walking_speed and
+## running_multiplier. Call after mutating either input so callers do not have
+## to duplicate the derivation formula.
+func update_derived_stats() -> void:
+	running_speed = int(round(walking_speed * running_multiplier))
 	run_to_walk_threshold = walking_speed * RUN_TO_WALK_THRESHOLD_FACTOR
 
 
